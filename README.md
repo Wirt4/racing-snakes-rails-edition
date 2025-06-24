@@ -1,12 +1,12 @@
 # Racing Snakes: Rails Edition
 <img src="/assets/readme_pic.jpg" alt="two snakes chasing each other on a grid" width="550" style="display: block; margin: 0 auto;"/>
+
 ## Description
 _Racing Snakes: Rails Edition_ is a lightweight Ruby on Rails application that parses, ranks, and displays race results using clean MVC architecture and test-driven development practices. An extension of "Racing Snakes"(https://github.com/Wirt4/racing_snakes), this project showcases practical Ruby skills, RSpec testing discipline, and deploy-ready Rails workflows.
 ## Who Is This Project For
 ### Hosted Project
 For people who want to play a fun little game without a ton of overhead for setup.
-###
-The repository
+### The repository
 For developers who want to develop and extend a deploy-read Rails app.
 ## Dependencies
 (stub)
