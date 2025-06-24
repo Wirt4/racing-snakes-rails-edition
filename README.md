@@ -5,8 +5,8 @@ _Racing Snakes: Rails Edition_ is a lightweight Ruby on Rails application that p
 ### Hosted Project
 For people who want to play a fun little game without a ton of overhead for setup.
 ###
-The repo
-For devs who want to develop and extend a deploy-read Rails app.
+The repository
+For developers who want to develop and extend a deploy-read Rails app.
 ## Dependencies
 (stub)
 ## Instructions For Use
