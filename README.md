@@ -9,9 +9,22 @@ For people who want to play a fun little game without a ton of overhead for setu
 ### The repository
 For developers who want to develop and extend a deploy-read Rails app.
 ## Dependencies
-(stub)
+To run locally, you'll need:
+- **Ruby** 3.3.4
+- **Rails** 7.1.3
+- **Bundler** 2.5.15
+
+Install dependencies with 
+```bash
+bundle install
+```
 ## Instructions For Use
-(stub)
+### Hosting
+To host locally, run
+```bash
+bin/rails server
+
+```
 ## Terms of Use
 The MIT License (MIT)
 
