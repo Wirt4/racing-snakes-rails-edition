@@ -18,10 +18,6 @@ jobs:
           bundle install --jobs 4 --retry 3
           yarn install --check-files || true
 
-      - name: Set Up DB
-        run: |
-          bin/rails db:setup
-
       - name: Run Tests
         run: bundle exec rspec
 
