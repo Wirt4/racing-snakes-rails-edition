@@ -19,7 +19,12 @@ Install dependencies with
 bundle install
 ```
 ## Instructions For Use
-(stub)
+### Hosting
+To host locally, run
+```bash
+bin/rails server
+
+```
 ## Terms of Use
 The MIT License (MIT)
 
