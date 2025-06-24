@@ -1,5 +1,5 @@
 # Racing Snakes: Rails Edition
-![Two Snakes Chasing each other on a grid](/assets/readme_pic.jpg?raw=true)
+<img src="/assets/readme_pic.jpg" alt="two snakes chasing each other on a grid" width="200"/>
 ## Description
 _Racing Snakes: Rails Edition_ is a lightweight Ruby on Rails application that parses, ranks, and displays race results using clean MVC architecture and test-driven development practices. An extension of "Racing Snakes"(https://github.com/Wirt4/racing_snakes), this project showcases practical Ruby skills, RSpec testing discipline, and deploy-ready Rails workflows.
 ## Who Is This Project For
