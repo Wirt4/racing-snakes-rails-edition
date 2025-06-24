@@ -9,6 +9,7 @@ For people who want to play a fun little game without a ton of overhead for setu
 ### The repository
 For developers who want to develop and extend a deploy-read Rails app.
 ## Dependencies
+- ruby 3.3.4
 (stub)
 ## Instructions For Use
 (stub)
