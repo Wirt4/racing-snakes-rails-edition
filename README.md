@@ -25,6 +25,10 @@ To host locally, run
 bin/rails server
 
 ```
+To run tests, run 
+```bash
+bundle exec rspec
+```
 ## Terms of Use
 The MIT License (MIT)
 
