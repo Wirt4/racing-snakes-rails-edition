@@ -18,16 +18,31 @@ Install dependencies with
 ```bash
 bundle install
 ```
+```bash
+rake install
+```
 ## Instructions For Use
 ### Hosting
 To host locally, run
 ```bash
 bin/rails server
-
+or 
+```bash
+rake localhost
 ```
+
 To run tests, run 
 ```bash
 bundler exec rspec
+```
+or
+```bash
+rake test
+```
+
+In development, you can also run rubocop for linting and style checks:
+```bash
+rake rubocop
 ```
 ## Terms of Use
 The MIT License (MIT)
