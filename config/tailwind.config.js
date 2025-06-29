@@ -1,4 +1,3 @@
-// config/tailwind.config.js
 module.exports = {
 	content: [
 		'./app/views/**/*.{html,erb}',
