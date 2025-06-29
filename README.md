@@ -27,7 +27,7 @@ bin/rails server
 ```
 To run tests, run 
 ```bash
-bundle exec rspec
+bundler exec rspec
 ```
 ## Terms of Use
 The MIT License (MIT)
