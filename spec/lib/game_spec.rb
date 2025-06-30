@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../app/lib/racing_snakes'
 RSpec.describe RacingSnakes::Game do
   describe '#add_player' do
