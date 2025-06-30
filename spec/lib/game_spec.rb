@@ -14,8 +14,15 @@ require_relative '../../app/lib/racing_snakes'
 # end
 
 RSpec.describe RacingSnakes::Game do
-  it 'can add a player' do
-    game = RacingSnakes::Game.new
-    game.add_player('3f9d7c2e1b4a8d65')
+  describe '#add_player' do
+    it 'game has an add_player method' do
+      game = RacingSnakes::Game.new
+      game.add_player('a2fc0b19dfea4c278379c8d9b79a4f6b')
+    end
+    it 'the player id must be a string' do
+      expect do
+        game.add_player(-1)
+      end.to raise_error(ArgumentError, /Player ID must be a string/)
+    end
   end
 end
