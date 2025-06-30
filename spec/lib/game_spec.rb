@@ -29,5 +29,9 @@ RSpec.describe RacingSnakes::Game do
         game.add_player(valid_player_id)
       end.to raise_error(ArgumentError, /player_id already exists/)
     end
+    it 'does not alter invariant: game.players is an array of AbstractPlayer' do
+      game.add_player(valid_player_id)
+      expect(game.players).to all(be_a(RacingSnakes::AbstractPlayer))
+    end
   end
 end

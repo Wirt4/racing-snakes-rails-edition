@@ -9,6 +9,8 @@ module RacingSnakes
   #  all players and trails are within the game bounds
   #  the board only contains valid player data and trail data
   class Game
+    attr_reader :players
+
     def add_player(player_id)
       # preconditions: player_id is a 32 character string
       # player is not already in the game
