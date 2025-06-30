@@ -14,13 +14,16 @@ module RacingSnakes
       # preconditions: player_id is a 32 character string
       # player is not already in the game
       # a player is created with the player name (player_id)
+      validate_player_id(player_id)
 
+      # postconditions: player count is incremented by 1s a player is added which has the name
+    end
+
+    private
+
+    def validate_player_id(player_id)
       raise ArgumentError, 'player_id must be a string' unless player_id.is_a?(String)
-      return if player_id.match?(/\A[a-f0-9]{32}\z/)
-
-      raise ArgumentError, 'player_id must be a 32 character hex string'
-
-      # postconditions: player count is incremented by 1s a player is added wich has the name
+      raise ArgumentError, 'player_id must be a 32 character hex string' unless player_id.match?(/\A[a-f0-9]{32}\z/)
     end
   end
 end
