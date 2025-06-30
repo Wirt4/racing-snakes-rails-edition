@@ -11,6 +11,11 @@ module RacingSnakes
   class Game
     attr_reader :players
 
+    def initialize(player_factory: RacingSnakes::PlayerFactory)
+      @player_factory = player_factory
+      @players = []
+    end
+
     def add_player(player_id)
       # preconditions: player_id is a 32 character string
       # player is not already in the game
@@ -18,7 +23,7 @@ module RacingSnakes
       @players ||= []
       @unique_player_ids ||= []
       validate_player_id(player_id)
-      @players << RacingSnakes::AbstractPlayer.new
+      @players << @player_factory.build(player_id)
       @unique_player_ids << player_id
 
       # postconditions: player count is incremented by 1s a player is added which has the name

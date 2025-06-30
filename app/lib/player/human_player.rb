@@ -1,6 +1,5 @@
 module RacingSnakes
   # TODO: list invariants
-  class AbstractPlayer
-    attr_reader :id
+  class HumanPlayer < RacingSnakes::AbstractPlayer
   end
 end
