@@ -21,8 +21,9 @@ RSpec.describe RacingSnakes::Game do
     end
     it 'the player id must be a string' do
       expect do
+        game = RacingSnakes::Game.new
         game.add_player(-1)
-      end.to raise_error(ArgumentError, /Player ID must be a string/)
+      end.to raise_error(ArgumentError, /player_id must be a string/)
     end
   end
 end
