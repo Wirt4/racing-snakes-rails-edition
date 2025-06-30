@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RacingSnakes
   class PlayerFactory
     def self.build(player_id)

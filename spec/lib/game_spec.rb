@@ -3,7 +3,10 @@
 require_relative '../../app/lib/racing_snakes'
 
 class DummyPlayer < RacingSnakes::AbstractPlayer
-  def initialize(id) = @id = id
+  def initialize(id)
+    super()
+    @id = id
+  end
   attr_reader :id
 end
 
