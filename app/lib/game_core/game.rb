@@ -9,11 +9,18 @@ module RacingSnakes
   #  all players and trails are within the game bounds
   #  the board only contains valid player data and trail data
   class Game
-    attr_reader :players
+    attr_reader :players, :frame_number
 
     def initialize(player_factory: RacingSnakes::PlayerFactory)
       @player_factory = player_factory
       @players = []
+      @frame_number = 0
+    end
+
+    def tick
+      # preconditions frame_number is a non-negative integer
+      # postconditions: frame_number is incremented by 1
+      @frame_number += 1
     end
 
     def add_player(player_id)

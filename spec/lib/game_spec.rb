@@ -36,4 +36,19 @@ RSpec.describe RacingSnakes::Game do
       expect(game.players).to all(be_a(RacingSnakes::AbstractPlayer))
     end
   end
+  describe '#tick' do
+    let(:game) { described_class.new }
+
+    it 'increments the tick count' do
+      initial_frame = game.frame_number
+      game.tick
+      expect(game.frame_number).to eq(initial_frame + 1)
+    end
+
+    it 'ensures that ticks are monotonically increasing' do
+      initial_frame = game.frame_number
+      game.tick
+      expect(game.frame_number).to be > initial_frame
+    end
+  end
 end
