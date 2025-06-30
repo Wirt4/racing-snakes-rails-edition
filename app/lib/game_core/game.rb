@@ -15,9 +15,10 @@ module RacingSnakes
       # player is not already in the game
       # a player is created with the player name (player_id)
 
-      return if player_id.is_a?(String)
+      raise ArgumentError, 'player_id must be a string' unless player_id.is_a?(String)
+      return if player_id.match?(/\A[a-f0-9]{32}\z/)
 
-      raise ArgumentError, 'player_id must be a string'
+      raise ArgumentError, 'player_id must be a 32 character hex string'
 
       # postconditions: player count is incremented by 1s a player is added wich has the name
     end

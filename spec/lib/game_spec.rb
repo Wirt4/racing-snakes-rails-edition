@@ -16,7 +16,7 @@ RSpec.describe RacingSnakes::Game do
     it 'the player id must be a 32 char hex generated' do
       expect do
         game.add_player(' this is not a valid player id')
-      end.to raise_error(ArgumentError, /player_id must be a 32 char hex string/)
+      end.to raise_error(ArgumentError, /player_id must be a 32 character hex string/)
     end
   end
 end
