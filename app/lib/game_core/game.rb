@@ -24,6 +24,11 @@ module RacingSnakes
       @frame_number += 1
     end
 
+    def game_over?
+      # TODO: figure out pre and post conditions
+      false
+    end
+
     def add_player(player_id)
       # preconditions: player_id is a 32 character string
       # player is not already in the game
