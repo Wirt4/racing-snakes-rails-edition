@@ -36,6 +36,9 @@ RSpec.describe RacingSnakes::Game do
       expect(game.players).to all(be_a(RacingSnakes::AbstractPlayer))
     end
   end
+end
+
+RSpec.describe RacingSnakes::Game do
   describe '#tick' do
     let(:game) { described_class.new }
 

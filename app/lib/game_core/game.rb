@@ -6,6 +6,7 @@ module RacingSnakes
   #  all participating players have a unique player_id
   #  players is an array of valid AbsPlayer objects
   #  game.tick is monotonically increasing
+  #  frame_number is a non-negative integer
   #  all players and trails are within the game bounds
   #  the board only contains valid player data and trail data
   class Game
@@ -18,8 +19,8 @@ module RacingSnakes
     end
 
     def tick
-      # preconditions frame_number is a non-negative integer
-      # postconditions: frame_number is incremented by 1
+      # precondition frame_number is a non-negative integer
+      # postcondition: frame_number is incremented by 1
       @frame_number += 1
     end
 
