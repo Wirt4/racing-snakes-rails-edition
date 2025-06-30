@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../app/lib/racing_snakes'
 RSpec.describe RacingSnakes::AbstractPlayer do
   describe '#initialize' do

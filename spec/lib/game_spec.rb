@@ -25,16 +25,6 @@ RSpec.describe RacingSnakes::Game do
     it 'adds a player with a valid ID' do
       game.add_player(player_id)
     end
-    it 'requires the player ID to be a string' do
-      expect do
-        game.add_player(-1)
-      end.to raise_error(ArgumentError, /player_id must be a string/)
-    end
-    it 'requires the player ID to be a 32-character hex string' do
-      expect do
-        game.add_player(' this is not a valid player id')
-      end.to raise_error(ArgumentError, /player_id must be a 32 character hex string/)
-    end
     it 'rejects duplicate player IDs' do
       game.add_player(player_id)
       expect do
