@@ -41,7 +41,10 @@ end
 RSpec.describe RacingSnakes::Game do
   describe '#tick' do
     let(:game) { described_class.new }
-
+    # NOTE: don't need to test for tick overflow or large number slowdown
+    # racing snakes is a session-based game with an end case when competing players are eliminated
+    # The grid should be nice and large, but with finite size
+    # so in a worst case scenario, the game frames are limited by the number of tiles in the grid
     it 'increments the tick count' do
       initial_frame = game.frame_number
       game.tick
