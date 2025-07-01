@@ -30,6 +30,12 @@ module RacingSnakes
       @waiting_for_players
     end
 
+    def game_over?
+      # precondition: class has been initialized
+      # postcondition: once the method returns true, it stays true
+      false
+    end
+
     def add_player(player_id)
       # preconditions:
       # player is not already in the game
