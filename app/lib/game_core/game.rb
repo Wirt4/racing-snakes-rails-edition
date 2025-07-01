@@ -30,6 +30,7 @@ module RacingSnakes
       # 5. if the player is eliminated, its trail is removed from the board
       # 6. if the player is not eliminated, its trail is updated on the board
       move_players
+      @player_roster.move_players
       @frame_number += 1
     end
 
