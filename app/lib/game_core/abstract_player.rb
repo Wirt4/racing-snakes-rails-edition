@@ -17,5 +17,11 @@ module RacingSnakes
     def eliminated?
       !!@eliminated
     end
+
+    def move
+      # This method should be implemented by subclasses.
+      # It represents the player's move logic.
+      raise NotImplementedError, 'Subclasses must implement the move method'
+    end
   end
 end

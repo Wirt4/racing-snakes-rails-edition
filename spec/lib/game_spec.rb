@@ -13,7 +13,7 @@ end
 RSpec.describe RacingSnakes::Game do
   describe '#add_player' do
     let(:player_id) { 'a2fc0b19dfea4c278379c8d9b79a4f6b' }
-    let(:mock_player) { instance_double(RacingSnakes::AbstractPlayer, id: player_id) }
+    let(:mock_player) { instance_double(RacingSnakes::AbstractPlayer, id: player_id, move: nil) }
     let(:mock_factory) do
       Class.new do
         def self.build(player_id)
@@ -40,11 +40,41 @@ end
 
 RSpec.describe RacingSnakes::Game do
   describe '#tick' do
-    let(:game) { described_class.new }
+    let(:game) { described_class.new(player_factory: mock_factory) }
+    let(:player_one_id) { '23fc0b19df235c278379c8d9b79a4fcr' }
+    let(:player_two_id) { 'a2fc0b19dfea4c278379c8d9b79a4f6b' }
+    let(:player_three_id) { 'lsoc0b19dfea4c278379c8d9b79ambis' }
+
+    let(:mock_player_one) { instance_double(RacingSnakes::AbstractPlayer, id: player_one_id, move: nil, eliminated?: false) }
+    let(:mock_player_two) { instance_double(RacingSnakes::AbstractPlayer, id: player_two_id, move: nil, eliminated?: false) }
+    let(:mock_player_three) { instance_double(RacingSnakes::AbstractPlayer, id: player_two_id, move: nil, eliminated?: true) }
+
+    let(:mock_factory) do
+      double('PlayerFactory').tap do |factory|
+        allow(factory).to receive(:build) do |player_id|
+          case player_id
+          when player_one_id then mock_player_one
+          when player_two_id then mock_player_two
+          else mock_player_three
+          end
+        end
+      end
+    end
     # NOTE: don't need to test for tick overflow or large number slowdown
     # racing snakes is a session-based game with an end case when competing players are eliminated
     # The grid should be nice and large, but with finite size
     # so in a worst case scenario, the game frames are limited by the number of tiles in the grid
+    it 'calls move on each non-elminated player' do
+      game.add_player(player_one_id)
+      game.add_player(player_two_id)
+      game.add_player(player_three_id)
+
+      game.tick
+
+      expect(mock_player_one).to have_received(:move)
+      expect(mock_player_two).to have_received(:move)
+      expect(mock_player_three).not_to have_received(:move) # because player three is eliminated
+    end
     it 'increments the tick count' do
       initial_frame = game.frame_number
       game.tick

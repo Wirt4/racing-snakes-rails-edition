@@ -21,7 +21,18 @@ module RacingSnakes
 
     def tick
       # precondition frame_number is a non-negative integer
-      # postcondition: frame_number is incremented by 1
+      # postconditions: frame_number is incremented by 1
+      # each player
+      # 1. moves if non-eliminated
+      # 2. checks for collisions with other players or the board edgea
+      # 4 if the player has a collision, it is eliminated
+      # 5. if the player is eliminated, its trail is removed from the board
+      # 6. if the player is not eliminated, its trail is updated on the board
+      @players.each do |player|
+        next if player.eliminated?
+
+        player.move
+      end
       @frame_number += 1
     end
 
