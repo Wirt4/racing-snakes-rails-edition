@@ -11,7 +11,7 @@ module RacingSnakes
   class Game
     attr_reader :players, :frame_number, :waiting_for_players
 
-    def initialize(player_factory: RacingSnakes::PlayerFactory)
+    def initialize(player_factory: RacingSnakes::PlayerFactory, player_roster_factory: RacingSnakes::PlayerRosterFactory)
       @player_factory = player_factory
       @players = []
       @frame_number = 0

@@ -23,7 +23,7 @@ RSpec.describe RacingSnakes::Game do
     end
     let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
     let(:mock_roster_factory) { instance_double(RacingSnakes::PlayerRosterFactory, build: mock_roster) }
-    let(:game) { described_class.new(player_factory: mock_player_factory, roster_factory: mock_roster_factory) }
+    let(:game) { described_class.new(player_factory: mock_player_factory, player_roster_factory: mock_roster_factory) }
     it 'adds a player with a valid ID' do
       game.add_player(player_id)
     end
