@@ -24,7 +24,8 @@ module RacingSnakes
     end
 
     def waiting_for_players?
-      # TODO: figure out pre and post conditions
+      # precondition: class has been initialized
+      # postcondition: once the method returns false, it stays false
       true
     end
 
