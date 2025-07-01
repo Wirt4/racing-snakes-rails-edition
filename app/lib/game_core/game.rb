@@ -9,12 +9,13 @@ module RacingSnakes
   #  frame_number is a non-negative integer
   #  the board only contains valid player data and trail data
   class Game
-    attr_reader :players, :frame_number
+    attr_reader :players, :frame_number, :waiting_for_players
 
     def initialize(player_factory: RacingSnakes::PlayerFactory)
       @player_factory = player_factory
       @players = []
       @frame_number = 0
+      @waiting_for_players = true
     end
 
     def tick
@@ -26,7 +27,7 @@ module RacingSnakes
     def waiting_for_players?
       # precondition: class has been initialized
       # postcondition: once the method returns false, it stays false
-      true
+      @waiting_for_players
     end
 
     def add_player(player_id)
@@ -40,6 +41,9 @@ module RacingSnakes
       raise ArgumentError, 'player_id already exists' if @players.map(&:id)&.include?(player_id)
 
       @players << @player_factory.build(player_id)
+      return if @players.size < 2
+
+      @waiting_for_players = false
 
       # postconditions: player count is incremented by 1s a player is added which has the name
     end
