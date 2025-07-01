@@ -11,12 +11,9 @@ module RacingSnakes
   class Game
     attr_reader :players, :frame_number, :waiting_for_players
 
-    def initialize(player_factory: RacingSnakes::PlayerFactory, player_roster: RacingSnakes::AbstractPlayerRoster)
-      @player_factory = player_factory
+    def initialize(player_roster: RacingSnakes::AbstractPlayerRoster)
       @player_roster = player_roster
-      @players = []
       @frame_number = 0
-      @waiting_for_players = true
       @game_over = false
     end
 
@@ -29,7 +26,6 @@ module RacingSnakes
       # 4 if the player has a collision, it is eliminated
       # 5. if the player is eliminated, its trail is removed from the board
       # 6. if the player is not eliminated, its trail is updated on the board
-      move_players
       @player_roster.move_players
       @frame_number += 1
     end
@@ -37,7 +33,7 @@ module RacingSnakes
     def waiting_for_players?
       # precondition: class has been initialized
       # postcondition: once the method returns false, it stays false
-      @waiting_for_players
+      @player_roster.count < 2
     end
 
     def game_over?
@@ -45,40 +41,17 @@ module RacingSnakes
       # postcondition: once the method returns true, it stays true
       return @game_over if @game_over == true
 
-      inactive_players = @players.select(&:eliminated?)
-      @game_over = true if !@waiting_for_players && inactive_players.size >= @players.size - 1
+      @game_over = true if !waiting_for_players && @player_roster.active_players <= 1
 
       @game_over
     end
 
     def add_player(player_id)
-      # preconditions:
-      # player is not already in the game
-      # a player is created with the player name (player_id) //todo: need to test this?
-      # player's position is inside the board bounds
-      # player's position does not occupy another player or trail
-      @players ||= []
       @player_roster.add_player(player_id)
 
-      raise ArgumentError, 'player_id already exists' if @players.map(&:id)&.include?(player_id)
-
-      @players << @player_factory.build(player_id)
       return if @player_roster.count < 2
 
-      # postconditions: player is added to the game
       @waiting_for_players = false
-
-      # postconditions: player count is incremented by 1s a player is added which has the name
-    end
-
-    private
-
-    def move_players
-      @players.each do |player|
-        next if player.eliminated?
-
-        player.move
-      end
     end
   end
 end
