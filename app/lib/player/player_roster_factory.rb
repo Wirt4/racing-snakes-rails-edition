@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RacingSnakes
   # Factory class to create player instances
   class PlayerRosterFactory

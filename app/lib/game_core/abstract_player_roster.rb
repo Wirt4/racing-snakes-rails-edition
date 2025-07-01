@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RacingSnakes
   # Abstract class for player roster management
   # Players can be added, removed, and have their functions called en masse.
