@@ -65,5 +65,12 @@ RSpec.describe RacingSnakes::Game do
       expect(game.players).to be_empty
       expect(game.waiting_for_players?).to be true
     end
+    it 'returns false when at least 2 players are present' do
+      game = described_class.new
+      game.add_player('player1')
+      game.add_player('player2')
+      expect(game.players.size).to eq(2)
+      expect(game.waiting_for_players?).to be false
+    end
   end
 end
