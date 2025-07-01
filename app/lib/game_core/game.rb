@@ -13,6 +13,7 @@ module RacingSnakes
 
     def initialize(player_roster: RacingSnakes::AbstractPlayerRoster, board: RacingSnakes::AbstractBoard)
       @player_roster = player_roster
+      @board = board
       @frame_number = 0
       @game_over = false
     end
@@ -28,6 +29,7 @@ module RacingSnakes
       # 6. if the player is not eliminated, its trail is updated on the board
       @player_roster.move_players
       ## crashed_players = @board.collisions(@player_roster) --it's an array of player_ids
+      @board.collisions(roster: @player_roster)
       ## @player_roster.deactivate(crashed_players)
       ## @board.remove_trails(crashed_players)
       ## @board.update_trails(@player_roster)
