@@ -11,8 +11,9 @@ module RacingSnakes
   class Game
     attr_reader :players, :frame_number, :waiting_for_players
 
-    def initialize(player_factory: RacingSnakes::PlayerFactory, player_roster_factory: RacingSnakes::PlayerRosterFactory)
+    def initialize(player_factory: RacingSnakes::PlayerFactory, player_roster: RacingSnakes::AbstractPlayerRoster)
       @player_factory = player_factory
+      @player_roster = player_roster
       @players = []
       @frame_number = 0
       @waiting_for_players = true
@@ -56,7 +57,7 @@ module RacingSnakes
       # player's position is inside the board bounds
       # player's position does not occupy another player or trail
       @players ||= []
-
+      @player_roster.add_player(player_id)
       raise ArgumentError, 'player_id already exists' if @players.map(&:id)&.include?(player_id)
 
       @players << @player_factory.build(player_id)
