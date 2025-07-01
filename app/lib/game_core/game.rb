@@ -28,11 +28,7 @@ module RacingSnakes
       # 4 if the player has a collision, it is eliminated
       # 5. if the player is eliminated, its trail is removed from the board
       # 6. if the player is not eliminated, its trail is updated on the board
-      @players.each do |player|
-        next if player.eliminated?
-
-        player.move
-      end
+      move_players
       @frame_number += 1
     end
 
@@ -69,6 +65,16 @@ module RacingSnakes
       @waiting_for_players = false
 
       # postconditions: player count is incremented by 1s a player is added which has the name
+    end
+
+    private
+
+    def move_players
+      @players.each do |player|
+        next if player.eliminated?
+
+        player.move
+      end
     end
   end
 end
