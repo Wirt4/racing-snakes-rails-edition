@@ -74,3 +74,11 @@ RSpec.describe RacingSnakes::Game do
     end
   end
 end
+RSpec.describe RacingSnakes::Game do
+  describe '#game_over?' do
+    it 'its impossible for a game to be over while its still waiting for players' do
+      game = described_class.new
+      expect(game.game_over?).to be false
+    end
+  end
+end
