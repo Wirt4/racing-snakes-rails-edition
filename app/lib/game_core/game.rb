@@ -16,6 +16,7 @@ module RacingSnakes
       @players = []
       @frame_number = 0
       @waiting_for_players = true
+      @game_over = false
     end
 
     def tick
@@ -33,7 +34,7 @@ module RacingSnakes
     def game_over?
       # precondition: class has been initialized
       # postcondition: once the method returns true, it stays true
-      false
+      @game_over
     end
 
     def add_player(player_id)
