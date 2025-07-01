@@ -59,15 +59,11 @@ RSpec.describe RacingSnakes::Game do
   end
 end
 RSpec.describe RacingSnakes::Game do
-  describe '#game_over?' do
-    let(:game) { described_class.new }
-    let(:mock_board) { instance_double(RacingSnakes::AbstractBoard, in_bounds?: true) }
-    let(:player_one_id) { 'asdf8csig9dfea3n278379c8d99a4asa' }
-    let(:player_two_id) { 'c2fc0b19dfea4c278379c8d9b79a4f6b' }
-    it 'if all players are within board bounds, then game_over? is false' do
-      game.add_player(player_one_id)
-      game.add_player(player_two_id)
-      expect(game.game_over?).to be false
+  describe '#waiting_for_players?' do
+    it 'returns true when no players are present' do
+      game = described_class.new
+      expect(game.players).to be_empty
+      expect(game.waiting_for_players?).to be true
     end
   end
 end

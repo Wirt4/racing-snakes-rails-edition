@@ -7,7 +7,6 @@ module RacingSnakes
   #  players is an array of valid AbsPlayer objects
   #  game.tick is monotonically increasing
   #  frame_number is a non-negative integer
-  #  all players and trails are within the game bounds
   #  the board only contains valid player data and trail data
   class Game
     attr_reader :players, :frame_number
@@ -24,15 +23,17 @@ module RacingSnakes
       @frame_number += 1
     end
 
-    def game_over?
+    def waiting_for_players?
       # TODO: figure out pre and post conditions
-      false
+      true
     end
 
     def add_player(player_id)
-      # preconditions: player_id is a 32 character string
+      # preconditions:
       # player is not already in the game
-      # a player is created with the player name (player_id)
+      # a player is created with the player name (player_id) //todo: need to test this?
+      # player's position is inside the board bounds
+      # player's position does not occupy another player or trail
       @players ||= []
 
       raise ArgumentError, 'player_id already exists' if @players.map(&:id)&.include?(player_id)
