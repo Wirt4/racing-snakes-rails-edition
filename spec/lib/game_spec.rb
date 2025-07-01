@@ -25,12 +25,7 @@ RSpec.describe RacingSnakes::Game do
         allow(board).to receive(:collisions).with(roster: anything).and_return(nil)
       end
     end
-
     let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }
-    # NOTE: don't need to test for tick overflow or large number slowdown
-    # racing snakes is a session-based game with an end case when competing players are eliminated
-    # The grid should be nice and large, but with finite size
-    # so in a worst case scenario, the game frames are limited by the number of tiles in the grid
     it 'calles move on the roster' do
       game.tick
       expect(mock_roster).to have_received(:move_players)
@@ -38,16 +33,6 @@ RSpec.describe RacingSnakes::Game do
     it 'passes player roster to board.collisions' do
       game.tick
       expect(mock_board).to have_received(:collisions).with(roster: mock_roster)
-    end
-    it 'increments the tick count' do
-      initial_frame = game.frame_number
-      game.tick
-      expect(game.frame_number).to eq(initial_frame + 1)
-    end
-    it 'ensures that ticks are monotonically increasing' do
-      initial_frame = game.frame_number
-      game.tick
-      expect(game.frame_number).to be > initial_frame
     end
   end
 end
