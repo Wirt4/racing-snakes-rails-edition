@@ -109,17 +109,20 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, count: 3) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, count: 3, active_players: 3) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
 
     it 'its impossible for a game to be over while its still waiting for players' do
-      game = described_class.new
+      allow(mock_roster).to receive(:count).and_return(0)
       expect(game.game_over?).to be false
     end
     it 'if all but one player is eliminated, the game is over' do
       game.add_player('player1')
       game.add_player('player2')
       game.add_player('player3')
+      allow(mock_roster).to receive(:count).and_return(3)
+      allow(mock_roster).to receive(:active_players).and_return(1)
+
       game.players.each { |p| p.eliminated = true unless p.id == 'player1' }
       expect(game.game_over?).to be true
     end
