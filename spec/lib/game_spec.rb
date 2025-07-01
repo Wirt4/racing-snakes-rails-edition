@@ -80,5 +80,13 @@ RSpec.describe RacingSnakes::Game do
       game = described_class.new
       expect(game.game_over?).to be false
     end
+    it 'if all but one player is eliminated, the game is over' do
+      game = described_class.new
+      game.add_player('player1')
+      game.add_player('player2')
+      game.add_player('player3')
+      game.players.each { |p| p.eliminated = true unless p.id == 'player1' }
+      expect(game.game_over?).to be true
+    end
   end
 end
