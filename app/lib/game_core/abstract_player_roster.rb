@@ -14,6 +14,11 @@ module RacingSnakes
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end
 
+    def active_players
+      # NOTE: return type should be an array of AbstractPlayer objects -- or just player objects, really
+      raise NotImplementedError, 'This method should be overridden in subclasses'
+    end
+
     def count
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end

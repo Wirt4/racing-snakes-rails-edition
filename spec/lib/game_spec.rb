@@ -19,14 +19,16 @@ end
 
 RSpec.describe RacingSnakes::Game do
   describe '#tick' do
+    let(:active_players) { [instance_double(RacingSnakes::AbstractPlayer), instance_double(RacingSnakes::AbstractPlayer)] }
     let(:mock_roster) do
-      instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil).tap do |roster|
+      instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil,
+                                                          active_players: active_players).tap do |roster|
         allow(roster).to receive(:deactivate)
       end
     end
     let(:mock_board) do
       instance_double(RacingSnakes::AbstractBoard).tap do |board|
-        allow(board).to receive(:collisions).with(roster: anything).and_return([])
+        allow(board).to receive(:collisions).with(active_players: anything).and_return([])
       end
     end
     let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }
@@ -36,10 +38,10 @@ RSpec.describe RacingSnakes::Game do
     end
     it 'passes player roster to board.collisions' do
       game.tick
-      expect(mock_board).to have_received(:collisions).with(roster: mock_roster)
+      expect(mock_board).to have_received(:collisions).with(active_players: mock_roster)
     end
     it 'passes the output of collisions to the player roster' do
-      allow(mock_board).to receive(:collisions).with(roster: mock_roster).and_return(['player1'])
+      allow(mock_board).to receive(:collisions).with(active_players: mock_roster).and_return(['player1'])
       game.tick
       expect(mock_roster).to have_received(:deactivate).with(crashed_players: ['player1'])
     end
