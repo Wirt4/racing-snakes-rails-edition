@@ -59,11 +59,13 @@ module RacingSnakes
       # player's position does not occupy another player or trail
       @players ||= []
       @player_roster.add_player(player_id)
+
       raise ArgumentError, 'player_id already exists' if @players.map(&:id)&.include?(player_id)
 
       @players << @player_factory.build(player_id)
-      return if @players.size < 2
+      return if @player_roster.count < 2
 
+      # postconditions: player is added to the game
       @waiting_for_players = false
 
       # postconditions: player count is incremented by 1s a player is added which has the name

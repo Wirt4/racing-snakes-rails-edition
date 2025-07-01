@@ -21,7 +21,7 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil, count: 1) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
 
     it 'passes the player_id to the player roster' do
@@ -63,23 +63,11 @@ RSpec.describe RacingSnakes::Game do
       game.tick
       expect(mock_roster).to have_received(:move_players)
     end
-    it 'calls move on each non-elminated player' do
-      game.add_player(player_one_id)
-      game.add_player(player_two_id)
-      game.add_player(player_three_id)
-
-      game.tick
-
-      expect(mock_player_one).to have_received(:move)
-      expect(mock_player_two).to have_received(:move)
-      expect(mock_player_three).not_to have_received(:move) # because player three is eliminated
-    end
     it 'increments the tick count' do
       initial_frame = game.frame_number
       game.tick
       expect(game.frame_number).to eq(initial_frame + 1)
     end
-
     it 'ensures that ticks are monotonically increasing' do
       initial_frame = game.frame_number
       game.tick
@@ -96,13 +84,15 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil, count: nil) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
     it 'returns true when no players are present' do
+      allow(mock_roster).to receive(:count).and_return(0)
       expect(game.players).to be_empty
       expect(game.waiting_for_players?).to be true
     end
     it 'returns false when at least 2 players are present' do
+      allow(mock_roster).to receive(:count).and_return(2)
       game.add_player('player1')
       game.add_player('player2')
       expect(game.players.size).to eq(2)
@@ -119,7 +109,7 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, count: 3) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
 
     it 'its impossible for a game to be over while its still waiting for players' do
