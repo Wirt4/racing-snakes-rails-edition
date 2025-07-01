@@ -14,13 +14,10 @@ module RacingSnakes
     def initialize(player_roster: RacingSnakes::AbstractPlayerRoster, board: RacingSnakes::AbstractBoard)
       @player_roster = player_roster
       @board = board
-      @frame_number = 0
       @game_over = false
     end
 
     def tick
-      # precondition frame_number is a non-negative integer
-      # postconditions: frame_number is incremented by 1
       # each player
       # 1. moves if non-eliminated
       # 2. checks for collisions with other players or the board edga
@@ -33,7 +30,6 @@ module RacingSnakes
       ## @player_roster.deactivate(crashed_players)
       ## @board.remove_trails(crashed_players)
       ## @board.update_trails(@player_roster)
-      @frame_number += 1
     end
 
     def waiting_for_players?

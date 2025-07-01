@@ -19,14 +19,18 @@ end
 
 RSpec.describe RacingSnakes::Game do
   describe '#tick' do
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
+    let(:mock_roster) do
+      instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil).tap do |roster|
+        allow(roster).to receive(:deactivate)
+      end
+    end
     let(:mock_board) do
       instance_double(RacingSnakes::AbstractBoard).tap do |board|
-        allow(board).to receive(:collisions).with(roster: anything).and_return(nil)
+        allow(board).to receive(:collisions).with(roster: anything).and_return([])
       end
     end
     let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }
-    it 'calles move on the roster' do
+    it 'calls move on the roster' do
       game.tick
       expect(mock_roster).to have_received(:move_players)
     end
@@ -34,8 +38,14 @@ RSpec.describe RacingSnakes::Game do
       game.tick
       expect(mock_board).to have_received(:collisions).with(roster: mock_roster)
     end
+    it 'passes the output of collisions to the player roster' do
+      allow(mock_board).to receive(:collisions).with(roster: mock_roster).and_return(['player1'])
+      game.tick
+      expect(mock_roster).to have_received(:deactivate).with(crashed_players: ['player1'])
+    end
   end
 end
+
 RSpec.describe RacingSnakes::Game do
   describe '#waiting_for_players?' do
     let(:mock_board) { instance_double(RacingSnakes::AbstractBoard, collisions: nil) }

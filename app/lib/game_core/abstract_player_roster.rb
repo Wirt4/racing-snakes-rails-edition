@@ -10,6 +10,10 @@ module RacingSnakes
       raise NotImplementedError, 'This class is abstract and cannot be instantiated directly'
     end
 
+    def deactivate(crashed_players: Array[String])
+      raise NotImplementedError, 'This method should be overridden in subclasses'
+    end
+
     def count
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end
