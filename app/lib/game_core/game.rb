@@ -34,10 +34,10 @@ module RacingSnakes
     def game_over?
       # precondition: tick has been called at least once
       # postcondition: once the method returns true, it stays true
-      return @game_over if @game_over
+      return @game_over if @game_over == true
 
       inactive_players = @players.select(&:eliminated?)
-      @game_over = true if inactive_players.size >= @players.size - 1
+      @game_over = true if !@waiting_for_players && inactive_players.size >= @players.size - 1
 
       @game_over
     end
