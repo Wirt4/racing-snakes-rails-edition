@@ -25,8 +25,8 @@ module RacingSnakes
       # 5. if the player is eliminated, its trail is removed from the board
       # 6. if the player is not eliminated, its trail is updated on the board
       @player_roster.move_players
-      ## crashed_players = @board.collisions(@player_roster) --it's an array of player_ids
-      @board.collisions(roster: @player_roster)
+      crashed_player_ids = @board.collisions(roster: @player_roster)
+      @player_roster.deactivate(crashed_players: crashed_player_ids)
       ## @player_roster.deactivate(crashed_players)
       ## @board.remove_trails(crashed_players)
       ## @board.update_trails(@player_roster)
