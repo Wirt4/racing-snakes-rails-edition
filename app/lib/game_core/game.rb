@@ -11,7 +11,7 @@ module RacingSnakes
   class Game
     attr_reader :players, :frame_number, :waiting_for_players
 
-    def initialize(player_roster: RacingSnakes::AbstractPlayerRoster)
+    def initialize(player_roster: RacingSnakes::AbstractPlayerRoster, board: RacingSnakes::AbstractBoard)
       @player_roster = player_roster
       @frame_number = 0
       @game_over = false
@@ -22,11 +22,15 @@ module RacingSnakes
       # postconditions: frame_number is incremented by 1
       # each player
       # 1. moves if non-eliminated
-      # 2. checks for collisions with other players or the board edgea
+      # 2. checks for collisions with other players or the board edga
       # 4 if the player has a collision, it is eliminated
       # 5. if the player is eliminated, its trail is removed from the board
       # 6. if the player is not eliminated, its trail is updated on the board
       @player_roster.move_players
+      ## crashed_players = @board.collisions(@player_roster) --it's an array of player_ids
+      ## @player_roster.deactivate(crashed_players)
+      ## @board.remove_trails(crashed_players)
+      ## @board.update_trails(@player_roster)
       @frame_number += 1
     end
 
