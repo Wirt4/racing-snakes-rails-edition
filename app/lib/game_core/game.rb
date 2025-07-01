@@ -32,8 +32,13 @@ module RacingSnakes
     end
 
     def game_over?
-      # precondition: class has been initialized
+      # precondition: tick has been called at least once
       # postcondition: once the method returns true, it stays true
+      return @game_over if @game_over
+
+      inactive_players = @players.select(&:eliminated?)
+      @game_over = true if inactive_players.size >= @players.size - 1
+
       @game_over
     end
 

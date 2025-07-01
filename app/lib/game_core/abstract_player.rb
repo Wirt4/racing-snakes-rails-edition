@@ -10,6 +10,12 @@ module RacingSnakes
 
     def initialize(id)
       raise ArgumentError, 'player id must be a string' unless id.is_a?(String)
+
+      @eliminated = false
+    end
+
+    def eliminated?
+      !!@eliminated
     end
   end
 end
