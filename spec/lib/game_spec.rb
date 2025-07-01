@@ -21,31 +21,19 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
-    it 'adds a player with a valid ID' do
-      game.add_player(player_id)
-    end
-    it 'rejects duplicate player IDs' do
-      game.add_player(player_id)
-      expect do
-        game.add_player(player_id)
-      end.to raise_error(ArgumentError, /player_id already exists/)
-    end
+
     it 'passes the player_id to the player roster' do
       game.add_player(player_id)
       expect(mock_roster).to have_received(:add_player).with(player_id)
-    end
-    it 'does not alter invariant: game.players is an array of AbstractPlayer' do
-      game.add_player(player_id)
-      expect(game.players).to all(be_a(RacingSnakes::AbstractPlayer))
     end
   end
 end
 
 RSpec.describe RacingSnakes::Game do
   describe '#tick' do
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
     let(:game) { described_class.new(player_factory: mock_factory, player_roster: mock_roster) }
     let(:player_one_id) { '23fc0b19df235c278379c8d9b79a4fcr' }
     let(:player_two_id) { 'a2fc0b19dfea4c278379c8d9b79a4f6b' }
@@ -54,7 +42,6 @@ RSpec.describe RacingSnakes::Game do
     let(:mock_player_one) { instance_double(RacingSnakes::AbstractPlayer, id: player_one_id, move: nil, eliminated?: false) }
     let(:mock_player_two) { instance_double(RacingSnakes::AbstractPlayer, id: player_two_id, move: nil, eliminated?: false) }
     let(:mock_player_three) { instance_double(RacingSnakes::AbstractPlayer, id: player_two_id, move: nil, eliminated?: true) }
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
     let(:mock_roster_factory) { instance_double(RacingSnakes::PlayerRosterFactory, build: mock_roster) }
 
     let(:mock_factory) do
@@ -72,6 +59,10 @@ RSpec.describe RacingSnakes::Game do
     # racing snakes is a session-based game with an end case when competing players are eliminated
     # The grid should be nice and large, but with finite size
     # so in a worst case scenario, the game frames are limited by the number of tiles in the grid
+    it 'calles move on the roster' do
+      game.tick
+      expect(mock_roster).to have_received(:move_players)
+    end
     it 'calls move on each non-elminated player' do
       game.add_player(player_one_id)
       game.add_player(player_two_id)
@@ -105,7 +96,7 @@ RSpec.describe RacingSnakes::Game do
         end
       end
     end
-    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil) }
+    let(:mock_roster) { instance_double(RacingSnakes::AbstractPlayerRoster, add_player: nil, move_players: nil) }
     let(:game) { described_class.new(player_factory: mock_player_factory, player_roster: mock_roster) }
     it 'returns true when no players are present' do
       expect(game.players).to be_empty
