@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RacingSnakes
   # AbstractBoard is an abstract class that represents a game board.
   # Invariants: width and height are always positive integers.
