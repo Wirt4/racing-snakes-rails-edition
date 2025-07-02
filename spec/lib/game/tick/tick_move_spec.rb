@@ -9,7 +9,8 @@ RSpec.describe RacingSnakes::Game do
   let(:mock_board) do
     instance_double(
       RacingSnakes::AbstractBoard,
-      collisions: []
+      collisions: [],
+      update_trails: nil
     )
   end
   let(:mock_roster) do

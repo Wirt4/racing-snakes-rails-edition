@@ -12,7 +12,7 @@ RSpec.describe RacingSnakes::Game do
   end
 
   let(:mock_board) do
-    instance_double(RacingSnakes::AbstractBoard).tap do |b|
+    instance_double(RacingSnakes::AbstractBoard, update_trails: nil).tap do |b|
       allow(b).to receive(:collisions).with(roster: anything).and_return([])
     end
   end

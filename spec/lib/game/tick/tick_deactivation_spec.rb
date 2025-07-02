@@ -4,7 +4,7 @@ require_relative '../../../../app/lib/racing_snakes'
 
 RSpec.describe RacingSnakes::Game do
   let(:mock_board) do
-    instance_double(RacingSnakes::AbstractBoard, collisions: ['player1'])
+    instance_double(RacingSnakes::AbstractBoard, collisions: ['player1'], update_trails: nil)
   end
   let(:mock_roster) do
     instance_double(
