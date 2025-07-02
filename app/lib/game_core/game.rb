@@ -19,9 +19,8 @@ module RacingSnakes
 
     def tick
       @player_roster.move_players
-      crashed_player_ids = @board.collisions(active_players: @player_roster.active_players)
+      crashed_player_ids = @board.collisions(active_players: @player_roster)
       @player_roster.deactivate(crashed_players: crashed_player_ids)
-      ## @board.remove_trails(crashed_players)
       ## @board.update_trails(@player_roster)
     end
 

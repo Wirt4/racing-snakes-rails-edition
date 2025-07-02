@@ -27,7 +27,7 @@ RSpec.describe RacingSnakes::Game do
   describe '#tick' do
     it 'passes player roster to board.collisions' do
       game.tick
-      expect(mock_board).to have_received(:collisions).with(active_players: mock_roster.active_players)
+      expect(mock_board).to have_received(:collisions).with(active_players: mock_roster)
     end
   end
 end
