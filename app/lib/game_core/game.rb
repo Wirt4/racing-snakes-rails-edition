@@ -19,7 +19,6 @@ module RacingSnakes
 
     def tick
       # precondition(s):
-      #  any inputs have been processed and passed to the appropriate players (note: need a datatype that pairs inputs with player id)
       # postcondition(s)
       @player_roster.move_players
       crashed_player_ids = @board.collisions(roster: @player_roster)
@@ -28,7 +27,8 @@ module RacingSnakes
       # postcondition(s):
       # all active players have moved according to their inputs and speed
       # crashed players have been deactivated
-      # the trails on the board have been updated - moving players have left a trail, crashed players have trails removed
+      # the trails on the board have been updated
+      # moving players have left a trail, crashed players have trails removed
       #
     end
 
