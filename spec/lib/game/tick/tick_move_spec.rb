@@ -18,7 +18,8 @@ RSpec.describe RacingSnakes::Game do
       RacingSnakes::AbstractPlayerRoster,
       add_player: nil,
       move_players: nil,
-      deactivate: nil
+      deactivate: nil,
+      count: 2
     )
   end
 

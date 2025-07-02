@@ -7,6 +7,7 @@ RSpec.describe RacingSnakes::Game do
     instance_double(
       RacingSnakes::AbstractPlayerRoster,
       add_player: nil,
+      count: 2,
       move_players: nil
     ).tap { |r| allow(r).to receive(:deactivate) }
   end

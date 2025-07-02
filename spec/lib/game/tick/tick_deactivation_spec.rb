@@ -10,7 +10,8 @@ RSpec.describe RacingSnakes::Game do
     instance_double(
       RacingSnakes::AbstractPlayerRoster,
       add_player: nil,
-      move_players: nil
+      move_players: nil,
+      count: 2
     ).tap { |r| allow(r).to receive(:deactivate) }
   end
   let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }

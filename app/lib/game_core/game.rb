@@ -19,17 +19,19 @@ module RacingSnakes
 
     def tick
       # precondition(s):
-      # postcondition(s)
-      @player_roster.move_players
-      crashed_player_ids = @board.collisions(roster: @player_roster)
-      @player_roster.deactivate(crashed_players: crashed_player_ids)
-      @board.update_trails(roster: @player_roster)
+      # waiting_for_players? and game_over are false
       # postcondition(s):
       # all active players have moved according to their inputs and speed
       # crashed players have been deactivated
       # the trails on the board have been updated
       # moving players have left a trail, crashed players have trails removed
-      #
+
+      raise 'Game state is not updatable' if waiting_for_players? || @game_over
+
+      @player_roster.move_players
+      crashed_player_ids = @board.collisions(roster: @player_roster)
+      @player_roster.deactivate(crashed_players: crashed_player_ids)
+      @board.update_trails(roster: @player_roster)
     end
 
     def waiting_for_players?
