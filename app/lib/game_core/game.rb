@@ -18,12 +18,6 @@ module RacingSnakes
     end
 
     def tick
-      # each player
-      # 1. moves if non-eliminated
-      # 2. checks for collisions with other players or the board edga
-      # 4 if the player has a collision, it is eliminated
-      # 5. if the player is eliminated, its trail is removed from the board
-      # 6. if the player is not eliminated, its trail is updated on the board
       @player_roster.move_players
       crashed_player_ids = @board.collisions(active_players: @player_roster.active_players)
       @player_roster.deactivate(crashed_players: crashed_player_ids)
