@@ -27,7 +27,6 @@ module RacingSnakes
       @player_roster.move_players
       crashed_player_ids = @board.collisions(active_players: @player_roster.active_players)
       @player_roster.deactivate(crashed_players: crashed_player_ids)
-      ## @player_roster.deactivate(crashed_players)
       ## @board.remove_trails(crashed_players)
       ## @board.update_trails(@player_roster)
     end
