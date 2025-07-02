@@ -6,7 +6,11 @@ module RacingSnakes
   class AbstractBoard
     attr_reader :width, :height
 
-    def collisions(active_players: Array[RacingSnakes::AbstractPlayer])
+    def update_trails(roster: RacingSnakes::AbstractPlayerRoster)
+      raise NotImplementedError, 'This method should be overridden in a subclass'
+    end
+
+    def collisions(roster: RacingSnakes::AbstractPlayerRoster)
       # NOTE: should return an array of player_ids, if no collisions, return an empty array
       raise NotImplementedError, 'This method should be overridden in a subclass'
     end
