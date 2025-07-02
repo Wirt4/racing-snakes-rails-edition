@@ -18,7 +18,7 @@ RSpec.describe RacingSnakes::Game do
 
   describe '#tick' do
     it 'passes the output of collisions to the player roster' do
-      game.tick
+      game.update
       expect(mock_roster).to have_received(:deactivate).with(crashed_players: ['player1'])
     end
   end

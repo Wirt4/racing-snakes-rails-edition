@@ -17,7 +17,7 @@ module RacingSnakes
       @game_over = false
     end
 
-    def tick
+    def update
       # precondition(s):
       # waiting_for_players? and game_over are false
       # postcondition(s):

@@ -3,16 +3,6 @@
 require_relative '../../../../app/lib/racing_snakes'
 
 RSpec.describe RacingSnakes::Game do
-  let(:active_players) do
-    [instance_double(RacingSnakes::AbstractPlayer), instance_double(RacingSnakes::AbstractPlayer)]
-  end
-  let(:mock_board) do
-    instance_double(
-      RacingSnakes::AbstractBoard,
-      collisions: [],
-      update_trails: nil
-    )
-  end
   let(:mock_roster) do
     instance_double(
       RacingSnakes::AbstractPlayerRoster,
@@ -23,12 +13,18 @@ RSpec.describe RacingSnakes::Game do
     )
   end
 
+  let(:mock_board) do
+    instance_double(RacingSnakes::AbstractBoard, collisions: nil).tap do |b|
+      allow(b).to receive(:update_trails).with(roster: anything)
+    end
+  end
+
   let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }
 
   describe '#tick' do
-    it 'calls move on the roster' do
-      game.tick
-      expect(mock_roster).to have_received(:move_players)
+    it 'passes player roster to board.collisions' do
+      game.update
+      expect(mock_board).to have_received(:update_trails).with(roster: mock_roster)
     end
   end
 end
