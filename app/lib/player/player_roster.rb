@@ -1,4 +1,4 @@
 module RacingSnakes
-  class PlayerRoster
+  class PlayerRoster < AbstractPlayerRoster
   end
 end

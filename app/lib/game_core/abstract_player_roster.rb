@@ -6,10 +6,6 @@ module RacingSnakes
   # Invariants:
   # - All participating players have a unique player_id
   class AbstractPlayerRoster
-    def initialize(player_factory: RacingSnakes::PlayerFactory)
-      raise NotImplementedError, 'This class is abstract and cannot be instantiated directly'
-    end
-
     def deactivate(crashed_players: Array[String])
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end
