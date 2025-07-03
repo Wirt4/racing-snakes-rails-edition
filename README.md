@@ -44,6 +44,16 @@ In development, you can also run rubocop for linting and style checks:
 ```bash
 rake rubocop
 ```
+### neovim shortcuts
+If you use neovim, you can use the following shortcuts to run tests and lint.
+```vim
+make test
+```
+```vim
+make rubocop
+```
+
+Then you can use `:copen` to open the results in a quickfix window.
 ## Terms of Use
 The MIT License (MIT)
 
