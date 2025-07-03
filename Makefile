@@ -6,7 +6,7 @@ test:
 	bundle exec rspec --require ./spec/support/quickfix_formatter.rb --format QuickfixFormatter
 
 
-rubocop::
+lint::
 	bundle exec rubocop
 
 format:

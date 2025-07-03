@@ -18,7 +18,7 @@ task :test do
 end
 
 desc 'Run RuboCop'
-task :rubocop do
+task :lint do
   sh 'bundle exec rubocop'
 end
 
