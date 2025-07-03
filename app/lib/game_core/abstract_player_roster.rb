@@ -19,6 +19,10 @@ module RacingSnakes
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end
 
+    def state
+      raise NotImplementedError, 'This method should be overridden in subclasses'
+    end
+
     def add_player(player_id)
       raise NotImplementedError, 'This method should be overridden in subclasses'
     end
