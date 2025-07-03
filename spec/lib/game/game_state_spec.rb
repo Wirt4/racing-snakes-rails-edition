@@ -6,7 +6,7 @@ RSpec.describe RacingSnakes::Game do
   let(:mock_board) { instance_double(RacingSnakes::AbstractBoard, collisions: nil) }
   let(:game) { described_class.new(player_roster: mock_roster, board: mock_board) }
   it 'game is just created' do
-    expected = { 'waiting_for_players': false }
+    expected = { 'waiting_for_players': false, 'game_over': false, 'players': [] }
     expect(game.state).to eq(expected)
   end
 end

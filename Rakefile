@@ -19,7 +19,7 @@ end
 
 desc 'Run RuboCop'
 task :rubocop do
-  sh 'bundle exec rubocop -A'
+  sh 'bundle exec rubocop'
 end
 
 desc 'Run Rails server locally'
