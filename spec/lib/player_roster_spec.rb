@@ -7,4 +7,5 @@ RSpec.describe RacingSnakes::PlayerRoster do
       expect(roster).to be_a(RacingSnakes::AbstractPlayerRoster)
     end
   end
+  # TODO: build out after gamestate has been built
 end
