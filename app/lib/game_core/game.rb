@@ -62,7 +62,7 @@ module RacingSnakes
       # precondition: class has been initialized
       # postcondition: internal state is unchanged, status is returned as a hash
 
-      { waiting_for_players: waiting_for_players?, game_over: game_over?, players: [] }
+      { waiting_for_players: waiting_for_players?, game_over: game_over?, players: @player_roster.state }
     end
   end
 end
