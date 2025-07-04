@@ -1,18 +1,24 @@
 <div id="raycast-canvas" width="640" height="400"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 <script>
+  class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+//TODO: refactor to use Point class
 let player = { x: 4.5, y: 4.5, angle: 0 };
 let walls = [];
-
 function setup() {
   let canvas = createCanvas(640, 400);
   canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
   walls = [
-    { x1: 1, y1: 1, x2: 8, y2: 1 }, // top wall
-    { x1: 8, y1: 1, x2: 8, y2: 8 }, // right wall
-    { x1: 8, y1: 8, x2: 1, y2: 8 }, // bottom wall
-    { x1: 1, y1: 8, x2: 1, y2: 1 },  // left wall
+    {start: new.Point(1,1,), end:new.Point(8,1) }, // top wall
+    {start: new.Point(8, 1), end: new.Point(8,8)}, // right wall
+    {start: new.Point(8,8), end: new.Point(1,8)}, // bottom wall
+    {start: new.Point(1, 8), end: new.Point(1,1)},  // left wall
   ];
   }
 
@@ -65,7 +71,7 @@ function castRay(angle) {
     let hit = rayIntersectsWall(origin, rayDir, wall);
         if (hit) {
       // Uncomment this line to print wall hits
-       console.log(`Hit wall (${wall.x1},${wall.y1})–(${wall.x2},${wall.y2}) at distance ${hit.distance}`);
+          console.log(`Hit wall (${wall.start.x},${wall.start.y})–(${wall.end.x},${wall.end.y}) at distance ${hit.distance}`);
     }
     if (hit && (!closest || hit.distance < closest.distance)) {
       closest = hit;
@@ -95,24 +101,24 @@ function castRay(angle) {
 //   };
 //
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
-  const { x1, y1, x2, y2 } = wall;
+    const { start, end } = wall;
 
   const x3 = rayOrigin.x;
   const y3 = rayOrigin.y;
   const x4 = rayOrigin.x + rayDir.x;
   const y4 = rayOrigin.y + rayDir.y;
 
-  const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    const denom = (start.x - end.x) * (y3 - y4) - (start.y - end.y) * (x3 - x4);
   if (abs(denom) < 0.00001) return null; // parallel or identical
 
-  const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
-  const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom;
+  const t = ((start.x - x3) * (y3 - y4) - (start.y - y3) * (x3 - x4)) / denom;
+    const u = -((start.x - end.x) * (y1 - y3) - (start.y - end.y) * (start.x - x3)) / denom;
 
   if (t < 0 || t > 1 || u < 0) return null;
 
-  const intersectionX = x1 + t * (x2 - x1);
-  const intersectionY = y1 + t * (y2 - y1);
-  const distance = dist(x3, y3, intersectionX, intersectionY);
+    const intersectionX = start.x + t * (end.x - start.x);
+    const intersectionY = start.y + t * (end.y - start.y);
+    const distance = dist(x3, y3, intersectionX, intersectionY); //TODO: look up dist function
 
   return { x: intersectionX, y: intersectionY, distance };
 }
