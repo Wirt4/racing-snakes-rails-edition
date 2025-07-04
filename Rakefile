@@ -18,8 +18,8 @@ task :test do
 end
 
 desc 'Run RuboCop'
-task :rubocop do
-  sh 'bundle exec rubocop -A'
+task :lint do
+  sh 'bundle exec rubocop'
 end
 
 desc 'Run Rails server locally'
