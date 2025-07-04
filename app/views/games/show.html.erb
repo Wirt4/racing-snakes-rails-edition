@@ -1,41 +1,84 @@
-<!-- app/views/games/show.html.erb -->
-<canvas id="raycast-canvas" width="320" height="240"></canvas>
+<div id="raycast-canvas" width="640" height="400"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 <script>
-let player = { x: 3, y: 3, angle: 0 };
-let map = [
-  [1,1,1,1,1],
-  [1,0,0,0,1],
-  [1,0,1,0,1],
-  [1,0,0,0,1],
-  [1,1,1,1,1],
-];
+let player = { x: 4.5, y: 4.5, angle: 0 };
+let walls = [];
 
 function setup() {
-  createCanvas(320, 240);
+  let canvas = createCanvas(640, 400);
+  canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
+walls = [
+  { x1: 1, y1: 1, x2: 8, y2: 1 }, // top wall
+  { x1: 8, y1: 1, x2: 8, y2: 8 }, // right wall
+  { x1: 8, y1: 8, x2: 1, y2: 8 }, // bottom wall
+  { x1: 1, y1: 8, x2: 1, y2: 1 }  // left wall
+];
+}
+function drawMap2D() {
+  push();
+  scale(10); // zoom in
+  stroke(255);
+  for (let wall of walls) {
+    line(wall.x1, wall.y1, wall.x2, wall.y2);
+  }
+  fill('red');
+  ellipse(player.x, player.y, 0.1);
+  pop();
 }
 
+  
 function draw() {
   background(0);
-  for (let i = 0; i < width; i += 2) {
-    let rayAngle = player.angle - PI/6 + (i / width) * PI/3;
+  const fov = PI / 2; //currently 90 degrees divide by 3 for 60 degrees
+
+  for (let i = 0; i < width; i++) {
+    let rayAngle = player.angle - fov / 2 + (i / width) * fov;
     let dist = castRay(rayAngle);
-    let h = height / (dist + 0.1);
-    fill(200 - dist * 40);
-    rect(i, height/2 - h/2, 2, h);
+    let correctedDist = dist * cos(rayAngle - player.angle);
+    let wallHeight = height / (correctedDist + 0.5);
+    let brightness = max(20, 255 - correctedDist * 30);
+    fill(brightness);
+    rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
   }
+  drawMap2D();
   player.angle += 0.01;
 }
 
 function castRay(angle) {
-  let sin = Math.sin(angle), cos = Math.cos(angle);
-  for (let d = 0; d < 10; d += 0.1) {
-    let x = Math.floor(player.x + cos * d);
-    let y = Math.floor(player.y + sin * d);
-    if (map[y]?.[x]) return d;
+  let rayDir = { x: cos(angle), y: sin(angle) };
+  let origin = { x: player.x, y: player.y };
+  let closest = null;
+
+  for (let wall of walls) {
+    let hit = rayIntersectsWall(origin, rayDir, wall);
+    if (hit && (!closest || hit.distance < closest.distance)) {
+      closest = hit;
+    }
   }
-  return 10;
+
+  return closest ? closest.distance : 1000;
+}
+
+function rayIntersectsWall(rayOrigin, rayDir, wall) {
+  const { x1, y1, x2, y2 } = wall;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const denom = rayDir.x * dy - rayDir.y * dx;
+
+  if (abs(denom) < 0.00001) return null; // parallel
+
+  const t = ((rayOrigin.x - x1) * dy - (rayOrigin.y - y1) * dx) / denom;
+  const u = ((rayOrigin.x - x1) * rayDir.y - (rayOrigin.y - y1) * rayDir.x) / denom;
+
+  if (t < 0 || u < 0 || u > 1) return null;
+
+  return {
+    x: rayOrigin.x + rayDir.x * t,
+    y: rayOrigin.y + rayDir.y * t,
+    distance: t
+  };
+
+
 }
 </script>
-
