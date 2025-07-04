@@ -20,10 +20,15 @@
           throw new Error("Distance must be non-negative");
         }
         return new Point(
-          this.x + cos(angle) * distance,
-          this.y + sin(angle) * distance
+          this.polarToCartesian(this.x, cos, angle, distance),
+          this.polarToCartesian(this.y, sin, angle, distance)
         );
-    }
+  }
+    polarToCartesian(position, func, angle, distance) {
+    return position+ func(angle) * distance;
+}
+
+
 }
 
 let player = {position: new Point(4.5, 4.5), angle: 0 };
