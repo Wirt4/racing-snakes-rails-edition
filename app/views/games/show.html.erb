@@ -7,17 +7,12 @@
   const FADE_POINT = 15; // distance at which brightness fades to minimum
 
   class Point {
-    //default is cartesian
     constructor(x, y) {
       this.x = x;
       this.y = y;
     }
 
     nextLocation(angle, distance){
-      //precondition: angle is in radians, magnitude is positive
-      //postconditions:
-      // state of this point is unchanged
-      //returns a new point <magnitude> distance away from the current point in the direction of <angle>
         if (distance < 0) {
           throw new Error("Distance must be non-negative");
         }
@@ -26,9 +21,18 @@
         this.y + sin(angle) * distance
       );
     }
-    
-    polarToCartesian(position, func, angle, distance) {
-      return position+ func(angle) * distance;
+  }
+
+class Player {
+  constructor(x, y, angle) {
+    this.position = new Point(x, y);
+    this.angle = angle; // in radians
+  }
+
+  draw2D() {
+    fill(255, 0, 0); // red color for player
+    noStroke();
+    ellipse(this.position.x, this.position.y, 0.2);
   }
 }
 
@@ -51,19 +55,23 @@ class Wall {
 
 function setup() {
   let canvas = createCanvas(640, 400);
-  canvas.parent("raycast-canvas"); // attach to canvas tag
+  canvas.parent("raycast-canvas"); 
   noStroke();
+  topWall = new Wall(1, 1, 58, 1);
+  rightWall = new Wall(58, 1, 58, 58);
+  bottomWall = new Wall(58, 58, 1, 58);
+  leftWall = new Wall(1, 58, 1, 1);
   walls = [
-    new Wall(1, 1, 58, 1), // top wall
-    new Wall(40, 30,5,10, 'red'), // squiggle one
-    new Wall(5,10, 70,30, 'red'),// squiggle two
-    new Wall(58, 1, 58, 58), // right wall
-    new Wall(58, 58, 1, 58), // bottom wall
-    new Wall(1, 58, 1, 1), // left wall
+    topWall,
+    new Wall(40, 30, 5,10, 'red'), 
+    new Wall(5, 10, 70,30, 'red'),
+    rightWall, 
+    bottomWall, 
+    leftWall, 
   ];
-  player = {position: new Point(4.5, 4.5), angle: 0 };
+  debugger;
+  player = new Player(4.5, 4.5, 0)
   }
-
 function getRayAngle(increment){
   return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
 }
@@ -73,13 +81,11 @@ function drawMap2D(fov) {
   scale(10); // zoom in
   stroke(MAX_BRIGHTNESS);
   for (let wall of walls) {
-    //law of demeter smell
-//    line(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
     wall.draw2D();
   }
   fill('red');
   noStroke();
-  ellipse(player.position.x, player.position.y, 0.1);
+  player.draw2D();
 
   // draw rays
   stroke(0, MAX_BRIGHTNESS, 0, 100);
@@ -121,6 +127,7 @@ function castRay(angle) {
   let color = null;
 
   for (let wall of walls) {
+    debugger;
     let hit = rayIntersectsWall(origin, rayDir, wall);
         if (hit) {
       // Uncomment this line to print wall hits
@@ -138,7 +145,8 @@ function castRay(angle) {
   return {dist: 1000, color};
 }
 
-function rayIntersectsWall(rayOrigin, rayDir, wall) {
+  function rayIntersectsWall(rayOrigin, rayDir, wall) {
+    debugger;
   const { start, end } = wall;
 
   const x3 = rayOrigin.x;
