@@ -177,19 +177,19 @@
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
     
     const { end } = wall;
-    const {start: wallStart} = wall;
+    const {start: wallStart, end: wallEnd} = wall;
     const rayPoint = new Point(rayOrigin.x + rayDir.x, rayOrigin.y + rayDir.y);
 
-    const determinant = (wallStart.x - end.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - end.y) * (rayOrigin.x - rayPoint.x);
+    const determinant = (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
     if (abs(determinant) < 0.00001) return null; // parallel or identical
 
     const wall_intersection = ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) / determinant;
-    const ray_intersection = -((wallStart.x - end.x) * (wallStart.y - rayOrigin.y) - (wallStart.y - end.y) * (wallStart.x - rayOrigin.x)) / determinant;
+    const ray_intersection = -((wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y) - (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)) / determinant;
 
     if (wall_intersection < 0 || wall_intersection > 1 || ray_intersection < 0) return null;
 
-    const intersectionX = wallStart.x + wall_intersection * (end.x - wallStart.x);
-    const intersectionY = wallStart.y + wall_intersection * (end.y - wallStart.y);
+    const intersectionX = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
+    const intersectionY = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
     const distance = dist(rayOrigin.x, rayOrigin.y, intersectionX, intersectionY);
 
     return { x: intersectionX, y: intersectionY, distance };
