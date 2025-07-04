@@ -119,6 +119,10 @@ function removeFishEye(distance, angle, viewerAngle){
     return distance * cos(angle - viewerAngle);
 }
 
+function calculateBrightness(distance) {
+  return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
+}
+
 function draw() {
   background(0);
 
@@ -127,7 +131,7 @@ function draw() {
     let {dist, color} = castRay(rayAngle);
     correctedDist = removeFishEye(dist, rayAngle, player.angle);
     let wallHeight = calculateWallHeight(correctedDist);
-    let brightness = max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
+    let brightness = calculateBrightness(correctedDist);
     if (color =='red'){
       fill(brightness, 0, 0);
     }else{
