@@ -53,6 +53,10 @@ function setup() {
   ];
   }
 
+function getRayAngle(angle, fov,increment, width){
+      return angle - fov / 2 + (increment / width) * fov;
+  }
+
 function drawMap2D(fov) {
   push();
   scale(10); // zoom in
@@ -67,7 +71,7 @@ function drawMap2D(fov) {
   // draw rays
   stroke(0, MAX_BRIGHTNESS, 0, 100);
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
-    let rayAngle = player.angle - fov / 2 + (i / width) * fov;
+    const rayAngle = getRayAngle(player.angle, fov, i, width);
     let dist = castRay(rayAngle);
     hit = player.position.nextLocation(rayAngle, dist);
     line(player.position.x, player.position.y, hit.x, hit.y);
@@ -80,7 +84,7 @@ function draw() {
   background(0);
 
   for (let i = 0; i < width; i++) {
-    let rayAngle = player.angle - FIELD_OF_VIEW / 2 + (i / width) * FIELD_OF_VIEW;
+    const rayAngle = getRayAngle(player.angle, FIELD_OF_VIEW, i, width);
     let dist = castRay(rayAngle);
     let correctedDist = dist * cos(rayAngle - player.angle);
     let wallHeight = height / (correctedDist + 0.5);
