@@ -8,13 +8,14 @@ function setup() {
   let canvas = createCanvas(640, 400);
   canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
-walls = [
-  { x1: 1, y1: 1, x2: 8, y2: 1 }, // top wall
-  { x1: 8, y1: 1, x2: 8, y2: 8 }, // right wall
-  { x1: 8, y1: 8, x2: 1, y2: 8 }, // bottom wall
-  { x1: 1, y1: 8, x2: 1, y2: 1 }  // left wall
-];
-}
+  walls = [
+    { x1: 1, y1: 1, x2: 8, y2: 1 }, // top wall
+    { x1: 8, y1: 1, x2: 8, y2: 8 }, // right wall
+    { x1: 8, y1: 8, x2: 1, y2: 8 }, // bottom wall
+    { x1: 1, y1: 8, x2: 1, y2: 1 },  // left wall
+  ];
+  }
+
 function drawMap2D() {
   push();
   scale(10); // zoom in
@@ -24,6 +25,16 @@ function drawMap2D() {
   }
   fill('red');
   ellipse(player.x, player.y, 0.1);
+
+  // draw rays
+  stroke(0, 255, 0, 100);
+  for (let i = 0; i < width; i += 20) { // thinner density for debugging
+    let rayAngle = player.angle - PI / 2 / 2 + (i / width) * PI / 2;
+    let dist = castRay(rayAngle);
+    let hitX = player.x + cos(rayAngle) * dist;
+    let hitY = player.y + sin(rayAngle) * dist;
+    line(player.x, player.y, hitX, hitY);
+  }
   pop();
 }
 
@@ -52,6 +63,10 @@ function castRay(angle) {
 
   for (let wall of walls) {
     let hit = rayIntersectsWall(origin, rayDir, wall);
+        if (hit) {
+      // Uncomment this line to print wall hits
+       console.log(`Hit wall (${wall.x1},${wall.y1})–(${wall.x2},${wall.y2}) at distance ${hit.distance}`);
+    }
     if (hit && (!closest || hit.distance < closest.distance)) {
       closest = hit;
     }
@@ -60,25 +75,45 @@ function castRay(angle) {
   return closest ? closest.distance : 1000;
 }
 
-function rayIntersectsWall(rayOrigin, rayDir, wall) {
+// function rayIntersectsWall(rayOrigin, rayDir, wall) {
+//   const { x1, y1, x2, y2 } = wall;
+//   const dx = x2 - x1;
+//   const dy = y2 - y1;
+//   const denom = rayDir.x * dy - rayDir.y * dx;
+//
+//   if (abs(denom) < 0.00001) return null; // parallel
+//
+//   const t = ((rayOrigin.x - x1) * dy - (rayOrigin.y - y1) * dx) / denom;
+//   const u = ((rayOrigin.x - x1) * rayDir.y - (rayOrigin.y - y1) * rayDir.x) / denom;
+//
+//   if (t < 0 || u < 0 || u > 1) return null;
+//
+//   return {
+//     x: rayOrigin.x + rayDir.x * t,
+//     y: rayOrigin.y + rayDir.y * t,
+//     distance: t
+//   };
+//
+  function rayIntersectsWall(rayOrigin, rayDir, wall) {
   const { x1, y1, x2, y2 } = wall;
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const denom = rayDir.x * dy - rayDir.y * dx;
 
-  if (abs(denom) < 0.00001) return null; // parallel
+  const x3 = rayOrigin.x;
+  const y3 = rayOrigin.y;
+  const x4 = rayOrigin.x + rayDir.x;
+  const y4 = rayOrigin.y + rayDir.y;
 
-  const t = ((rayOrigin.x - x1) * dy - (rayOrigin.y - y1) * dx) / denom;
-  const u = ((rayOrigin.x - x1) * rayDir.y - (rayOrigin.y - y1) * rayDir.x) / denom;
+  const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+  if (abs(denom) < 0.00001) return null; // parallel or identical
 
-  if (t < 0 || u < 0 || u > 1) return null;
+  const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
+  const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom;
 
-  return {
-    x: rayOrigin.x + rayDir.x * t,
-    y: rayOrigin.y + rayDir.y * t,
-    distance: t
-  };
+  if (t < 0 || t > 1 || u < 0) return null;
 
+  const intersectionX = x1 + t * (x2 - x1);
+  const intersectionY = y1 + t * (y2 - y1);
+  const distance = dist(x3, y3, intersectionX, intersectionY);
 
+  return { x: intersectionX, y: intersectionY, distance };
 }
 </script>
