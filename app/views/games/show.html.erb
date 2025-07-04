@@ -53,9 +53,34 @@
     }
 
     draw2D() {
-      fill(255, 0, 0); // red color for player
+      fillColor('red');
       noStroke();
       ellipse(this.position.x, this.position.y, 0.2);
+    }
+  }
+
+  class Point {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    nextLocation(angle, distance){
+        if (distance < 0) {
+          throw new Error("Distance must be non-negative");
+        }
+      return new Point(
+        this.x + cos(angle) * distance,
+        this.y + sin(angle) * distance
+      );
+    }
+  }
+
+  function fillColor(color, brightness= MAX_BRIGHTNESS) {
+    if (color === 'red') {
+      fill(brightness, 0, 0);
+    } else {
+      fill(0, brightness, 0);
     }
   }
 
@@ -114,63 +139,41 @@
   function calculateBrightness(distance) {
     return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - distance * FADE_POINT);
   }
- 
-  function fillColor(color, brightness) {
-    if (color === 'red') {
-      fill(brightness, 0, 0);
-    } else {
-      fill(0, brightness, 0);
+
+  function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
+    rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
+  }
+
+  function drawMap2D(fov) {
+    push();
+    scale(10);
+    stroke(MAX_BRIGHTNESS);
+    for (let wall of walls) {
+      wall.draw2D();
+    }
+
+    fill('red');
+    noStroke();
+    player.draw2D();
+
+    drawRays();
+
+    pop();
+  }
+
+  function drawRays(){
+    stroke(0, MAX_BRIGHTNESS, 0, 100);
+    strokeWeight(0.05);
+    let resolution = 20
+    for (let i = 0; i < width; i += resolution) {
+      const rayAngle = getRayAngle(i);
+      let {dist} = castRay(rayAngle);
+      hit = player.position.nextLocation(rayAngle, dist);
+      line(player.position.x, player.position.y, hit.x, hit.y);
     }
   }
 
-function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
-  rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
-}
- 
-  class Point {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-    }
-
-    nextLocation(angle, distance){
-        if (distance < 0) {
-          throw new Error("Distance must be non-negative");
-        }
-      return new Point(
-        this.x + cos(angle) * distance,
-        this.y + sin(angle) * distance
-      );
-    }
-  }
-function drawRays(){
-  stroke(0, MAX_BRIGHTNESS, 0, 100);
-  strokeWeight(0.05);
-  let resolution = 20
-  for (let i = 0; i < width; i += resolution) {
-    const rayAngle = getRayAngle(i);
-    let {dist} = castRay(rayAngle);
-    hit = player.position.nextLocation(rayAngle, dist);
-    line(player.position.x, player.position.y, hit.x, hit.y);
-  }
-}
-
-function drawMap2D(fov) {
-  push();
-  scale(10);
-  stroke(MAX_BRIGHTNESS);
-  for (let wall of walls) {
-    wall.draw2D();
-  }
-
-  fill('red');
-  noStroke();
-  player.draw2D();
-
-  drawRays();
-
-  pop();
-}
+  
  function rayIntersectsWall(rayOrigin, rayDir, wall) {
     
   const { start, end } = wall;
@@ -180,7 +183,7 @@ function drawMap2D(fov) {
   const x4 = rayOrigin.x + rayDir.x;
   const y4 = rayOrigin.y + rayDir.y;
 
-    const denom = (start.x - end.x) * (y3 - y4) - (start.y - end.y) * (x3 - x4);
+  const denom = (start.x - end.x) * (y3 - y4) - (start.y - end.y) * (x3 - x4);
   if (abs(denom) < 0.00001) return null; // parallel or identical
 
   const t = ((start.x - x3) * (y3 - y4) - (start.y - y3) * (x3 - x4)) / denom;
