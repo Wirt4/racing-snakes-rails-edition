@@ -70,9 +70,9 @@ function setup() {
     bottomWall, 
     leftWall, 
   ];
-  debugger;
+
   player = new Player(4.5, 4.5, 0)
-  }
+}
   
 function getRayAngle(increment){
   return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
@@ -107,20 +107,25 @@ function drawMap2D(fov) {
   pop();
 }
 
-  function calculateWallHeight(distance) {
+function calculateWallHeight(distance) {
     if (distance <= 0) {
       return 2 * height;
     }
   return height / distance;
 }
-  
+
+
+function removeFishEye(distance, angle, viewerAngle){
+    return distance * cos(angle - viewerAngle);
+}
+
 function draw() {
   background(0);
 
   for (let i = 0; i < width; i++) {
     const rayAngle = getRayAngle(i);
     let {dist, color} = castRay(rayAngle);
-    let correctedDist = dist * cos(rayAngle - player.angle);
+    correctedDist = removeFishEye(dist, rayAngle, player.angle);
     let wallHeight = calculateWallHeight(correctedDist);
     let brightness = max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
     if (color =='red'){
@@ -141,7 +146,7 @@ function castRay(angle) {
   let color = null;
 
   for (let wall of walls) {
-    debugger;
+    
     let hit = rayIntersectsWall(origin, rayDir, wall);
         if (hit) {
       // Uncomment this line to print wall hits
@@ -160,7 +165,7 @@ function castRay(angle) {
 }
 
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
-    debugger;
+    
   const { start, end } = wall;
 
   const x3 = rayOrigin.x;
