@@ -11,7 +11,7 @@
     this.y = y;
   }
 
-    nextLocation(angle, distance){
+  nextLocation(angle, distance){
       //precondition: angle is in radians, magnitude is positive
       //postconditions:
       // state of this point is unchanged
@@ -19,7 +19,7 @@
         if (distance < 0) {
           throw new Error("Distance must be non-negative");
         }
-        return new self.constructor(
+        return new Point(
           this.x + cos(angle) * distance,
           this.y + sin(angle) * distance
         );
@@ -68,7 +68,7 @@ function drawMap2D(fov) {
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
     let rayAngle = player.angle - fov / 2 + (i / width) * fov;
     let dist = castRay(rayAngle);
-    hit = player.nextLocation(rayAngle, dist);
+    hit = player.position.nextLocation(rayAngle, dist);
     line(player.position.x, player.position.y, hit.x, hit.y);
   }
   pop();
