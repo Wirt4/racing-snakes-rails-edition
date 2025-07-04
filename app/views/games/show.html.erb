@@ -2,16 +2,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 <script>
   const MAX_BRIGHTNESS = 255; // maximum brightness for walls
+  const MIN_BRIGHTNESS = 20;// minimum brightness for walls
   const FIELD_OF_VIEW = Math.PI / 2; // 90 degrees field of view
+  const FADE_POINT = 15; // distance at which brightness fades to minimum
 
   class Point {
     //default is cartesian
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+    }
 
-  nextLocation(angle, distance){
+    nextLocation(angle, distance){
       //precondition: angle is in radians, magnitude is positive
       //postconditions:
       // state of this point is unchanged
@@ -23,15 +25,14 @@
           this.polarToCartesian(this.x, cos, angle, distance),
           this.polarToCartesian(this.y, sin, angle, distance)
         );
-  }
+    }
+    
     polarToCartesian(position, func, angle, distance) {
-    return position+ func(angle) * distance;
+      return position+ func(angle) * distance;
+  }
 }
 
-
-}
-
-let player = {position: new Point(4.5, 4.5), angle: 0 };
+  let player = {};
 let walls = [];
 
 class Wall {
@@ -46,16 +47,19 @@ function setup() {
   canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
   walls = [
-    new Wall(1, 1, 8, 1), // top wall
-    new Wall(8, 1, 8, 8), // right wall
-    new Wall(8, 8, 1, 8), // bottom wall
-    new Wall(1, 8, 1, 1), // left wall
+    new Wall(1, 1, 58, 1), // top wall
+    new Wall(40, 30,5,10), // squiggle one
+    new Wall(5,10, 70,30),// squiggle two
+    new Wall(58, 1, 58, 58), // right wall
+    new Wall(58, 58, 1, 58), // bottom wall
+    new Wall(1, 58, 1, 1), // left wall
   ];
+  player = {position: new Point(4.5, 4.5), angle: 0 };
   }
 
 function getRayAngle(angle, fov,increment, width){
-      return angle - fov / 2 + (increment / width) * fov;
-  }
+  return angle - fov / 2 + (increment / width) * fov;
+}
 
 function drawMap2D(fov) {
   push();
@@ -87,13 +91,13 @@ function draw() {
     const rayAngle = getRayAngle(player.angle, FIELD_OF_VIEW, i, width);
     let dist = castRay(rayAngle);
     let correctedDist = dist * cos(rayAngle - player.angle);
-    let wallHeight = height / (correctedDist + 0.5);
-    let brightness = max(20, MAX_BRIGHTNESS - correctedDist * 30);
-    fill(brightness);
+    let wallHeight = height / (correctedDist + 0.5); // height of the wall based on distance
+    let brightness = max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
+    fill(0, brightness, 0);
     rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
   }
-  drawMap2D(FIELD_OF_VIEW);
-  player.angle += 0.01;
+  //drawMap2D(FIELD_OF_VIEW);
+  player.angle += 0.01; // rotate player for demonstration
 }
 
 function castRay(angle) {
@@ -105,7 +109,7 @@ function castRay(angle) {
     let hit = rayIntersectsWall(origin, rayDir, wall);
         if (hit) {
       // Uncomment this line to print wall hits
-          console.log(`Hit wall (${wall.start.x},${wall.start.y})–(${wall.end.x},${wall.end.y}) at distance ${hit.distance}`);
+//          console.log(`Hit wall (${wall.start.x},${wall.start.y})–(${wall.end.x},${wall.end.y}) at distance ${hit.distance}`);
     }
     if (hit && (!closest || hit.distance < closest.distance)) {
       closest = hit;
@@ -116,7 +120,7 @@ function castRay(angle) {
 }
 
 function rayIntersectsWall(rayOrigin, rayDir, wall) {
-    const { start, end } = wall;
+  const { start, end } = wall;
 
   const x3 = rayOrigin.x;
   const y3 = rayOrigin.y;
