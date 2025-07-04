@@ -10,15 +10,23 @@
 //TODO: refactor to use Point class
 let player = {position: new Point(4.5, 4.5), angle: 0 };
 let walls = [];
+
+class Wall {
+  constructor(x1, y1, x2, y2) {
+    this.start = new Point(x1, y1);
+    this.end = new Point(x2, y2); 
+  }
+}
+
 function setup() {
   let canvas = createCanvas(640, 400);
   canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
   walls = [
-    {start: new Point(1,1,), end:new Point(8,1) }, // top wall
-    {start: new Point(8, 1), end: new Point(8,8)}, // right wall
-    {start: new Point(8,8), end: new Point(1,8)}, // bottom wall
-    {start: new Point(1, 8), end: new Point(1,1)},  // left wall
+    new Wall(1, 1, 8, 1), // top wall
+    new Wall(8, 1, 8, 8), // right wall
+    new Wall(8, 8, 1, 8), // bottom wall
+    new Wall(1, 8, 1, 1), // left wall
   ];
   }
 
