@@ -5,10 +5,25 @@
   const FIELD_OF_VIEW = Math.PI / 2; // 90 degrees field of view
 
   class Point {
+    //default is cartesian
   constructor(x, y) {
     this.x = x;
     this.y = y;
   }
+
+    nextLocation(angle, distance){
+      //precondition: angle is in radians, magnitude is positive
+      //postconditions:
+      // state of this point is unchanged
+      //returns a new point <magnitude> distance away from the current point in the direction of <angle>
+        if (distance < 0) {
+          throw new Error("Distance must be non-negative");
+        }
+        return new self.constructor(
+          this.x + cos(angle) * distance,
+          this.y + sin(angle) * distance
+        );
+    }
 }
 
 let player = {position: new Point(4.5, 4.5), angle: 0 };
@@ -53,9 +68,8 @@ function drawMap2D(fov) {
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
     let rayAngle = player.angle - fov / 2 + (i / width) * fov;
     let dist = castRay(rayAngle);
-    let hitX = polarToCartesian(player.position.x, cos, rayAngle, dist);
-    let hitY = polarToCartesian(player.position.y, sin, rayAngle, dist);
-    line(player.position.x, player.position.y, hitX, hitY);
+    hit = player.nextLocation(rayAngle, dist);
+    line(player.position.x, player.position.y, hit.x, hit.y);
   }
   pop();
 }
