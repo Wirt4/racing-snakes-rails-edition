@@ -5,31 +5,117 @@
   const MIN_BRIGHTNESS = 20;// minimum brightness for walls
   const FIELD_OF_VIEW = Math.PI / 2; // 90 degrees field of view
   const FADE_POINT = 15; // distance at which brightness fades to minimum
-let player = {};
-let walls = [];
+  
+  let player = {};
+  let walls = [];
 
-function setup() {
-  let canvas = createCanvas(640, 400);
-  canvas.parent("raycast-canvas"); 
-  noStroke();
-  topWall = new Wall(1, 1, 58, 1);
-  rightWall = new Wall(58, 1, 58, 58);
-  bottomWall = new Wall(58, 58, 1, 58);
-  leftWall = new Wall(1, 58, 1, 1);
+  function setup() {
+    let canvas = createCanvas(640, 400);
+    canvas.parent("raycast-canvas"); 
+    noStroke();
+    topWall = new Wall(1, 1, 58, 1);
+    rightWall = new Wall(58, 1, 58, 58);
+    bottomWall = new Wall(58, 58, 1, 58);
+    leftWall = new Wall(1, 58, 1, 1);
 
-  walls = [
-    topWall,
-    new Wall(40, 30, 5,10, 'red'), 
-    new Wall(5, 10, 70,30, 'red'),
-    rightWall, 
-    bottomWall, 
-    leftWall, 
-  ];
+    walls = [
+      topWall,
+      new Wall(40, 30, 5,10, 'red'), 
+      new Wall(5, 10, 70,30, 'red'),
+      rightWall, 
+      bottomWall, 
+      leftWall, 
+    ];
 
-  player = new Player(4.5, 4.5, 0)
-}
+    player = new Player(4.5, 4.5, 0)
+    player.draw2D();
+  }
 
-class Point {
+  class Wall {
+    constructor(x1, y1, x2, y2, color = null) {
+      this.start = new Point(x1, y1);
+      this.end = new Point(x2, y2); 
+      this.color = color;
+    }
+
+    draw2D() {
+    stroke(this.color || MAX_BRIGHTNESS);
+    strokeWeight(0.1);
+    line(this.start.x, this.start.y, this.end.x, this.end.y);
+    }
+  }
+
+  class Player {
+    //angle is in radians
+    constructor(x, y, angle) {
+      this.position = new Point(x, y);
+      this.angle = angle;
+    }
+
+    draw2D() {
+      fill(255, 0, 0); // red color for player
+      noStroke();
+      ellipse(this.position.x, this.position.y, 0.2);
+    }
+  }
+
+  function draw() {
+    background(0);
+
+    for (let i = 0; i < width; i++) {
+      const rayAngle = getRayAngle(i);
+      let {dist, color} = castRay(rayAngle);
+      let correctedDist = removeFishEye(dist, rayAngle, player.angle);
+      let wallHeight = calculateWallHeight(correctedDist);
+      let brightness = calculateBrightness(correctedDist);
+      fillColor(color, brightness);
+      renderVerticalSlice(i, wallHeight);
+    }
+    drawMap2D(FIELD_OF_VIEW);
+    player.angle += 0.01; // rotate player for demonstration
+  }
+  
+  function getRayAngle(increment){
+    return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
+  }
+
+  function castRay(angle) {
+    let rayDir = { x: cos(angle), y: sin(angle) };
+    let origin = player.position;
+    let closest = null;
+    let color = null;
+
+    for (let wall of walls) {
+    
+      let hit = rayIntersectsWall(origin, rayDir, wall);
+      if (hit && (!closest || hit.distance < closest.distance)) {
+        closest = hit;
+        color = wall.color
+      }
+    }
+    if (closest) {
+      return {dist: closest.distance, color};
+    }
+
+    return {dist: 1000, color};
+  }
+
+  function removeFishEye(distance, angle, viewerAngle){
+    return distance * cos(angle - viewerAngle);
+  }
+
+  function calculateWallHeight(distance) {
+    if (distance <= 0) {
+      return 2 * height;
+    }
+    return height / distance;
+  }
+
+  function calculateBrightness(distance) {
+    return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - distance * FADE_POINT);
+  }
+
+  class Point {
     constructor(x, y) {
       this.x = x;
       this.y = y;
@@ -45,41 +131,6 @@ class Point {
       );
     }
   }
-
-  class Player {
-    //angle is in radians
-  constructor(x, y, angle) {
-    this.position = new Point(x, y);
-    this.angle = angle;
-  }
-
-  draw2D() {
-    fill(255, 0, 0); // red color for player
-    noStroke();
-    ellipse(this.position.x, this.position.y, 0.2);
-  }
-}
-
-
-class Wall {
-  constructor(x1, y1, x2, y2, color = null) {
-    this.start = new Point(x1, y1);
-    this.end = new Point(x2, y2); 
-    this.color = color;
-  }
-
-  draw2D() {
-    stroke(this.color || MAX_BRIGHTNESS);
-    strokeWeight(0.1);
-    line(this.start.x, this.start.y, this.end.x, this.end.y);
-  }
-}
-
-  
-function getRayAngle(increment){
-  return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
-}
-
 function drawRays(){
   stroke(0, MAX_BRIGHTNESS, 0, 100);
   strokeWeight(0.05);
@@ -109,22 +160,6 @@ function drawMap2D(fov) {
   pop();
 }
 
-function calculateWallHeight(distance) {
-    if (distance <= 0) {
-      return 2 * height;
-    }
-  return height / distance;
-}
-
-
-function removeFishEye(distance, angle, viewerAngle){
-    return distance * cos(angle - viewerAngle);
-}
-
-function calculateBrightness(distance) {
-  return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - distance * FADE_POINT);
-}
-
 function fillColor(color, brightness) {
   if (color === 'red') {
     fill(brightness, 0, 0);
@@ -136,44 +171,6 @@ function fillColor(color, brightness) {
 function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
   rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
 }
-
-function draw() {
-  background(0);
-
-  for (let i = 0; i < width; i++) {
-    const rayAngle = getRayAngle(i);
-    let {dist, color} = castRay(rayAngle);
-    let correctedDist = removeFishEye(dist, rayAngle, player.angle);
-    let wallHeight = calculateWallHeight(correctedDist);
-    let brightness = calculateBrightness(correctedDist);
-    fillColor(color, brightness);
-    renderVerticalSlice(i, wallHeight);
-  }
-  drawMap2D(FIELD_OF_VIEW);
-  player.angle += 0.01; // rotate player for demonstration
-}
-
-function castRay(angle) {
-  let rayDir = { x: cos(angle), y: sin(angle) };
-  let origin = player.position;
-  let closest = null;
-  let color = null;
-
-  for (let wall of walls) {
-    
-    let hit = rayIntersectsWall(origin, rayDir, wall);
-    if (hit && (!closest || hit.distance < closest.distance)) {
-      closest = hit;
-      color = wall.color
-    }
-  }
-  if (closest) {
-    return {dist: closest.distance, color};
-  }
-
-  return {dist: 1000, color};
-}
-
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
     
   const { start, end } = wall;
