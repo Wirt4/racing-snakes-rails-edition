@@ -120,7 +120,15 @@ function removeFishEye(distance, angle, viewerAngle){
 }
 
 function calculateBrightness(distance) {
-  return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
+  return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - distance * FADE_POINT);
+}
+
+function fillColor(color, brightness) {
+  if (color === 'red') {
+    fill(brightness, 0, 0);
+  } else {
+    fill(0, brightness, 0);
+  }
 }
 
 function draw() {
@@ -129,14 +137,10 @@ function draw() {
   for (let i = 0; i < width; i++) {
     const rayAngle = getRayAngle(i);
     let {dist, color} = castRay(rayAngle);
-    correctedDist = removeFishEye(dist, rayAngle, player.angle);
+    let correctedDist = removeFishEye(dist, rayAngle, player.angle);
     let wallHeight = calculateWallHeight(correctedDist);
     let brightness = calculateBrightness(correctedDist);
-    if (color =='red'){
-      fill(brightness, 0, 0);
-    }else{
-      fill(0, brightness, 0);
-    }
+    fillColor(color, brightness);
     rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
   }
   drawMap2D(FIELD_OF_VIEW);
