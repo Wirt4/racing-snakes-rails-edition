@@ -2,13 +2,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 <script>
   const MAX_BRIGHTNESS = 255; // maximum brightness for walls
+  const FIELD_OF_VIEW = Math.PI / 2; // 90 degrees field of view
+
   class Point {
   constructor(x, y) {
     this.x = x;
     this.y = y;
   }
 }
-//TODO: refactor to use Point class
+
 let player = {position: new Point(4.5, 4.5), angle: 0 };
 let walls = [];
 
@@ -31,11 +33,16 @@ function setup() {
   ];
   }
 
-function drawMap2D() {
+function polarToCartesian(position,func, angle, distance) {
+    return position+ func(angle) * distance;
+}
+
+function drawMap2D(fov) {
   push();
   scale(10); // zoom in
   stroke(MAX_BRIGHTNESS);
   for (let wall of walls) {
+    //law of demeter smell
     line(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
   }
   fill('red');
@@ -44,10 +51,10 @@ function drawMap2D() {
   // draw rays
   stroke(0, MAX_BRIGHTNESS, 0, 100);
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
-    let rayAngle = player.angle - PI / 2 / 2 + (i / width) * PI / 2;
+    let rayAngle = player.angle - fov / 2 + (i / width) * fov;
     let dist = castRay(rayAngle);
-    let hitX = player.position.x + cos(rayAngle) * dist;
-    let hitY = player.position.y + sin(rayAngle) * dist;
+    let hitX = polarToCartesian(player.position.x, cos, rayAngle, dist);
+    let hitY = polarToCartesian(player.position.y, sin, rayAngle, dist);
     line(player.position.x, player.position.y, hitX, hitY);
   }
   pop();
@@ -56,10 +63,9 @@ function drawMap2D() {
   
 function draw() {
   background(0);
-  const fov = PI / 2; //currently 90 degrees divide by 3 for 60 degrees
 
   for (let i = 0; i < width; i++) {
-    let rayAngle = player.angle - fov / 2 + (i / width) * fov;
+    let rayAngle = player.angle - FIELD_OF_VIEW / 2 + (i / width) * FIELD_OF_VIEW;
     let dist = castRay(rayAngle);
     let correctedDist = dist * cos(rayAngle - player.angle);
     let wallHeight = height / (correctedDist + 0.5);
@@ -67,13 +73,13 @@ function draw() {
     fill(brightness);
     rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
   }
-  drawMap2D();
+  drawMap2D(FIELD_OF_VIEW);
   player.angle += 0.01;
 }
 
 function castRay(angle) {
   let rayDir = { x: cos(angle), y: sin(angle) };
-  let origin = { x: player.position.x, y: player.position.y };
+  let origin = player.position;
   let closest = null;
 
   for (let wall of walls) {
