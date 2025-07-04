@@ -1,0 +1,41 @@
+<!-- app/views/games/show.html.erb -->
+<canvas id="raycast-canvas" width="320" height="240"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+<script>
+let player = { x: 3, y: 3, angle: 0 };
+let map = [
+  [1,1,1,1,1],
+  [1,0,0,0,1],
+  [1,0,1,0,1],
+  [1,0,0,0,1],
+  [1,1,1,1,1],
+];
+
+function setup() {
+  createCanvas(320, 240);
+  noStroke();
+}
+
+function draw() {
+  background(0);
+  for (let i = 0; i < width; i += 2) {
+    let rayAngle = player.angle - PI/6 + (i / width) * PI/3;
+    let dist = castRay(rayAngle);
+    let h = height / (dist + 0.1);
+    fill(200 - dist * 40);
+    rect(i, height/2 - h/2, 2, h);
+  }
+  player.angle += 0.01;
+}
+
+function castRay(angle) {
+  let sin = Math.sin(angle), cos = Math.cos(angle);
+  for (let d = 0; d < 10; d += 0.1) {
+    let x = Math.floor(player.x + cos * d);
+    let y = Math.floor(player.y + sin * d);
+    if (map[y]?.[x]) return d;
+  }
+  return 10;
+}
+</script>
+
