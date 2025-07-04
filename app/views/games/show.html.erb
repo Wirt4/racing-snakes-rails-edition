@@ -32,13 +32,14 @@
   }
 }
 
-  let player = {};
+let player = {};
 let walls = [];
 
 class Wall {
-  constructor(x1, y1, x2, y2) {
+  constructor(x1, y1, x2, y2, color = null) {
     this.start = new Point(x1, y1);
     this.end = new Point(x2, y2); 
+    this.color = color;
   }
 }
 
@@ -48,8 +49,8 @@ function setup() {
   noStroke();
   walls = [
     new Wall(1, 1, 58, 1), // top wall
-    new Wall(40, 30,5,10), // squiggle one
-    new Wall(5,10, 70,30),// squiggle two
+    new Wall(40, 30,5,10, 'red'), // squiggle one
+    new Wall(5,10, 70,30, 'red'),// squiggle two
     new Wall(58, 1, 58, 58), // right wall
     new Wall(58, 58, 1, 58), // bottom wall
     new Wall(1, 58, 1, 1), // left wall
@@ -115,8 +116,11 @@ function castRay(angle) {
       closest = hit;
     }
   }
+  if (closest) {
+    return closest.distance;
+  }
 
-  return closest ? closest.distance : 1000;
+  return 1000;
 }
 
 function rayIntersectsWall(rayOrigin, rayDir, wall) {
