@@ -5,8 +5,31 @@
   const MIN_BRIGHTNESS = 20;// minimum brightness for walls
   const FIELD_OF_VIEW = Math.PI / 2; // 90 degrees field of view
   const FADE_POINT = 15; // distance at which brightness fades to minimum
+let player = {};
+let walls = [];
 
-  class Point {
+function setup() {
+  let canvas = createCanvas(640, 400);
+  canvas.parent("raycast-canvas"); 
+  noStroke();
+  topWall = new Wall(1, 1, 58, 1);
+  rightWall = new Wall(58, 1, 58, 58);
+  bottomWall = new Wall(58, 58, 1, 58);
+  leftWall = new Wall(1, 58, 1, 1);
+
+  walls = [
+    topWall,
+    new Wall(40, 30, 5,10, 'red'), 
+    new Wall(5, 10, 70,30, 'red'),
+    rightWall, 
+    bottomWall, 
+    leftWall, 
+  ];
+
+  player = new Player(4.5, 4.5, 0)
+}
+
+class Point {
     constructor(x, y) {
       this.x = x;
       this.y = y;
@@ -37,8 +60,6 @@
   }
 }
 
-let player = {};
-let walls = [];
 
 class Wall {
   constructor(x1, y1, x2, y2, color = null) {
@@ -54,25 +75,6 @@ class Wall {
   }
 }
 
-function setup() {
-  let canvas = createCanvas(640, 400);
-  canvas.parent("raycast-canvas"); 
-  noStroke();
-  topWall = new Wall(1, 1, 58, 1);
-  rightWall = new Wall(58, 1, 58, 58);
-  bottomWall = new Wall(58, 58, 1, 58);
-  leftWall = new Wall(1, 58, 1, 1);
-  walls = [
-    topWall,
-    new Wall(40, 30, 5,10, 'red'), 
-    new Wall(5, 10, 70,30, 'red'),
-    rightWall, 
-    bottomWall, 
-    leftWall, 
-  ];
-
-  player = new Player(4.5, 4.5, 0)
-}
   
 function getRayAngle(increment){
   return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
@@ -131,6 +133,10 @@ function fillColor(color, brightness) {
   }
 }
 
+function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
+  rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
+}
+
 function draw() {
   background(0);
 
@@ -141,7 +147,7 @@ function draw() {
     let wallHeight = calculateWallHeight(correctedDist);
     let brightness = calculateBrightness(correctedDist);
     fillColor(color, brightness);
-    rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
+    renderVerticalSlice(i, wallHeight);
   }
   drawMap2D(FIELD_OF_VIEW);
   player.angle += 0.01; // rotate player for demonstration
@@ -156,10 +162,6 @@ function castRay(angle) {
   for (let wall of walls) {
     
     let hit = rayIntersectsWall(origin, rayDir, wall);
-        if (hit) {
-      // Uncomment this line to print wall hits
-//          console.log(`Hit wall (${wall.start.x},${wall.start.y})–(${wall.end.x},${wall.end.y}) at distance ${hit.distance}`);
-    }
     if (hit && (!closest || hit.distance < closest.distance)) {
       closest = hit;
       color = wall.color
