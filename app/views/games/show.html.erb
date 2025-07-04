@@ -8,7 +8,7 @@
   }
 }
 //TODO: refactor to use Point class
-let player = { x: 4.5, y: 4.5, angle: 0 };
+let player = {position: new Point(4.5, 4.5), angle: 0 };
 let walls = [];
 function setup() {
   let canvas = createCanvas(640, 400);
@@ -27,7 +27,7 @@ function drawMap2D() {
   scale(10); // zoom in
   stroke(255);
   for (let wall of walls) {
-    line(wall.start.x, wall.start.y, wall.end.xx, wall.end.y);
+    line(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
   }
   fill('red');
   ellipse(player.x, player.y, 0.1);
@@ -37,9 +37,9 @@ function drawMap2D() {
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
     let rayAngle = player.angle - PI / 2 / 2 + (i / width) * PI / 2;
     let dist = castRay(rayAngle);
-    let hitX = player.x + cos(rayAngle) * dist;
-    let hitY = player.y + sin(rayAngle) * dist;
-    line(player.x, player.y, hitX, hitY);
+    let hitX = player.position.x + cos(rayAngle) * dist;
+    let hitY = player.position.y + sin(rayAngle) * dist;
+    line(player.position.x, player.position.y, hitX, hitY);
   }
   pop();
 }
@@ -64,7 +64,7 @@ function draw() {
 
 function castRay(angle) {
   let rayDir = { x: cos(angle), y: sin(angle) };
-  let origin = { x: player.x, y: player.y };
+  let origin = { x: player.position.x, y: player.position.y };
   let closest = null;
 
   for (let wall of walls) {
