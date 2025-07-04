@@ -73,21 +73,22 @@ function setup() {
   debugger;
   player = new Player(4.5, 4.5, 0)
   }
+  
 function getRayAngle(increment){
   return player.angle - FIELD_OF_VIEW / 2 + (increment / width) * FIELD_OF_VIEW;
 }
 
-  function drawRays(){
-    stroke(0, MAX_BRIGHTNESS, 0, 100);
-  strokeWeight(0.05); // thinner line
-  for (let i = 0; i < width; i += 20) { // thinner density for debugging
+function drawRays(){
+  stroke(0, MAX_BRIGHTNESS, 0, 100);
+  strokeWeight(0.05);
+  let resolution = 20
+  for (let i = 0; i < width; i += resolution) {
     const rayAngle = getRayAngle(i);
     let {dist} = castRay(rayAngle);
     hit = player.position.nextLocation(rayAngle, dist);
     line(player.position.x, player.position.y, hit.x, hit.y);
   }
-
-  }
+}
 
 function drawMap2D(fov) {
   push();
@@ -96,13 +97,22 @@ function drawMap2D(fov) {
   for (let wall of walls) {
     wall.draw2D();
   }
+
   fill('red');
   noStroke();
   player.draw2D();
+
   drawRays();
+
   pop();
 }
 
+  function calculateWallHeight(distance) {
+    if (distance <= 0) {
+      return 2 * height;
+    }
+  return height / distance;
+}
   
 function draw() {
   background(0);
@@ -111,7 +121,7 @@ function draw() {
     const rayAngle = getRayAngle(i);
     let {dist, color} = castRay(rayAngle);
     let correctedDist = dist * cos(rayAngle - player.angle);
-    let wallHeight = height / (correctedDist + 0.5); // height of the wall based on distance
+    let wallHeight = calculateWallHeight(correctedDist);
     let brightness = max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - correctedDist * FADE_POINT);
     if (color =='red'){
       fill(brightness, 0, 0);
