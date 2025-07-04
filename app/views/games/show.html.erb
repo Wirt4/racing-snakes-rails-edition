@@ -15,10 +15,10 @@ function setup() {
   canvas.parent("raycast-canvas"); // attach to canvas tag
   noStroke();
   walls = [
-    {start: new.Point(1,1,), end:new.Point(8,1) }, // top wall
-    {start: new.Point(8, 1), end: new.Point(8,8)}, // right wall
-    {start: new.Point(8,8), end: new.Point(1,8)}, // bottom wall
-    {start: new.Point(1, 8), end: new.Point(1,1)},  // left wall
+    {start: new Point(1,1,), end:new Point(8,1) }, // top wall
+    {start: new Point(8, 1), end: new Point(8,8)}, // right wall
+    {start: new Point(8,8), end: new Point(1,8)}, // bottom wall
+    {start: new Point(1, 8), end: new Point(1,1)},  // left wall
   ];
   }
 
@@ -27,7 +27,7 @@ function drawMap2D() {
   scale(10); // zoom in
   stroke(255);
   for (let wall of walls) {
-    line(wall.x1, wall.y1, wall.x2, wall.y2);
+    line(wall.start.x, wall.start.y, wall.end.xx, wall.end.y);
   }
   fill('red');
   ellipse(player.x, player.y, 0.1);
@@ -81,26 +81,7 @@ function castRay(angle) {
   return closest ? closest.distance : 1000;
 }
 
-// function rayIntersectsWall(rayOrigin, rayDir, wall) {
-//   const { x1, y1, x2, y2 } = wall;
-//   const dx = x2 - x1;
-//   const dy = y2 - y1;
-//   const denom = rayDir.x * dy - rayDir.y * dx;
-//
-//   if (abs(denom) < 0.00001) return null; // parallel
-//
-//   const t = ((rayOrigin.x - x1) * dy - (rayOrigin.y - y1) * dx) / denom;
-//   const u = ((rayOrigin.x - x1) * rayDir.y - (rayOrigin.y - y1) * rayDir.x) / denom;
-//
-//   if (t < 0 || u < 0 || u > 1) return null;
-//
-//   return {
-//     x: rayOrigin.x + rayDir.x * t,
-//     y: rayOrigin.y + rayDir.y * t,
-//     distance: t
-//   };
-//
-  function rayIntersectsWall(rayOrigin, rayDir, wall) {
+function rayIntersectsWall(rayOrigin, rayDir, wall) {
     const { start, end } = wall;
 
   const x3 = rayOrigin.x;
@@ -112,7 +93,7 @@ function castRay(angle) {
   if (abs(denom) < 0.00001) return null; // parallel or identical
 
   const t = ((start.x - x3) * (y3 - y4) - (start.y - y3) * (x3 - x4)) / denom;
-    const u = -((start.x - end.x) * (y1 - y3) - (start.y - end.y) * (start.x - x3)) / denom;
+    const u = -((start.x - end.x) * (start.y - y3) - (start.y - end.y) * (start.x - x3)) / denom;
 
   if (t < 0 || t > 1 || u < 0) return null;
 
