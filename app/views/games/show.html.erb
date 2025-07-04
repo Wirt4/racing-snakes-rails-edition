@@ -114,7 +114,19 @@
   function calculateBrightness(distance) {
     return max(MIN_BRIGHTNESS, MAX_BRIGHTNESS - distance * FADE_POINT);
   }
+ 
+  function fillColor(color, brightness) {
+    if (color === 'red') {
+      fill(brightness, 0, 0);
+    } else {
+      fill(0, brightness, 0);
+    }
+  }
 
+function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
+  rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
+}
+ 
   class Point {
     constructor(x, y) {
       this.x = x;
@@ -159,19 +171,7 @@ function drawMap2D(fov) {
 
   pop();
 }
-
-function fillColor(color, brightness) {
-  if (color === 'red') {
-    fill(brightness, 0, 0);
-  } else {
-    fill(0, brightness, 0);
-  }
-}
-
-function renderVerticalSlice(fieldOfVisionXCoord, wallHeight){
-  rect(fieldOfVisionXCoord, height / 2 - wallHeight / 2, 1, wallHeight);
-}
-  function rayIntersectsWall(rayOrigin, rayDir, wall) {
+ function rayIntersectsWall(rayOrigin, rayDir, wall) {
     
   const { start, end } = wall;
 
