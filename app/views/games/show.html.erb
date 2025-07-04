@@ -172,15 +172,12 @@
       line(player.position.x, player.position.y, hit.x, hit.y);
     }
   }
-
   
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
-    
-    const { end } = wall;
     const {start: wallStart, end: wallEnd} = wall;
     const rayPoint = new Point(rayOrigin.x + rayDir.x, rayOrigin.y + rayDir.y);
 
-    const determinant = (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
+    const determinant = calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
     if (abs(determinant) < 0.00001) return null; // parallel or identical
 
     const wall_intersection = ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) / determinant;
@@ -193,5 +190,9 @@
     const distance = dist(rayOrigin.x, rayOrigin.y, intersectionX, intersectionY);
 
     return { x: intersectionX, y: intersectionY, distance };
+  }
+
+  function calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint){
+    return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
   }
 </script>
