@@ -41,6 +41,12 @@ class Wall {
     this.end = new Point(x2, y2); 
     this.color = color;
   }
+
+  draw2D() {
+    stroke(this.color || MAX_BRIGHTNESS);
+    strokeWeight(0.1); // visible even when scaled
+    line(this.start.x, this.start.y, this.end.x, this.end.y);
+  }
 }
 
 function setup() {
@@ -68,13 +74,16 @@ function drawMap2D(fov) {
   stroke(MAX_BRIGHTNESS);
   for (let wall of walls) {
     //law of demeter smell
-    line(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+//    line(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+    wall.draw2D();
   }
   fill('red');
-  ellipse(player.x, player.y, 0.1);
+  noStroke();
+  ellipse(player.position.x, player.position.y, 0.1);
 
   // draw rays
   stroke(0, MAX_BRIGHTNESS, 0, 100);
+  strokeWeight(0.05); // thinner line
   for (let i = 0; i < width; i += 20) { // thinner density for debugging
     const rayAngle = getRayAngle(player.angle, fov, i, width);
     let {dist} = castRay(rayAngle);
@@ -101,7 +110,7 @@ function draw() {
     }
     rect(i, height / 2 - wallHeight / 2, 1, wallHeight);
   }
-  //drawMap2D(FIELD_OF_VIEW);
+  drawMap2D(FIELD_OF_VIEW);
   player.angle += 0.01; // rotate player for demonstration
 }
 
