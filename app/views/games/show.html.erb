@@ -174,27 +174,27 @@
   }
 
   
- function rayIntersectsWall(rayOrigin, rayDir, wall) {
+  function rayIntersectsWall(rayOrigin, rayDir, wall) {
     
-  const { start, end } = wall;
+    const { start, end } = wall;
 
-  const x3 = rayOrigin.x;
-  const y3 = rayOrigin.y;
-  const x4 = rayOrigin.x + rayDir.x;
-  const y4 = rayOrigin.y + rayDir.y;
+    const x3 = rayOrigin.x;
+    const y3 = rayOrigin.y;
+    const x4 = rayOrigin.x + rayDir.x;
+    const y4 = rayOrigin.y + rayDir.y;
 
-  const denom = (start.x - end.x) * (y3 - y4) - (start.y - end.y) * (x3 - x4);
-  if (abs(denom) < 0.00001) return null; // parallel or identical
+    const determinant = (start.x - end.x) * (y3 - y4) - (start.y - end.y) * (x3 - x4);
+    if (abs(determinant) < 0.00001) return null; // parallel or identical
 
-  const t = ((start.x - x3) * (y3 - y4) - (start.y - y3) * (x3 - x4)) / denom;
-    const u = -((start.x - end.x) * (start.y - y3) - (start.y - end.y) * (start.x - x3)) / denom;
+    const wall_intersection = ((start.x - x3) * (y3 - y4) - (start.y - y3) * (x3 - x4)) / determinant;
+    const ray_intersection = -((start.x - end.x) * (start.y - y3) - (start.y - end.y) * (start.x - x3)) / determinant;
 
-  if (t < 0 || t > 1 || u < 0) return null;
+    if (wall_intersection < 0 || wall_intersection > 1 || ray_intersection < 0) return null;
 
-    const intersectionX = start.x + t * (end.x - start.x);
-    const intersectionY = start.y + t * (end.y - start.y);
+    const intersectionX = start.x + wall_intersection * (end.x - start.x);
+    const intersectionY = start.y + wall_intersection * (end.y - start.y);
     const distance = dist(x3, y3, intersectionX, intersectionY); //TODO: look up dist function
 
-  return { x: intersectionX, y: intersectionY, distance };
-}
+    return { x: intersectionX, y: intersectionY, distance };
+  }
 </script>
