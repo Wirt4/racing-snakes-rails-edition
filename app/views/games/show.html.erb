@@ -201,14 +201,17 @@
   }
 
   function wallIntersection(wallStart, rayOrigin, rayPoint, determinant){
-    const bar = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
-    foo = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
-    const diff = bar - foo 
+    const foo = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
+    const bar = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
+    const diff = foo - bar 
     return diff / determinant;
   }
 
   function rayIntersection(wallStart, wallEnd, rayOrigin, determinant) {
-    return -((wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y) - (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)) / determinant;
+    const foo = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y) 
+    const bar = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
+    const diff = -(foo - bar); 
+    return diff / determinant;
   }
 
   function isInsideWall(wall_intersection, ray_intersection) {
