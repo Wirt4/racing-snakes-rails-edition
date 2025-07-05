@@ -1,8 +1,11 @@
 // test for game loop
 import { setUpCanvas } from './canvas_sketch';
 
-async function sleep(ms: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, ms));
+async function sleep(fps: number): Promise<void> {
+	if (fps <= 0) {
+		throw new Error("FPS must be greater than 0");
+	}
+	return new Promise((resolve) => setTimeout(resolve, 1000 / fps));
 }
 
 function draw(ctx: CanvasRenderingContext2D): void {
@@ -25,7 +28,7 @@ async function main(): Promise<void> {
 		ctx.reset();
 		draw(ctx);
 		writeText(ctx, "Frames: " + frameCount, 10, 40);
-		await sleep(1000 / 60); // 60 FPS
+		await sleep(60);
 		frameCount++;
 	}
 }

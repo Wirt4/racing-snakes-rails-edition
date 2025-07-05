@@ -11,9 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // test for game loop
 const canvas_sketch_1 = require("./canvas_sketch");
-function sleep(ms) {
+function sleep(fps) {
     return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => setTimeout(resolve, ms));
+        if (fps <= 0) {
+            throw new Error("FPS must be greater than 0");
+        }
+        return new Promise((resolve) => setTimeout(resolve, 1000 / fps));
     });
 }
 function draw(ctx) {
@@ -35,7 +38,7 @@ function main() {
             ctx.reset();
             draw(ctx);
             writeText(ctx, "Frames: " + frameCount, 10, 40);
-            yield sleep(1000 / 60); // 60 FPS
+            yield sleep(60);
             frameCount++;
         }
     });
