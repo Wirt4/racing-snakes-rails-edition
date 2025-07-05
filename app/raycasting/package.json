@@ -5,5 +5,8 @@
     "eslint": "^9.30.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1"
+  },
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --outfile=../assets/builds/raycaster.js --format=esm --target=es2020"
   }
 }
