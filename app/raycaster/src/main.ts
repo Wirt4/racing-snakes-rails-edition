@@ -1,8 +1,8 @@
-console.log("script loaded");
-
+// assumes target will have an empty div tag with id "app"
 const app = document.getElementById("app");
 const canv = document.createElement("canvas");
 canv.id = 'my-house';
-canv.width = 300;
-canv.height = 300;
+const square_size = 300;
+canv.width = square_size;
+canv.height = square_size;
 app?.appendChild(canv);
