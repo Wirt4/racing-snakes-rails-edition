@@ -176,14 +176,13 @@
   function rayIntersectsWall(rayOrigin, rayDir, wall) {
     const {start: wallStart, end: wallEnd} = wall;
     const rayPoint = new Point(rayOrigin.x + rayDir.x, rayOrigin.y + rayDir.y);
-
     const determinant = calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
-    if (abs(determinant) < 0.00001) return null; // parallel or identical
+    if (isParallel(determinant)) return null;
 
-    const wall_intersection = ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) / determinant;
-    const ray_intersection = -((wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y) - (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)) / determinant;
+    const wall_intersection = wallIntersection(wallStart, rayOrigin, rayPoint, determinant);
+    const ray_intersection = rayIntersection(wallStart, wallEnd, rayOrigin, determinant);
 
-    if (wall_intersection < 0 || wall_intersection > 1 || ray_intersection < 0) return null;
+    if (wall_intersection < 0 || wall_intersection > 1 || ray_intersection < 0) return null; // ray is outside the wall segment
 
     const intersectionX = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
     const intersectionY = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
@@ -194,5 +193,18 @@
 
   function calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint){
     return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
+  }
+
+  function isParallel(determinant){
+    let threshold = 0.00001;
+    return abs(determinant) < threshold;
+    }
+
+  function wallIntersection(wallStart, rayOrigin, rayPoint, determinant){
+    return ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) / determinant;
+  }
+  function rayIntersection(wallStart, wallEnd, rayOrigin, determinant) {
+    return -((wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y) - (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)) / determinant;
+
   }
 </script>
