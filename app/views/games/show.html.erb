@@ -201,8 +201,10 @@
   }
 
   function wallIntersection(wallStart, rayOrigin, rayPoint, determinant){
-    const foo = ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) 
-    return ((wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)) / determinant;
+    const bar = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
+    foo = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
+    const diff = bar - foo 
+    return diff / determinant;
   }
 
   function rayIntersection(wallStart, wallEnd, rayOrigin, determinant) {
