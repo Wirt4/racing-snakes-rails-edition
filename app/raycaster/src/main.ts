@@ -1,6 +1,8 @@
 console.log("script loaded");
 
 const app = document.getElementById("app");
-const p = document.createElement("p");
-p.textContent = "Greetings Program!";
-app?.appendChild(p);
+const canv = document.createElement("canvas");
+canv.id = 'my-house';
+canv.width = 300;
+canv.height = 300;
+app?.appendChild(canv);
