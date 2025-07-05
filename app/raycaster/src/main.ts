@@ -22,7 +22,7 @@ async function main(): Promise<void> {
 		ctx.reset();
 		draw(ctx);
 		writeText(ctx, "Frames: " + frameCount, 10, 40);
-		await sleep(Settings.FPS);
+		await sleep(Settings.FRAMES_PER_SECOND);
 		frameCount++;
 	}
 }

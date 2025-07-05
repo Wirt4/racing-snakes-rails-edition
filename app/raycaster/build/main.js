@@ -32,7 +32,7 @@ function main() {
             ctx.reset();
             draw(ctx);
             writeText(ctx, "Frames: " + frameCount, 10, 40);
-            yield (0, sleep_1.sleep)(settings_1.Settings.FPS);
+            yield (0, sleep_1.sleep)(settings_1.Settings.FRAMES_PER_SECOND);
             frameCount++;
         }
     });
