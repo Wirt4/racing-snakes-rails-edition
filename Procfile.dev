@@ -1,3 +1,3 @@
 web: bin/rails server
 css: bin/rails tailwindcss:watch
-ts: cd app/raycasting && npm run build -- --watch
+ts: cd app/raycaster && npm run build -- --watch

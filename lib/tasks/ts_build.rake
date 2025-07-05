@@ -3,7 +3,7 @@ namespace :ts do
   desc 'Build TypeScript frontend'
   task :build do
     puts '🏗️  Building TypeScript assets with npm...'
-    Dir.chdir('app/raycasting') do
+    Dir.chdir('app/raycaster') do
       system('npm run build') or raise '❌ TypeScript build failed!'
     end
   end
