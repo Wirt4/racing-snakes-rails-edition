@@ -38,4 +38,4 @@
 !/app/assets/builds/.keep
 
 # Typescript stuff
-*/node_modules/*
+/app/frontend-render/node_modules/*
