@@ -14,6 +14,10 @@ const ctx = canvas.getContext("2d");
 if (!ctx) {
 	throw new Error("Failed to get canvas context");
 }
+ctx.translate(150, 150);
+ctx.rotate((45 * Math.PI) / 180); //experiment with rotation
+ctx.translate(-150, -150); // reset translation to origin
+
 ctx.lineWidth = 10;
 
 // Wall
