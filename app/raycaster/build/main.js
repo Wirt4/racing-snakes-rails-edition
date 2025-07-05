@@ -11,14 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // test for game loop
 const canvas_sketch_1 = require("./canvas_sketch");
-function sleep(fps) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (fps <= 0) {
-            throw new Error("FPS must be greater than 0");
-        }
-        return new Promise((resolve) => setTimeout(resolve, 1000 / fps));
-    });
-}
+const sleep_1 = require("./sleep");
+const settings_1 = require("./settings");
 function draw(ctx) {
     ctx.fillStyle = "#AAFF00"; // a nice green
     ctx.fillRect(130, 190, 40, 60);
@@ -38,7 +32,7 @@ function main() {
             ctx.reset();
             draw(ctx);
             writeText(ctx, "Frames: " + frameCount, 10, 40);
-            yield sleep(60);
+            yield (0, sleep_1.sleep)(settings_1.Settings.FPS);
             frameCount++;
         }
     });
