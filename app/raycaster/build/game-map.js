@@ -20,7 +20,6 @@ class GameMap {
             const brightness = this.calculateBrightness(correctedDistance);
             renderer.fillColor(color, brightness);
             this.renderVerticalSlice(renderer, i, sliceHeight);
-            console.log('exited out of loop');
         }
         //	this.draw2DMap(renderer, Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians);
     }
