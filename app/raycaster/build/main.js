@@ -10,30 +10,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // test for game loop
-const canvas_sketch_1 = require("./canvas_sketch");
 const sleep_1 = require("./sleep");
 const settings_1 = require("./settings");
-function draw(ctx) {
-    ctx.fillStyle = "#AAFF00"; // a nice green
-    ctx.fillRect(130, 190, 40, 60);
-    ctx.fillStyle = "#000000"; // black
-    ctx.fillText("Hello World", 10, 20);
-}
-function writeText(ctx, text, x, y) {
-    ctx.fillStyle = "#FFFFFF"; //white
-    ctx.font = "16px Arial";
-    ctx.fillText(text, x, y);
-}
+const renderer_1 = require("./renderer"); // Uncomment if using Renderer class
+const game_map_1 = require("./game-map");
+// function writeText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
+// 	ctx.fillStyle = "#FFFFFF"; //white
+// 	ctx.font = "16px Arial";
+// 	ctx.fillText(text, x, y);
+// }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const ctx = (0, canvas_sketch_1.setUpCanvas)("app", 300, 300);
-        let frameCount = 0;
+        const renderer = new renderer_1.Renderer("app", settings_1.Settings.CANVAS_WIDTH, settings_1.Settings.CANVAS_HEIGHT);
+        const gameMap = new game_map_1.GameMap();
         while (true) {
-            ctx.reset();
-            draw(ctx);
-            writeText(ctx, "Frames: " + frameCount, 10, 40);
+            renderer.reset();
+            gameMap.draw(renderer);
+            gameMap.update();
             yield (0, sleep_1.sleep)(settings_1.Settings.FRAMES_PER_SECOND);
-            frameCount++;
         }
     });
 }
