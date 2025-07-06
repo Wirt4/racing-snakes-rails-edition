@@ -37,15 +37,15 @@ class Renderer {
         this.context.fillRect(x, y, width, height);
     }
     fillColor(color, brightness = 100) {
-        const percent = brightness / 100;
+        const percent = brightness / 200;
         if (percent < 0 || percent > 1) {
             throw new Error("Brightness must be between 0 and 100");
         }
         if (color == 'red') {
-            this.context.fillStyle = this.HSLToHex({ h: 1, s: 1, l: brightness });
+            this.context.fillStyle = this.HSLToHex({ h: 1, s: 100, l: brightness });
         }
         else {
-            this.context.fillStyle = this.HSLToHex({ h: 120, s: 1, l: brightness });
+            this.context.fillStyle = this.HSLToHex({ h: 120, s: 100, l: brightness });
         }
     }
     ellipse(x, y, stroke) { }
@@ -62,12 +62,11 @@ class Renderer {
     }
     HSLToHex(hsl) {
         const { h, s, l } = hsl;
-        const hDecimal = l / 100;
-        const a = (s * Math.min(hDecimal, 1 - hDecimal)) / 100;
+        const lDecimal = l / 100;
+        const a = (s * Math.min(lDecimal, 1 - lDecimal)) / 100;
         const f = (n) => {
             const k = (n + h / 30) % 12;
-            const color = hDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-            // Convert to Hex and prefix with "0" if required
+            const color = lDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
             return Math.round(255 * color)
                 .toString(16)
                 .padStart(2, "0");
