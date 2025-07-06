@@ -71,11 +71,18 @@ class Renderer implements RendererInterface {
 	}
 
 	public strokeWeight(weight: number): void {
-		throw new Error("strokeWeight is not implemented in Renderer");
+		this.context.lineWidth = weight;
 	}
 
 	public line(x1: number, y1: number, x2: number, y2: number): void {
-		throw new Error("line is not implemented in Renderer");
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context draws a line from (x1, y1) to (x2, y2)
+		 */
+		this.context.beginPath();
+		this.context.moveTo(x1, y1);
+		this.context.lineTo(x2, y2);
+		this.context.stroke();
 	}
 
 	public rect(x: number, y: number, width: number, height: number): void {

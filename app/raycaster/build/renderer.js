@@ -49,10 +49,17 @@ class Renderer {
         this.context.fillRect(130, 190, 40, 60);
     }
     strokeWeight(weight) {
-        //another throwaway, shapes will not natively have strokes
+        this.context.lineWidth = weight;
     }
     line(x1, y1, x2, y2) {
-        //possible future implementation
+        /**
+         * Precondition: the context is a valid CanvasRenderingContext2D
+         * Postcondition: the context draws a line from (x1, y1) to (x2, y2)
+         */
+        this.context.beginPath();
+        this.context.moveTo(x1, y1);
+        this.context.lineTo(x2, y2);
+        this.context.stroke();
     }
     rect(x, y, width, height) {
         this.context.fillRect(x, y, width, height);
@@ -77,7 +84,6 @@ class Renderer {
          */
         this.context.lineWidth = stroke;
         this.context.ellipse(x, y, 1, 1, 0, 0, 0);
-        throw new Error("ellipse is not implemented");
     }
     noStroke() {
         /**
