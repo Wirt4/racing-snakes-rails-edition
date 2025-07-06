@@ -71,11 +71,11 @@ class Renderer implements RendererInterface {
 	}
 
 	public strokeWeight(weight: number): void {
-		//another throwaway, shapes will not natively have strokes
+		throw new Error("strokeWeight is not implemented in Renderer");
 	}
 
 	public line(x1: number, y1: number, x2: number, y2: number): void {
-		//possible future implementation
+		throw new Error("line is not implemented in Renderer");
 	}
 
 	public rect(x: number, y: number, width: number, height: number): void {
@@ -96,15 +96,30 @@ class Renderer implements RendererInterface {
 	}
 
 	public ellipse(x: number, y: number, stroke: number): void {
-		throw new Error("ellipse is not implemented");
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context draws an ellipse at the specified coordinates with the specified stroke weight, the ellipse defaults 
+		 * to a circle of radius 1
+		 */
+		this.context.lineWidth = stroke;
+		this.context.ellipse(x, y, 1, 1, 0, 0, 0)
 	}
 
 	public noStroke(): void {
-		throw new Error("noStroke is not implemented");
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context is set to not stroke shapes
+		 */
+		this.context.strokeStyle = "transparent";
 	}
 
 	public stroke(color: Color): void {
-		throw new Error("stroke is not implemented");
+		/**
+		 * Precondition: the color is a valid Color object
+		 * Postcondition: the context is set to stroke with the specified color
+		 */
+		//TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
+		this.context.strokeStyle = color.toString();
 	}
 
 	private assertIsPositiveInteger(value: number): void {

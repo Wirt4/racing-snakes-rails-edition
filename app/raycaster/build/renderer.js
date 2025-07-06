@@ -70,13 +70,29 @@ class Renderer {
         }
     }
     ellipse(x, y, stroke) {
+        /**
+         * Precondition: the context is a valid CanvasRenderingContext2D
+         * Postcondition: the context draws an ellipse at the specified coordinates with the specified stroke weight, the ellipse defaults
+         * to a circle of radius 1
+         */
+        this.context.lineWidth = stroke;
+        this.context.ellipse(x, y, 1, 1, 0, 0, 0);
         throw new Error("ellipse is not implemented");
     }
     noStroke() {
-        throw new Error("noStroke is not implemented");
+        /**
+         * Precondition: the context is a valid CanvasRenderingContext2D
+         * Postcondition: the context is set to not stroke shapes
+         */
+        this.context.strokeStyle = "transparent";
     }
     stroke(color) {
-        throw new Error("stroke is not implemented");
+        /**
+         * Precondition: the color is a valid Color object
+         * Postcondition: the context is set to stroke with the specified color
+         */
+        //TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
+        this.context.strokeStyle = color.toString();
     }
     assertIsPositiveInteger(value) {
         if (!Number.isInteger(value) || value <= 0) {
