@@ -32,6 +32,8 @@ class GameMap {
 	update(): void {
 		// Update game state, e.g., player position, wall states, etc.
 		// This method can be expanded based on game logic
+		// For now, it does nothing except demonstrate the 3D-ness
+		this.player.angle += 0.01;
 	}
 
 	private getRayAngle(index: number): number {
