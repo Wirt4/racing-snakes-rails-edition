@@ -20,6 +20,27 @@ class Renderer {
         }
         this.context = context;
     }
+    scale(scale) {
+        /**
+         * Precondition: * - The context is a valid CanvasRenderingContext2D.
+         * Postcondition: * - The context is scaled by the specified factor.
+         * **/
+        this.context.scale(scale, scale);
+    }
+    save() {
+        /**
+         * Precondition: the context behaves as previously set
+         * postcondition: the current state of the context is saved
+         **/
+        this.context.save();
+    }
+    restore() {
+        /**
+         * Precondition: the context behaves as previously expected, including any overwrites since context.save()
+         * postcondition: the context is restored to the last saved state, disregarding any changes made since the last save
+         **/
+        this.context.restore();
+    }
     reset() {
         this.context.reset();
     }
@@ -48,12 +69,14 @@ class Renderer {
             this.context.fillStyle = this.HSLToHex({ h: 120, s: 100, l: brightness });
         }
     }
-    ellipse(x, y, stroke) { }
+    ellipse(x, y, stroke) {
+        throw new Error("ellipse is not implemented");
+    }
     noStroke() {
-        //this is a stub and a throwaway, shapes will not natively have strokes
+        throw new Error("noStroke is not implemented");
     }
     stroke(color) {
-        //stub
+        throw new Error("stroke is not implemented");
     }
     assertIsPositiveInteger(value) {
         if (!Number.isInteger(value) || value <= 0) {

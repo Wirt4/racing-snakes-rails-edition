@@ -2,6 +2,14 @@ import { Color } from "./color";
 interface RendererInterface {
 	fillColor(color: string, brightness: number): void;
 	rect(x: number, y: number, width: number, height: number): void;
+	save(): void;
+	scale(scale: number): void;
+	stroke(color: Color): void;
+	restore(): void;
+	strokeWeight(weight: number): void;
+	line(x1: number, y1: number, x2: number, y2: number): void;
+	ellipse(x: number, y: number, stroke: number): void;
+	noStroke(): void;
 }
 
 class Renderer implements RendererInterface {
@@ -27,6 +35,30 @@ class Renderer implements RendererInterface {
 		}
 
 		this.context = context;
+	}
+
+	public scale(scale: number): void {
+		/** 
+		 * Precondition: * - The context is a valid CanvasRenderingContext2D.
+		 * Postcondition: * - The context is scaled by the specified factor.
+		 * **/
+		this.context.scale(scale, scale);
+	}
+
+	public save(): void {
+		/**
+		 * Precondition: the context behaves as previously set
+		 * postcondition: the current state of the context is saved
+		 **/
+		this.context.save();
+	}
+
+	public restore(): void {
+		/**
+		 * Precondition: the context behaves as previously expected, including any overwrites since context.save()
+		 * postcondition: the context is restored to the last saved state, disregarding any changes made since the last save
+		 **/
+		this.context.restore();
 	}
 
 	public reset(): void {
@@ -63,14 +95,16 @@ class Renderer implements RendererInterface {
 		}
 	}
 
-	public ellipse(x: number, y: number, stroke: number): void { }
+	public ellipse(x: number, y: number, stroke: number): void {
+		throw new Error("ellipse is not implemented");
+	}
 
 	public noStroke(): void {
-		//this is a stub and a throwaway, shapes will not natively have strokes
+		throw new Error("noStroke is not implemented");
 	}
 
 	public stroke(color: Color): void {
-		//stub
+		throw new Error("stroke is not implemented");
 	}
 
 	private assertIsPositiveInteger(value: number): void {
@@ -96,22 +130,6 @@ class Renderer implements RendererInterface {
 		return `#${f(0)}${f(8)}${f(4)}`;
 	}
 
-	// private HSLToHex(hsl: { h: number; s: number; l: number }): string {
-	// 	const { h, s, l } = hsl;
-	//
-	// 	const hDecimal = l / 100;
-	// 	const a = (s * Math.min(hDecimal, 1 - hDecimal)) / 100;
-	// 	const f = (n: number) => {
-	// 		const k = (n + h / 30) % 12;
-	// 		const color = hDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-	//
-	// 		// Convert to Hex and prefix with "0" if required
-	// 		return Math.round(255 * color)
-	// 			.toString(16)
-	// 			.padStart(2, "0");
-	// 	};
-	// 	return `#${f(0)}${f(8)}${f(4)}`;
-	// }
 
 }
 

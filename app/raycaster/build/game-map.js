@@ -110,5 +110,29 @@ class GameMap {
     renderVerticalSlice(renderer, fieldOfVisionXCoord, sliceHeight) {
         renderer.rect(fieldOfVisionXCoord, settings_1.Settings.CANVAS_HEIGHT / 2 - sliceHeight / 2, 1, sliceHeight);
     }
+    draw2DMap(renderer, angle) {
+        // This method can be used to draw a 2D map of the game world
+        renderer.save();
+        renderer.scale(10);
+        renderer.stroke(color_1.Color.WHITE);
+        for (const wall of this.walls) {
+            wall.draw2D(renderer);
+        }
+        this.player.draw2D(renderer);
+        //for debugging
+        this.drawRays(renderer);
+        renderer.restore();
+    }
+    drawRays(renderer) {
+        renderer.stroke(color_1.Color.GREEN);
+        renderer.strokeWeight(0.05);
+        const resolution = 20;
+        for (let i = 0; i < settings_1.Settings.CANVAS_WIDTH; i += resolution) {
+            const rayAngle = this.getRayAngle(i);
+            const { distance } = this.castRay(rayAngle);
+            const hit = this.player.position.nextLocation(rayAngle, distance);
+            renderer.line(this.player.position.x, this.player.position.y, hit.x, hit.y);
+        }
+    }
 }
 exports.GameMap = GameMap;

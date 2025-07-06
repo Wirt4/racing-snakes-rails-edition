@@ -1,5 +1,6 @@
 import { Point } from './point';
-import { Renderer } from './renderer';
+import { RendererInterface } from './renderer';
+import { Color } from './color';
 class Player {
 	position: Point;
 	angle: number; //angle in radians
@@ -9,8 +10,8 @@ class Player {
 		this.angle = angle;
 	}
 
-	draw2D(renderer: Renderer) {
-		renderer.fillColor('red');
+	draw2D(renderer: RendererInterface) {
+		renderer.fillColor(Color.RED, 100);
 		renderer.noStroke();
 		renderer.ellipse(this.position.x, this.position.y, 0.2);
 	}

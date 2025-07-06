@@ -133,6 +133,32 @@ class GameMap {
 
 	}
 
-}
+	private draw2DMap(renderer: RendererInterface, angle: number): void {
+		// This method can be used to draw a 2D map of the game world
+		renderer.save();
+		renderer.scale(10);
+		renderer.stroke(Color.WHITE);
+		for (const wall of this.walls) {
+			wall.draw2D(renderer);
+		}
+		this.player.draw2D(renderer);
+		//for debugging
+		this.drawRays(renderer);
 
+		renderer.restore();
+
+	}
+
+	private drawRays(renderer: RendererInterface): void {
+		renderer.stroke(Color.GREEN);
+		renderer.strokeWeight(0.05);
+		const resolution = 20
+		for (let i = 0; i < Settings.CANVAS_WIDTH; i += resolution) {
+			const rayAngle = this.getRayAngle(i);
+			const { distance } = this.castRay(rayAngle);
+			const hit = this.player.position.nextLocation(rayAngle, distance);
+			renderer.line(this.player.position.x, this.player.position.y, hit.x, hit.y);
+		}
+	}
+}
 export { GameMap };
