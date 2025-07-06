@@ -33,6 +33,11 @@ class Renderer {
     line(x1, y1, x2, y2) {
         //possible future implementation
     }
+    rect(x, y, width, height) {
+        this.assertIsPositiveInteger(width);
+        this.assertIsPositiveInteger(height);
+        this.context.fillRect(x, y, width, height);
+    }
     fillColor(color) {
         //stub, need a cleaner interface
     }

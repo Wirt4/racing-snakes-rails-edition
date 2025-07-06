@@ -1,5 +1,10 @@
 import { Color } from "./color";
-class Renderer {
+interface RendererInterface {
+	fillColor(color: string, brightness: number): void;
+	rect(x: number, y: number, width: number, height: number): void;
+}
+
+class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
 	constructor(targetId: string, width: number, height: number) {
 		this.assertIsPositiveInteger(width);
@@ -41,6 +46,12 @@ class Renderer {
 		//possible future implementation
 	}
 
+	public rect(x: number, y: number, width: number, height: number): void {
+		this.assertIsPositiveInteger(width);
+		this.assertIsPositiveInteger(height);
+		this.context.fillRect(x, y, width, height);
+	}
+
 	public fillColor(color: string): void {
 		//stub, need a cleaner interface
 	}
@@ -63,4 +74,4 @@ class Renderer {
 
 }
 
-export { Renderer }
+export { Renderer, RendererInterface };

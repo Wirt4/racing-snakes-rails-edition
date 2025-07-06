@@ -17,11 +17,6 @@ const game_map_1 = require("./game-map");
 const player_1 = require("./player");
 const wall_1 = require("./wall");
 const color_1 = require("./color");
-// function writeText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
-// 	ctx.fillStyle = "#FFFFFF"; //white
-// 	ctx.font = "16px Arial";
-// 	ctx.fillText(text, x, y);
-// }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const topWall = new wall_1.Wall(1, 1, 58, 1, color_1.Color.GREEN);

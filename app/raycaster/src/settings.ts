@@ -1,11 +1,12 @@
 
 export enum Settings {
 	FRAMES_PER_SECOND = 60,
-	DEGREES_OF_VISON = 90,
+	DEGREES_OF_VISION = 90,
 	MAX_DISTANCE = 1000,
 	MAX_PERCENT_BRIGHTNESS = 100,
 	MIN_PERCENT_BRIGHTNESS = 8,
 	FADE_DISTANCE = 15,
 	CANVAS_WIDTH = 640,
 	CANVAS_HEIGHT = 400,
+	RESOLUTION = 640, //I have an intuition that the lateral resolution and canvas width should be independent,
 }

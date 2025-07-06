@@ -6,4 +6,5 @@ var Color;
     Color["RED"] = "red";
     Color["GREEN"] = "green";
     Color["GRAY"] = "gray";
+    Color["NONE"] = "none";
 })(Color || (exports.Color = Color = {}));

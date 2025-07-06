@@ -7,11 +7,6 @@ import { Player } from './player';
 import { Wall } from './wall';
 import { Color } from './color';
 
-// function writeText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
-// 	ctx.fillStyle = "#FFFFFF"; //white
-// 	ctx.font = "16px Arial";
-// 	ctx.fillText(text, x, y);
-// }
 
 async function main(): Promise<void> {
 	const topWall = new Wall(1, 1, 58, 1, Color.GREEN);
