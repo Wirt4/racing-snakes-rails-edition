@@ -16,7 +16,6 @@ class GameMap {
 
 	draw(renderer: RendererInterface): void {
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
-			// getting the ray angle is  a private method to this class
 			const angle = this.getRayAngle(i);
 			const { distance, color } = this.castRay(angle);
 			const correctedDistance = this.removeFishEye(distance, angle, this.player.angle)
