@@ -39,3 +39,4 @@
 
 # Typescript stuff
 /app/raycaster/node_modules/*
+/app/raycaster/build/*
