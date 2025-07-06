@@ -47,13 +47,15 @@ class Renderer implements RendererInterface {
 	}
 
 	public rect(x: number, y: number, width: number, height: number): void {
-		this.assertIsPositiveInteger(width);
-		this.assertIsPositiveInteger(height);
 		this.context.fillRect(x, y, width, height);
 	}
 
 	public fillColor(color: string): void {
-		//stub, need a cleaner interface
+		if (color == 'red') {
+			this.context.fillStyle = '#FF0000'; // red
+		} else {
+			this.context.fillStyle = "#AAFF00"; //green
+		}
 	}
 
 	public ellipse(x: number, y: number, stroke: number): void { }

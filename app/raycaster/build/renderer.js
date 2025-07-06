@@ -34,12 +34,15 @@ class Renderer {
         //possible future implementation
     }
     rect(x, y, width, height) {
-        this.assertIsPositiveInteger(width);
-        this.assertIsPositiveInteger(height);
         this.context.fillRect(x, y, width, height);
     }
     fillColor(color) {
-        //stub, need a cleaner interface
+        if (color == 'red') {
+            this.context.fillStyle = '#FF0000'; // red
+        }
+        else {
+            this.context.fillStyle = "#AAFF00"; //green
+        }
     }
     ellipse(x, y, stroke) { }
     noStroke() {

@@ -26,7 +26,6 @@ async function main(): Promise<void> {
 
 	const gameMap = new GameMap(player, walls);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-
 	while (true) {
 		renderer.reset();
 		gameMap.draw(renderer);
