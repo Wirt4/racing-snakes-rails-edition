@@ -12,8 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // test for game loop
 const sleep_1 = require("./sleep");
 const settings_1 = require("./settings");
-const renderer_1 = require("./renderer"); // Uncomment if using Renderer class
+const renderer_1 = require("./renderer");
 const game_map_1 = require("./game-map");
+const player_1 = require("./player");
+const wall_1 = require("./wall");
+const color_1 = require("./color");
 // function writeText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
 // 	ctx.fillStyle = "#FFFFFF"; //white
 // 	ctx.font = "16px Arial";
@@ -21,8 +24,21 @@ const game_map_1 = require("./game-map");
 // }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        const topWall = new wall_1.Wall(1, 1, 58, 1, color_1.Color.GREEN);
+        const rightWall = new wall_1.Wall(58, 1, 58, 58, color_1.Color.GREEN);
+        const bottomWall = new wall_1.Wall(58, 58, 1, 58, color_1.Color.GREEN);
+        const leftWall = new wall_1.Wall(1, 58, 1, 1, color_1.Color.GREEN);
+        const walls = [
+            topWall,
+            new wall_1.Wall(40, 30, 5, 10, color_1.Color.RED),
+            new wall_1.Wall(5, 10, 70, 30, color_1.Color.RED),
+            rightWall,
+            bottomWall,
+            leftWall,
+        ];
+        const player = new player_1.Player(4.5, 4.5, 0);
+        const gameMap = new game_map_1.GameMap(player, walls);
         const renderer = new renderer_1.Renderer("app", settings_1.Settings.CANVAS_WIDTH, settings_1.Settings.CANVAS_HEIGHT);
-        const gameMap = new game_map_1.GameMap();
         while (true) {
             renderer.reset();
             gameMap.draw(renderer);

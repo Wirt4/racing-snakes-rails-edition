@@ -1,3 +1,4 @@
+import { Color } from "./color";
 class Renderer {
 	private context: CanvasRenderingContext2D
 	constructor(targetId: string, width: number, height: number) {
@@ -32,7 +33,27 @@ class Renderer {
 		this.context.fillRect(130, 190, 40, 60);
 	}
 
+	public strokeWeight(weight: number): void {
+		//another throwaway, shapes will not natively have strokes
+	}
 
+	public line(x1: number, y1: number, x2: number, y2: number): void {
+		//possible future implementation
+	}
+
+	public fillColor(color: string): void {
+		//stub, need a cleaner interface
+	}
+
+	public ellipse(x: number, y: number, stroke: number): void { }
+
+	public noStroke(): void {
+		//this is a stub and a throwaway, shapes will not natively have strokes
+	}
+
+	public stroke(color: Color): void {
+		//stub
+	}
 
 	private assertIsPositiveInteger(value: number): void {
 		if (!Number.isInteger(value) || value <= 0) {

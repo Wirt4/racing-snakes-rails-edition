@@ -9,6 +9,6 @@ var Settings;
     Settings[Settings["MAX_PERCENT_BRIGHTNESS"] = 100] = "MAX_PERCENT_BRIGHTNESS";
     Settings[Settings["MIN_PERCENT_BRIGHTNESS"] = 8] = "MIN_PERCENT_BRIGHTNESS";
     Settings[Settings["FADE_DISTANCE"] = 15] = "FADE_DISTANCE";
-    Settings[Settings["CANVAS_WIDTH"] = 800] = "CANVAS_WIDTH";
-    Settings[Settings["CANVAS_HEIGHT"] = 600] = "CANVAS_HEIGHT";
+    Settings[Settings["CANVAS_WIDTH"] = 640] = "CANVAS_WIDTH";
+    Settings[Settings["CANVAS_HEIGHT"] = 400] = "CANVAS_HEIGHT";
 })(Settings || (exports.Settings = Settings = {}));

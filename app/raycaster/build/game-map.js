@@ -2,13 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameMap = void 0;
 class GameMap {
-    // for all the coordinates of walls and trails and stuff
-    // player: Player
-    // walls: Wall[]
-    // constructor(player: Player, walls: Wall[]) {
-    // 	this.player = player;
-    // 	this.walls = walls;
-    // }
+    constructor(player, walls) {
+        this.player = player;
+        this.walls = walls;
+    }
     draw(renderer) {
         renderer.draw();
     }

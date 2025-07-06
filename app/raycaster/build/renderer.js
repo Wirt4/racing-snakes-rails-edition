@@ -27,6 +27,22 @@ class Renderer {
         this.context.fillStyle = "#AAFF00"; // a nice green
         this.context.fillRect(130, 190, 40, 60);
     }
+    strokeWeight(weight) {
+        //another throwaway, shapes will not natively have strokes
+    }
+    line(x1, y1, x2, y2) {
+        //possible future implementation
+    }
+    fillColor(color) {
+        //stub, need a cleaner interface
+    }
+    ellipse(x, y, stroke) { }
+    noStroke() {
+        //this is a stub and a throwaway, shapes will not natively have strokes
+    }
+    stroke(color) {
+        //stub
+    }
     assertIsPositiveInteger(value) {
         if (!Number.isInteger(value) || value <= 0) {
             throw new Error("Value must be a positive integer");
