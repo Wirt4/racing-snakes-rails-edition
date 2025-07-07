@@ -24,5 +24,5 @@ end
 
 desc 'Run Rails server locally'
 task :localhost do
-  sh 'bundle exec rails server'
+  sh 'bin/dev'
 end

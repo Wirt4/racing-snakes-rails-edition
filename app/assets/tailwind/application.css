@@ -11,7 +11,7 @@
     font-family: 'Press Start 2P', monospace;
   }
 }
-
+/*TODO: make scanlines verical to evoke how the rendering is actually done*/
 @layer utilities {
   .scanlines {
     position: relative;

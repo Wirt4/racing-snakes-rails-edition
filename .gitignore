@@ -38,4 +38,5 @@
 !/app/assets/builds/.keep
 
 # Typescript stuff
-/app/frontend-render/node_modules/*
+/app/raycaster/node_modules/*
+/app/raycaster/build/*
