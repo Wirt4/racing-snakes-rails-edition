@@ -89,7 +89,7 @@ class GameMap {
 		result.isValid = true;
 		result.x = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
 		result.y = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
-		result.distance = this.dist(rayOrigin.x, rayOrigin.y, result.x, result.y);
+		result.distance = this.dist(rayOrigin, result);
 		return result;
 	}
 
@@ -120,8 +120,8 @@ class GameMap {
 		return wall_intersection >= 0 && wall_intersection <= 1 && ray_intersection >= 0;
 	}
 
-	private dist(x1: number, y1: number, x2: number, y2: number): number {
-		return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+	private dist(coordinatesA: Coordinates, coordinatesB: Coordinates): number {
+		return Math.sqrt((coordinatesB.x - coordinatesA.x) ** 2 + (coordinatesB.y - coordinatesA.y) ** 2);
 	}
 	// the viewer's angle is an unnecessary parameter
 	private removeFishEye(distance: number, angle: number, viewerAngle: number): number {
