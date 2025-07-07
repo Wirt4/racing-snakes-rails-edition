@@ -5,11 +5,7 @@ import { Settings } from './settings';
 import { Angle } from './geometry/angle';
 import { ColorName } from './color/color_name';
 import { Point } from './point';
-
-interface Coordinates {
-	x: number;
-	y: number;
-}
+import { Coordinates } from './geometry/coordinates';
 
 class GameMap {
 	player: Player
