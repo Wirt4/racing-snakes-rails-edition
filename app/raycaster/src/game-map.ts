@@ -2,7 +2,7 @@ import { Player } from './player';
 import { Wall } from './wall';
 import { RendererInterface } from './renderer';
 import { Settings } from './settings';
-import { Angle } from './angle';
+import { Angle } from './geometry/angle';
 import { Color } from './color';
 import { Point } from './point';
 

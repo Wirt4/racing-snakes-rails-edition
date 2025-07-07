@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@babel/preset-typescript": "^7.27.1",
     "@eslint/js": "^9.30.1",
     "esbuild": "^0.25.5",
     "eslint": "^9.30.1",
@@ -10,8 +11,7 @@
   "scripts": {
     "build": "esbuild src/main.ts --bundle --outfile=../assets/builds/raycaster.js --format=esm --target=es2020"
   },
-    "overrides": {
-  "glob": "^10.3.10"
+  "overrides": {
+    "glob": "^10.3.10"
   }
-
 }
