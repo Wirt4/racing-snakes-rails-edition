@@ -2,8 +2,9 @@ import { describe, test, expect } from '@jest/globals';
 import { HSL } from './hsl';
 describe('HSL object tests', () => {
 	test('object creation', () => {
-		const hsl = new HSL(240.5);
+		const hsl = new HSL(240.5, 100);
 		expect(hsl.hue).toEqual(240.5);
+		expect(hsl.saturation).toEqual(100);
 	})
 	test('enforce validity of hue', () => {
 		expect(() => new HSL(-10)).toThrow("Hue must be between 0 and 360");
