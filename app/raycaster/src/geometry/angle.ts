@@ -2,10 +2,8 @@ export class Angle {
 	private _radians: number;
 
 	constructor(radians: number) {
-		while (radians < 0) {
-			radians += 2 * Math.PI;
-		}
-		this._radians = radians;
+		const fullSweep = 2 * Math.PI;
+		this._radians = ((radians % fullSweep) + fullSweep) % fullSweep;
 	}
 
 	get radians(): number {
