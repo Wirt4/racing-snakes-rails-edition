@@ -20,8 +20,24 @@ class HSL {
 	}
 
 	toHex(): string {
-		return "#FF000";
+		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
+		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
+		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
+		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
+		return `#${redHex}${greenHex}${blueHex}`;
 	}
+
+	private colorChannelToHex(channel: number, adjustmentFactor: number): string {
+
+		const wheelColor = (channel + this.hue / 30) % 12;
+		const color = this.lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);
+
+		return Math.round(255 * color)
+			.toString(16)
+			.toUpperCase()
+			.padStart(2, "0");
+	}
+
 
 	private assertSatOrLight(value: number, name: string): void {
 		this.assertInRange(value, 0, 1, name);
