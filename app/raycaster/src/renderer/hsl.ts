@@ -19,6 +19,10 @@ class HSL {
 		this.lightness = lightness;
 	}
 
+	toHex(): string {
+		return "#FF000";
+	}
+
 	private assertSatOrLight(value: number, name: string): void {
 		this.assertInRange(value, 0, 1, name);
 	}
