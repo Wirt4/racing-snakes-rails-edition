@@ -5,8 +5,8 @@ class Player {
 	position: Point;
 	angle: number; //angle in radians
 	//angle is in radians
-	constructor(x: number, y: number, angle: number) {
-		this.position = new Point(x, y);
+	constructor(position: { x: number, y: number }, angle: number = 0) {
+		this.position = new Point(position.x, position.y);
 		this.angle = angle;
 	}
 

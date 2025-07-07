@@ -22,7 +22,7 @@ async function main(): Promise<void> {
 		leftWall,
 	];
 
-	const player = new Player(4.5, 4.5, 0)
+	const player = new Player({ x: 4.5, y: 4.5 })
 
 	const gameMap = new GameMap(player, walls);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
