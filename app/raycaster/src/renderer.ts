@@ -2,6 +2,7 @@ import { ColorName } from "./color/color_name";
 import { hslFactory } from "./renderer/hsl_factory";
 import { HSL } from "./renderer/hsl";
 import { Coordinates } from "./geometry/coordinates";
+import { assertIsPositiveInteger } from "./utils";
 interface RendererInterface {
 	fillColor(color: ColorName, brightness: number): void;
 	rect(origin: Coordinates, width: number, height: number): void;
@@ -18,8 +19,8 @@ interface RendererInterface {
 class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
 	constructor(targetId: string, width: number, height: number) {
-		this.assertIsPositiveInteger(width);
-		this.assertIsPositiveInteger(height);
+		assertIsPositiveInteger(width);
+		assertIsPositiveInteger(height);
 
 		const app = document.getElementById(targetId);
 		if (!app) {
@@ -146,12 +147,6 @@ class Renderer implements RendererInterface {
 		 */
 		//TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
 		this.context.strokeStyle = hslFactory(color).toHex();
-	}
-
-	private assertIsPositiveInteger(value: number): void {
-		if (!Number.isInteger(value) || value <= 0) {
-			throw new Error("Value must be a positive integer");
-		}
 	}
 
 }
