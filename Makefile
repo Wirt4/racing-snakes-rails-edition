@@ -2,11 +2,12 @@
 
 .PHONY: test lint ci
 
-test:
+ruby-test:
 	bundle exec rspec --require ./spec/support/quickfix_formatter.rb --format QuickfixFormatter
 
-
-lint::
+ts-test:
+	cd app/raycaster && npx jest
+lint:
 	bundle exec rubocop
 
 format:
