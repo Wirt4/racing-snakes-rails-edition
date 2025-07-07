@@ -103,16 +103,16 @@ class GameMap {
 	}
 
 	private wallIntersection(wallStart: Point, rayOrigin: Coordinates, rayPoint: Point, determinant: number): number {
-		const foo = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
-		const bar = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
-		const diff = foo - bar
+		const numerator1 = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
+		const numerator2 = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
+		const diff = numerator1 - numerator2;
 		return diff / determinant;
 	}
 
 	private rayIntersection(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, determinant: number): number {
-		const foo = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
-		const bar = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
-		const diff = -(foo - bar);
+		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
+		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
+		const diff = -(numerator1 - numerator2);
 		return diff / determinant;
 	}
 
