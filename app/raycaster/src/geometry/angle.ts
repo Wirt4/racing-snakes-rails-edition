@@ -1,5 +1,6 @@
 export class Angle {
 	private _radians: number;
+	private static _ratio: number = 180 / Math.PI;
 
 	constructor(radians: number) {
 		const fullSweep = 2 * Math.PI;
@@ -11,11 +12,12 @@ export class Angle {
 	}
 
 	get degrees(): number {
-		return this._radians * (180 / Math.PI);
+		return this._radians * Angle._ratio;
 	}
 
 	static fromDegrees(degrees: number): Angle {
-		return new Angle(degrees * (Math.PI / 180));
+		return new Angle(degrees / Angle._ratio);
+		//return new Angle(degrees * (Math.PI / 180));
 	}
 
 	static fromRadians(radians: number): Angle {

@@ -20,6 +20,11 @@ describe('Angle', () => {
 		const expected = 90;
 		const input = Math.PI / 2;
 		expect(new Angle(input).degrees).toEqual(expected);
-
 	})
+	test('can instantiate from Degrees', () => {
+		const expected = Math.PI / 2;
+		const input = 90;
+		expect(Angle.fromDegrees(input).radians).toEqual(expected);
+	})
+
 })
