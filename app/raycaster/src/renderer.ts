@@ -1,10 +1,12 @@
-import { Color } from "./color";
+import { ColorName } from "./color/color_name";
+import { hslFactory } from "./renderer/hsl_factory";
+import { HSL } from "./renderer/hsl";
 interface RendererInterface {
-	fillColor(color: string, brightness: number): void;
+	fillColor(color: ColorName, brightness: number): void;
 	rect(x: number, y: number, width: number, height: number): void;
 	save(): void;
 	scale(scale: number): void;
-	stroke(color: Color): void;
+	stroke(color: ColorName): void;
 	restore(): void;
 	strokeWeight(weight: number): void;
 	line(x1: number, y1: number, x2: number, y2: number): void;
@@ -89,17 +91,21 @@ class Renderer implements RendererInterface {
 		this.context.fillRect(x, y, width, height);
 	}
 
-	public fillColor(color: string, brightness: number = 100): void {
-		const percent = brightness / 200;
-		if (percent < 0 || percent > 1) {
+	public fillColor(color: ColorName, brightness: number = 100): void {
+		if (brightness < 0 || brightness > 100) {
 			throw new Error("Brightness must be between 0 and 100");
 		}
 
-		if (color == 'red') {
-			this.context.fillStyle = this.HSLToHex({ h: 1, s: 100, l: brightness })
+		const brightnessPercent = brightness / 100;
+		let hsl: HSL;
+
+		if (color == ColorName.RED) {
+			hsl = hslFactory(ColorName.RED);
 		} else {
-			this.context.fillStyle = this.HSLToHex({ h: 120, s: 100, l: brightness })
+			hsl = hslFactory(ColorName.PURPLE);
 		}
+		hsl.lightness *= brightnessPercent;
+		this.context.fillStyle = hsl.toHex();
 	}
 
 	public ellipse(x: number, y: number, stroke: number): void {
@@ -120,13 +126,13 @@ class Renderer implements RendererInterface {
 		this.context.strokeStyle = "transparent";
 	}
 
-	public stroke(color: Color): void {
+	public stroke(color: ColorName): void {
 		/**
 		 * Precondition: the color is a valid Color object
 		 * Postcondition: the context is set to stroke with the specified color
 		 */
 		//TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
-		this.context.strokeStyle = color.toString();
+		this.context.strokeStyle = hslFactory(color).toHex();
 	}
 
 	private assertIsPositiveInteger(value: number): void {
@@ -134,24 +140,6 @@ class Renderer implements RendererInterface {
 			throw new Error("Value must be a positive integer");
 		}
 	}
-
-	private HSLToHex(hsl: { h: number; s: number; l: number }): string {
-		const { h, s, l } = hsl;
-
-		const lDecimal = l / 100;
-		const a = (s * Math.min(lDecimal, 1 - lDecimal)) / 100;
-		const f = (n: number) => {
-			const k = (n + h / 30) % 12;
-			const color = lDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-
-			return Math.round(255 * color)
-				.toString(16)
-				.padStart(2, "0");
-		};
-
-		return `#${f(0)}${f(8)}${f(4)}`;
-	}
-
 
 }
 

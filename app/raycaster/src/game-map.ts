@@ -3,7 +3,7 @@ import { Wall } from './wall';
 import { RendererInterface } from './renderer';
 import { Settings } from './settings';
 import { Angle } from './geometry/angle';
-import { Color } from './color';
+import { ColorName } from './color/color_name';
 import { Point } from './point';
 
 class GameMap {
@@ -15,6 +15,8 @@ class GameMap {
 	}
 
 	draw(renderer: RendererInterface): void {
+		renderer.fillColor(ColorName.BLACK, 100);
+		renderer.rect(0, 0, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
 			const angle = this.getRayAngle(i);
 			const { distance, color } = this.castRay(angle);
@@ -39,12 +41,12 @@ class GameMap {
 		return this.player.angle - Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians / 2 + (index / Settings.RESOLUTION) * Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
 	}
 
-	private castRay(angle: number): { distance: number, color: Color } {
+	private castRay(angle: number): { distance: number, color: ColorName } {
 		//this really isn't descriptive the dx/dy bit that's going on
 		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
 		// This method will cast a ray in the direction of the angle
 		// and return the distance to the nearest wall and its color
-		let color = Color.NONE;
+		let color = ColorName.NONE;
 		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
 		//consider a foreach loop below
 		for (const wall of this.walls) {
@@ -136,7 +138,7 @@ class GameMap {
 		// This method can be used to draw a 2D map of the game world
 		renderer.save();
 		renderer.scale(10);
-		renderer.stroke(Color.WHITE);
+		renderer.stroke(ColorName.WHITE);
 		for (const wall of this.walls) {
 			wall.draw2D(renderer);
 		}
@@ -149,7 +151,7 @@ class GameMap {
 	}
 
 	private drawRays(renderer: RendererInterface): void {
-		renderer.stroke(Color.GREEN);
+		renderer.stroke(ColorName.GREEN);
 		renderer.strokeWeight(0.05);
 		const resolution = 20
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i += resolution) {

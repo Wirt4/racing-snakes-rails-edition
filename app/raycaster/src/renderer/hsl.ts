@@ -20,6 +20,12 @@ class HSL {
 	}
 
 	toHex(): string {
+		/**
+		 * Preconditions: 
+		 * The HSL object has valid hue, saturation, and lightness values.
+		 * Postconditions:
+		 * Returns a string representing the color in hexadecimal format.
+		 */
 		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
 		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
 		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);

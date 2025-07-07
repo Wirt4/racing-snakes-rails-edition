@@ -30,5 +30,16 @@ describe('HSL object tests', () => {
 		const hex = hsl.toHex();
 		expect(hex).toEqual('#FF0000');
 	})
+	test('confirm objects lightness is mutable', () => {
+		const hsl = new HSL(120, 1, 0.5); //Green
+		const hex = hsl.toHex();
+		expect(hex).toEqual('#00FF00');
+		hsl.lightness = 0.75; //Change lightness
+		const newHex = hsl.toHex();
+		expect(newHex).toEqual('#80FF80'); //Expect a lighter green
+		hsl.lightness = 0.25; //Change lightness
+		const darkerHex = hsl.toHex();
+		expect(darkerHex).toEqual('#008000'); //Expect a darker green
+	})
 
 })

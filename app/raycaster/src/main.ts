@@ -5,18 +5,18 @@ import { Renderer } from './renderer';
 import { GameMap } from './game-map';
 import { Player } from './player';
 import { Wall } from './wall';
-import { Color } from './color';
+import { ColorName } from './color/color_name';
 
 
 async function main(): Promise<void> {
-	const topWall = new Wall(1, 1, 58, 1, Color.GREEN);
-	const rightWall = new Wall(58, 1, 58, 58, Color.GREEN);
-	const bottomWall = new Wall(58, 58, 1, 58, Color.GREEN);
-	const leftWall = new Wall(1, 58, 1, 1, Color.GREEN);
+	const topWall = new Wall(1, 1, 58, 1, ColorName.GREEN);
+	const rightWall = new Wall(58, 1, 58, 58, ColorName.GREEN);
+	const bottomWall = new Wall(58, 58, 1, 58, ColorName.GREEN);
+	const leftWall = new Wall(1, 58, 1, 1, ColorName.GREEN);
 	const walls = [
 		topWall,
-		new Wall(40, 30, 5, 10, Color.RED),
-		new Wall(5, 10, 70, 30, Color.RED),
+		new Wall(40, 30, 5, 10, ColorName.RED),
+		new Wall(5, 10, 70, 30, ColorName.RED),
 		rightWall,
 		bottomWall,
 		leftWall,
