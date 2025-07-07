@@ -9,18 +9,22 @@ class HSL {
 		 * saturation is a float representing the saturation as a percentage between 0 and 1 (inclusive).
 		 * lightness is a float representing the lightness as a percentage between 0 and 1 (inclusive).
 		 * **/
-		if (hue < 0 || hue > 360) {
-			throw new Error("Hue must be between 0 and 360");
-		}
+		this.assertInRange(hue, 0, 360, "Hue");
 		this.hue = hue;
-		if (saturation < 0 || saturation > 1) {
-			throw new Error("Saturation must be between 0 and 1");
-		}
+		this.assertSatOrLight(saturation, "Saturation");
 		this.saturation = saturation;
-		if (lightness < 0 || lightness > 1) {
-			throw new Error("Lightness must be between 0 and 1");
-		}
+		this.assertSatOrLight(lightness, "Lightness");
 		this.lightness = lightness;
+	}
+
+	private assertSatOrLight(value: number, name: string): void {
+		this.assertInRange(value, 0, 1, name);
+	}
+
+	private assertInRange(value: number, min: number, max: number, name: string): void {
+		if (value < min || value > max) {
+			throw new Error(`${name} must be between ${min} and ${max}`);
+		}
 	}
 }
 export { HSL };
