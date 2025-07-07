@@ -43,13 +43,9 @@ class GameMap {
 	}
 
 	private castRay(angle: number): { distance: number, color: ColorName } {
-		//this really isn't descriptive the dx/dy bit that's going on
 		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
-		// This method will cast a ray in the direction of the angle
-		// and return the distance to the nearest wall and its color
 		let color = ColorName.NONE;
 		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
-		//consider a foreach loop below
 		for (const wall of this.walls) {
 			const hit = this.rayIntersectsWall(this.player.position, rayDirection, wall);
 			if (hit.isValid && (!closest.isValid || hit.distance < closest.distance)) {
@@ -111,7 +107,6 @@ class GameMap {
 	}
 
 	private dist(x1: number, y1: number, x2: number, y2: number): number {
-		//hacky pythagorean distance formula
 		return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 	}
 	// the viewer's angle is an unnecessary parameter
@@ -121,7 +116,7 @@ class GameMap {
 
 	private calculateSliceHeight(distance: number, height: number): number {
 		if (distance <= 0) {
-			return 2 * height; // Avoid division by zero
+			return 2 * height;
 		}
 		return height / distance;
 	}
@@ -136,7 +131,6 @@ class GameMap {
 	}
 
 	private draw2DMap(renderer: RendererInterface, angle: number): void {
-		// This method can be used to draw a 2D map of the game world
 		renderer.save();
 		renderer.scale(10);
 		renderer.stroke(ColorName.WHITE);
@@ -144,7 +138,6 @@ class GameMap {
 			wall.draw2D(renderer);
 		}
 		this.player.draw2D(renderer);
-		//for debugging
 		this.drawRays(renderer);
 
 		renderer.restore();
