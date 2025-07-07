@@ -141,7 +141,6 @@ class GameMap {
 
 	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number): void {
 		renderer.rect(fieldOfVisionXCoord, Settings.CANVAS_HEIGHT / 2 - sliceHeight / 2, 1, sliceHeight);
-
 	}
 
 	private draw2DMap(renderer: RendererInterface, angle: number): void {
@@ -153,7 +152,6 @@ class GameMap {
 		}
 		this.player.draw2D(renderer);
 		this.drawRays(renderer);
-
 		renderer.restore();
 
 	}
