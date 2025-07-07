@@ -1,7 +1,8 @@
 class HSL {
 	hue: number;
 	saturation: number;
-	constructor(hue: number, saturation: number) {
+	lightness: number;
+	constructor(hue: number, saturation: number, lightness: number) {
 		/**
 		 * Preconditions: 
 		 * hue is a float representing the hue in degrees  between 0 and 360 (inclusive).
@@ -15,6 +16,7 @@ class HSL {
 			throw new Error("Saturation must be between 0 and 1");
 		}
 		this.saturation = saturation;
+		this.lightness = lightness;
 	}
 }
 export { HSL };
