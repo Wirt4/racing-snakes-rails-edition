@@ -7,6 +7,13 @@ import { ColorName } from './color/color_name';
 import { Point } from './point';
 import { Coordinates } from './geometry/coordinates';
 
+interface Intersection {
+	isValid: boolean;
+	x: number;
+	y: number;
+	distance: number;
+}
+
 class GameMap {
 	player: Player
 	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
@@ -63,21 +70,27 @@ class GameMap {
 
 	}
 
-	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: Wall): { isValid: boolean, x: number, y: number, distance: number } {
+	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: Wall): Intersection {
 		const { start: wallStart, end: wallEnd } = wall;
 		const rayPoint = new Point(rayOrigin.x + direction.x, rayOrigin.y + direction.y);
 		const determinant = this.calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
-		if (this.isParallel(determinant)) return { isValid: false, x: -1, y: -1, distance: Infinity }
+		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
+
+		if (this.isParallel(determinant)) {
+			return result;
+		}
+
 		const wall_intersection = this.wallIntersection(wallStart, rayOrigin, rayPoint, determinant);
-
 		const ray_intersection = this.rayIntersection(wallStart, wallEnd, rayOrigin, determinant);
+		if (!this.isInsideWall(wall_intersection, ray_intersection)) {
+			return result;
+		}
 
-		if (!this.isInsideWall(wall_intersection, ray_intersection)) return { isValid: false, x: -1, y: -1, distance: Infinity };
-
-		const intersectionX = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
-		const intersectionY = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
-		const distance = this.dist(rayOrigin.x, rayOrigin.y, intersectionX, intersectionY);
-		return { isValid: true, x: intersectionX, y: intersectionY, distance };
+		result.isValid = true;
+		result.x = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
+		result.y = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
+		result.distance = this.dist(rayOrigin.x, rayOrigin.y, result.x, result.y);
+		return result;
 	}
 
 	private calculateDeterminant(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, rayPoint: Point): number {
