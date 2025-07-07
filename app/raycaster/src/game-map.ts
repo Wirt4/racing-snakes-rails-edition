@@ -8,6 +8,7 @@ import { Point } from './point';
 
 class GameMap {
 	player: Player
+	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
 	walls: Wall[]
 	constructor(player: Player, walls: Wall[]) {
 		this.player = player;
@@ -26,7 +27,7 @@ class GameMap {
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight);
 		}
-		this.draw2DMap(renderer, Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians);
+		this.draw2DMap(renderer, this.fieldOfVision);
 	}
 
 	update(): void {
@@ -38,8 +39,7 @@ class GameMap {
 	}
 
 	private getRayAngle(index: number): number {
-		//this conversion is a little wonky, would like to precomput the radians before entering the loop
-		return this.player.angle - Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians / 2 + (index / Settings.RESOLUTION) * Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
+		return this.player.angle - this.fieldOfVision / 2 + (index / Settings.RESOLUTION) * this.fieldOfVision;
 	}
 
 	private castRay(angle: number): { distance: number, color: ColorName } {
