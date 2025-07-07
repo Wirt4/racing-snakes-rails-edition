@@ -15,7 +15,7 @@ class GameMap {
 	}
 
 	draw(renderer: RendererInterface): void {
-		renderer.fillColor(ColorName.BLACK, 100);
+		renderer.fillColor(ColorName.BLACK, .01);
 		renderer.rect(0, 0, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
 			const angle = this.getRayAngle(i);
