@@ -6,6 +6,11 @@ import { Angle } from './geometry/angle';
 import { ColorName } from './color/color_name';
 import { Point } from './point';
 
+interface Coordinates {
+	x: number;
+	y: number;
+}
+
 class GameMap {
 	player: Player
 	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
@@ -62,7 +67,7 @@ class GameMap {
 
 	}
 
-	private rayIntersectsWall(rayOrigin: { x: number, y: number }, direction: { x: number, y: number }, wall: Wall): { isValid: boolean, x: number, y: number, distance: number } {
+	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: Wall): { isValid: boolean, x: number, y: number, distance: number } {
 		const { start: wallStart, end: wallEnd } = wall;
 		const rayPoint = new Point(rayOrigin.x + direction.x, rayOrigin.y + direction.y);
 		const determinant = this.calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
@@ -79,7 +84,7 @@ class GameMap {
 		return { isValid: true, x: intersectionX, y: intersectionY, distance };
 	}
 
-	private calculateDeterminant(wallStart: Point, wallEnd: Point, rayOrigin: { x: number, y: number }, rayPoint: Point): number {
+	private calculateDeterminant(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, rayPoint: Point): number {
 		return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
 	}
 
@@ -88,14 +93,14 @@ class GameMap {
 		return Math.abs(determinant) < threshold;
 	}
 
-	private wallIntersection(wallStart: Point, rayOrigin: { x: number, y: number }, rayPoint: Point, determinant: number): number {
+	private wallIntersection(wallStart: Point, rayOrigin: Coordinates, rayPoint: Point, determinant: number): number {
 		const foo = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
 		const bar = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
 		const diff = foo - bar
 		return diff / determinant;
 	}
 
-	private rayIntersection(wallStart: Point, wallEnd: Point, rayOrigin: { x: number, y: number }, determinant: number): number {
+	private rayIntersection(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, determinant: number): number {
 		const foo = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
 		const bar = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
 		const diff = -(foo - bar);
