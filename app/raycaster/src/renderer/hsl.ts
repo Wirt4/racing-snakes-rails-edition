@@ -7,7 +7,8 @@ class HSL {
 		 * Preconditions: 
 		 * hue is a float representing the hue in degrees  between 0 and 360 (inclusive).
 		 * saturation is a float representing the saturation as a percentage between 0 and 1 (inclusive).
-			* **/
+		 * lightness is a float representing the lightness as a percentage between 0 and 1 (inclusive).
+		 * **/
 		if (hue < 0 || hue > 360) {
 			throw new Error("Hue must be between 0 and 360");
 		}
