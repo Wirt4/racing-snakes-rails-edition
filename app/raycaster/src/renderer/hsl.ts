@@ -17,6 +17,9 @@ class HSL {
 			throw new Error("Saturation must be between 0 and 1");
 		}
 		this.saturation = saturation;
+		if (lightness < 0 || lightness > 1) {
+			throw new Error("Lightness must be between 0 and 1");
+		}
 		this.lightness = lightness;
 	}
 }
