@@ -65,15 +65,19 @@ class Renderer implements RendererInterface {
 	}
 
 	public reset(): void {
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context is reset to its initial state, clearing any transformations or styles
+		 */
 		this.context.reset();
 	}
 
-	public draw(): void {
-		this.context.fillStyle = "#AAFF00"; // a nice green
-		this.context.fillRect(130, 190, 40, 60);
-	}
 
 	public strokeWeight(weight: number): void {
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context is set to stroke with the specified weight
+		 */
 		this.context.lineWidth = weight;
 	}
 
@@ -89,10 +93,18 @@ class Renderer implements RendererInterface {
 	}
 
 	public rect(origin: Coordinates, width: number, height: number): void {
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context draws a rectangle at the specified coordinates with the specified width and height
+		 */
 		this.context.fillRect(origin.x, origin.y, width, height);
 	}
 
 	public fillColor(color: ColorName, brightness: number = 100): void {
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D
+		 * Postcondition: the context is set to fill with the specified color and brightness - the exact specs are keyed to the mapping of the color name
+		 */
 		if (brightness < 0 || brightness > 100) {
 			throw new Error("Brightness must be between 0 and 100");
 		}
