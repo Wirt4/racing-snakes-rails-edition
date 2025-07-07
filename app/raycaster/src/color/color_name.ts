@@ -3,7 +3,6 @@ export enum ColorName {
 	BLUE,
 	RED,
 	GREEN,
-	BROWN,
 	BLACK,
 	PURPLE,
 	ORANGE,
