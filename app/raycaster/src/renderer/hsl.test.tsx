@@ -25,5 +25,10 @@ describe('HSL object tests', () => {
 		expect(() => new HSL(240, 1, 1)).not.toThrow();
 		expect(() => new HSL(240, 0, 0)).not.toThrow();
 	})
+	test('HSL to hex conversion', () => {
+		const hsl = new HSL(0, 1, 1); //Red
+		const hex = hsl.toHex();
+		expect(hex).toEqual('#FF000');
+	})
 
 })
