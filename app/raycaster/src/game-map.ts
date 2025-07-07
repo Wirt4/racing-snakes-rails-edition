@@ -29,7 +29,7 @@ class GameMap {
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
 			const angle = this.getRayAngle(i);
 			const { distance, color } = this.castRay(angle);
-			const correctedDistance = this.removeFishEye(distance, angle, this.player.angle)
+			const correctedDistance = this.removeFishEye(distance, angle)
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);
 			const brightness = this.calculateBrightness(correctedDistance);
 			renderer.fillColor(color, brightness);
@@ -123,9 +123,9 @@ class GameMap {
 	private dist(coordinatesA: Coordinates, coordinatesB: Coordinates): number {
 		return Math.sqrt((coordinatesB.x - coordinatesA.x) ** 2 + (coordinatesB.y - coordinatesA.y) ** 2);
 	}
-	// the viewer's angle is an unnecessary parameter
-	private removeFishEye(distance: number, angle: number, viewerAngle: number): number {
-		return distance * Math.cos(angle - viewerAngle);
+
+	private removeFishEye(distance: number, angle: number): number {
+		return distance * Math.cos(angle - this.player.angle);
 	}
 
 	private calculateSliceHeight(distance: number, height: number): number {
