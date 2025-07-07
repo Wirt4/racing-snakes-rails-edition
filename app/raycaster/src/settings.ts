@@ -8,5 +8,5 @@ export enum Settings {
 	FADE_DISTANCE = 15,
 	CANVAS_WIDTH = 640,
 	CANVAS_HEIGHT = 400,
-	RESOLUTION = 640, //I have an intuition that the lateral resolution and canvas width should be independent,
+	RESOLUTION = 640,
 }
