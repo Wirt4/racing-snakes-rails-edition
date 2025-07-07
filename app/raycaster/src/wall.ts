@@ -15,7 +15,7 @@ class Wall {
 	draw2D(renderer: RendererInterface): void {
 		renderer.stroke(this.color);
 		renderer.strokeWeight(0.1);
-		renderer.line(this.start.x, this.start.y, this.end.x, this.end.y);
+		renderer.line(this.start, this.end);
 	}
 }
 export { Wall };

@@ -1,16 +1,17 @@
 import { ColorName } from "./color/color_name";
 import { hslFactory } from "./renderer/hsl_factory";
 import { HSL } from "./renderer/hsl";
+import { Coordinates } from "./geometry/coordinates";
 interface RendererInterface {
 	fillColor(color: ColorName, brightness: number): void;
-	rect(x: number, y: number, width: number, height: number): void;
+	rect(origin: Coordinates, width: number, height: number): void;
 	save(): void;
 	scale(scale: number): void;
 	stroke(color: ColorName): void;
 	restore(): void;
 	strokeWeight(weight: number): void;
-	line(x1: number, y1: number, x2: number, y2: number): void;
-	ellipse(x: number, y: number, stroke: number): void;
+	line(start: Coordinates, end: Coordinates): void;
+	ellipse(origin: Coordinates, stroke: number): void;
 	noStroke(): void;
 }
 
@@ -76,19 +77,19 @@ class Renderer implements RendererInterface {
 		this.context.lineWidth = weight;
 	}
 
-	public line(x1: number, y1: number, x2: number, y2: number): void {
+	public line(start: Coordinates, end: Coordinates): void {
 		/**
 		 * Precondition: the context is a valid CanvasRenderingContext2D
 		 * Postcondition: the context draws a line from (x1, y1) to (x2, y2)
 		 */
 		this.context.beginPath();
-		this.context.moveTo(x1, y1);
-		this.context.lineTo(x2, y2);
+		this.context.moveTo(start.x, start.y);
+		this.context.lineTo(end.x, end.y);
 		this.context.stroke();
 	}
 
-	public rect(x: number, y: number, width: number, height: number): void {
-		this.context.fillRect(x, y, width, height);
+	public rect(origin: Coordinates, width: number, height: number): void {
+		this.context.fillRect(origin.x, origin.y, width, height);
 	}
 
 	public fillColor(color: ColorName, brightness: number = 100): void {
@@ -108,14 +109,14 @@ class Renderer implements RendererInterface {
 		this.context.fillStyle = hsl.toHex();
 	}
 
-	public ellipse(x: number, y: number, stroke: number): void {
+	public ellipse(origin: Coordinates, stroke: number): void {
 		/**
 		 * Precondition: the context is a valid CanvasRenderingContext2D
 		 * Postcondition: the context draws an ellipse at the specified coordinates with the specified stroke weight, the ellipse defaults 
 		 * to a circle of radius 1
 		 */
 		this.context.lineWidth = stroke;
-		this.context.ellipse(x, y, 1, 1, 0, 0, 0)
+		this.context.ellipse(origin.x, origin.y, 1, 1, 0, 0, 0)
 	}
 
 	public noStroke(): void {

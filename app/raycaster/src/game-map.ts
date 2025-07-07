@@ -25,7 +25,7 @@ class GameMap {
 
 	draw(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLACK, .01);
-		renderer.rect(0, 0, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
 			const angle = this.getRayAngle(i);
 			const { distance, color } = this.castRay(angle);
@@ -35,7 +35,7 @@ class GameMap {
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight);
 		}
-		this.draw2DMap(renderer, this.fieldOfVision);
+		this.draw2DMap(renderer);
 	}
 
 	update(): void {
@@ -140,10 +140,11 @@ class GameMap {
 	}
 
 	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number): void {
-		renderer.rect(fieldOfVisionXCoord, Settings.CANVAS_HEIGHT / 2 - sliceHeight / 2, 1, sliceHeight);
+		const origin = { x: fieldOfVisionXCoord, y: Settings.CANVAS_HEIGHT / 2 - sliceHeight / 2 };
+		renderer.rect(origin, 1, sliceHeight);
 	}
 
-	private draw2DMap(renderer: RendererInterface, angle: number): void {
+	private draw2DMap(renderer: RendererInterface): void {
 		renderer.save();
 		renderer.scale(10);
 		renderer.stroke(ColorName.WHITE);
@@ -153,7 +154,6 @@ class GameMap {
 		this.player.draw2D(renderer);
 		this.drawRays(renderer);
 		renderer.restore();
-
 	}
 
 	private drawRays(renderer: RendererInterface): void {
@@ -164,7 +164,7 @@ class GameMap {
 			const rayAngle = this.getRayAngle(i);
 			const { distance } = this.castRay(rayAngle);
 			const hit = this.player.position.nextLocation(rayAngle, distance);
-			renderer.line(this.player.position.x, this.player.position.y, hit.x, hit.y);
+			renderer.line(this.player.position, hit);
 		}
 	}
 }
