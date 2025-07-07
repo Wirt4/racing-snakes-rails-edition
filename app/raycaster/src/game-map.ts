@@ -43,7 +43,7 @@ class GameMap {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.player.angle += 0.01;
+		this.player.position.x += 1;
 	}
 
 	private getRayAngle(index: number): number {
@@ -146,7 +146,7 @@ class GameMap {
 
 	private draw2DMap(renderer: RendererInterface): void {
 		renderer.save();
-		renderer.scale(10);
+		renderer.scale(2.5);
 		renderer.stroke(ColorName.WHITE);
 		for (const wall of this.walls) {
 			wall.draw2D(renderer);

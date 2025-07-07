@@ -9,21 +9,18 @@ import { ColorName } from './color/color_name';
 
 
 async function main(): Promise<void> {
-	const topWall = new Wall(1, 1, 58, 1, ColorName.GREEN);
-	const rightWall = new Wall(58, 1, 58, 58, ColorName.GREEN);
-	const bottomWall = new Wall(58, 58, 1, 58, ColorName.GREEN);
-	const leftWall = new Wall(1, 58, 1, 1, ColorName.GREEN);
+	const topWall = new Wall(0, 0, 58, 0, ColorName.GREEN);
+	const rightWall = new Wall(100, 0, 100, 100, ColorName.GREEN);
+	const bottomWall = new Wall(100, 100, 0, 100, ColorName.GREEN);
+	const leftWall = new Wall(0, 100, 0, 0, ColorName.GREEN);
 	const walls = [
 		topWall,
-		new Wall(40, 30, 5, 10, ColorName.RED),
-		new Wall(5, 10, 70, 30, ColorName.RED),
 		rightWall,
 		bottomWall,
 		leftWall,
 	];
 
-	const player = new Player({ x: 4.5, y: 4.5 })
-
+	const player = new Player({ x: 1, y: 50 });
 	const gameMap = new GameMap(player, walls);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	while (true) {
