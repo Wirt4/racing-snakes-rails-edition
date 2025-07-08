@@ -1,4 +1,4 @@
 interface RaycasterInterface {
-	getViewRays(viewerAngle: number): number[];
+	getViewRays(viewerAngle: number): Set<number>;
 }
 export { RaycasterInterface }
