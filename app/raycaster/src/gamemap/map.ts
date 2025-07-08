@@ -1,5 +1,6 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { ColorName } from '../game/color/color_name';
 
 const GRID_CELL = 1; // Size of the grid cells
 export class GameMap implements GameMapInterface {
@@ -28,6 +29,12 @@ export class GameMap implements GameMapInterface {
 				}
 			)
 		}
+		this.walls = [
+			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK },
+			{ line: { start: { x: 0, y: 0 }, end: { x: width, y: 0 } }, color: ColorName.BLACK },
+			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK },
+			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK }
+		]
 	}
 
 	movePlayer(): void {
