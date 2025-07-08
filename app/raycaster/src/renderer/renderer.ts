@@ -1,21 +1,9 @@
 import { ColorName } from "../game/color/color_name";
-import { hslFactory } from "../renderer/hsl_factory";
-import { HSL } from "./hsl";
+import { hslFactory } from "./hsl/hsl_factory";
+import { HSL } from "./hsl/hsl";
 import { Coordinates } from "../geometry/interfaces";
 import { assertIsPositiveInteger } from "../utils";
-interface RendererInterface {
-	fillColor(color: ColorName, brightness: number): void;
-	rect(origin: Coordinates, width: number, height: number): void;
-	save(): void;
-	scale(scale: number): void;
-	stroke(color: ColorName): void;
-	restore(): void;
-	strokeWeight(weight: number): void;
-	line(start: Coordinates, end: Coordinates): void;
-	ellipse(origin: Coordinates, stroke: number): void;
-	noStroke(): void;
-}
-
+import { RendererInterface } from "./interface";
 class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
 	constructor(targetId: string, width: number, height: number) {
