@@ -2,6 +2,7 @@ import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 
+
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	gridLinesX: LineSegment[] = [];
@@ -11,24 +12,8 @@ export class GameMap implements GameMapInterface {
 
 
 	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
-		this.gridLinesX = [];
-		this.gridLinesY = [];
-		for (let i = gridCell; i <= width; i += gridCell) {
-			this.gridLinesX.push(
-				{
-					start: { x: i, y: 0 },
-					end: { x: i, y: height }
-				}
-			);
-		}
-		for (let i = gridCell; i <= height; i += gridCell) {
-			this.gridLinesY.push(
-				{
-					start: { x: 0, y: i },
-					end: { x: width, y: i }
-				}
-			)
-		}
+		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
+		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
 		const left_top = { x: 0, y: 0 };
 		const left_bottom = { x: 0, y: height };
 		const right_top = { x: width, y: 0 };
@@ -57,6 +42,24 @@ export class GameMap implements GameMapInterface {
 			line: { start, end },
 			color
 		};
+	}
+
+	private generateGridLines(step: number, primary: number, secondary: number, isVerical: boolean = false): LineSegment[] {
+		const lines: LineSegment[] = [];
+		for (let i = step; i <= primary; i += step) {
+			if (isVerical) {
+				lines.push({
+					start: { x: i, y: 0 },
+					end: { x: i, y: secondary }
+				});
+			} else {
+				lines.push({
+					start: { x: 0, y: i },
+					end: { x: secondary, y: i }
+				});
+			}
+		}
+		return lines;
 	}
 
 }
