@@ -2,7 +2,7 @@
 import { sleep } from './sleep';
 import { Settings } from './settings';
 import { Renderer } from './renderer';
-import { GameMap } from './game-map';
+import { Game } from './game';
 import { Player } from './player';
 import { Wall } from './wall';
 import { ColorName } from './color/color_name';
@@ -33,7 +33,7 @@ async function main(): Promise<void> {
 	}
 
 	const player = new Player({ x: 20, y: 50 });
-	const gameMap = new GameMap(player, walls, gridLines);
+	const gameMap = new Game(player, walls, gridLines);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	while (true) {
 		renderer.reset();
