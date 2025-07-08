@@ -1,5 +1,6 @@
 import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger } from '../utils';
+import { FULL_CIRCLE } from '../geometry/constants';
 
 class Raycaster implements RaycasterInterface {
 	private offsets: Set<number>;
@@ -40,10 +41,10 @@ class Raycaster implements RaycasterInterface {
 
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
-			return angle + 2 * Math.PI;
+			return angle + FULL_CIRCLE;
 		}
-		if (angle > 2 * Math.PI) {
-			return angle - 2 * Math.PI;
+		if (angle > FULL_CIRCLE) {
+			return angle - FULL_CIRCLE;
 		}
 		return angle;
 	}
