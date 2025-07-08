@@ -3,7 +3,7 @@ import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';
 import { ColorName } from './color/color_name';
 import { Point } from '../geometry/point';
-import { Coordinates } from '../geometry/coordinates';
+import { Coordinates } from '../geometry/interfaces';
 import { GameMapInterface, WallInterface } from '../gamemap/interface';
 interface Intersection {
 	isValid: boolean;

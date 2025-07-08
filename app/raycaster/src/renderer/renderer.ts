@@ -1,7 +1,7 @@
 import { ColorName } from "../game/color/color_name";
 import { hslFactory } from "../renderer/hsl_factory";
 import { HSL } from "./hsl";
-import { Coordinates } from "../geometry/coordinates";
+import { Coordinates } from "../geometry/interfaces";
 import { assertIsPositiveInteger } from "../utils";
 interface RendererInterface {
 	fillColor(color: ColorName, brightness: number): void;

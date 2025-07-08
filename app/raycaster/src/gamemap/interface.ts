@@ -1,4 +1,4 @@
-import { Coordinates } from '../geometry/coordinates';
+import { Coordinates } from '../geometry/interfaces';
 import { LineSegment } from '../geometry/line_segment';
 import { ColorName } from '../game/color/color_name';
 
