@@ -2,12 +2,20 @@ import { describe, test, expect } from '@jest/globals';
 import { Raycaster } from './raycaster';
 describe('Raycaster tests', () => {
 
-	test('getViewRays should throw error if not implemented', () => {
+	test('getViewRays should return a set with one ray per point of resolution', () => {
 		const raycaster = new Raycaster(640, Math.PI / 3);
 		const expectedRayNumber = 640;
 		const actualRayNumber = raycaster.getViewRays(0).size;
 		expect(actualRayNumber).toEqual(expectedRayNumber);
 	});
+	test('getViewRays should return rays in the range of 0 to 2*PI', () => {
+		const raycaster = new Raycaster(640, Math.PI / 3);
+		const rays = raycaster.getViewRays(0);
+		rays.forEach(ray => {
+			expect(ray).toBeGreaterThanOrEqual(0);
+			expect(ray).toBeLessThanOrEqual(2 * Math.PI);
+		});
+	})
 	test('no ray in result may exist outside the cone of vision', () => {
 		const raycaster = new Raycaster(640, Math.PI / 2); // 90 degrees field of view
 		const rays = raycaster.getViewRays(Math.PI / 2); //looking straight up
@@ -16,7 +24,7 @@ describe('Raycaster tests', () => {
 			expect(ray).toBeLessThanOrEqual(3 * Math.PI / 4);
 		});
 	});
-	test('object may not be instantiaed with invalid resolutions', () => {
+	test('object may not be instantiated with invalid resolutions', () => {
 		expect(() => {
 			new Raycaster(8.98, Math.PI / 3);
 		}).toThrow();
@@ -24,7 +32,7 @@ describe('Raycaster tests', () => {
 			new Raycaster(-1, Math.PI / 3);
 		}).toThrow();
 	});
-	test('object may not be instantiaed with invalid angle for field of view', () => {
+	test('object may not be instantiated with invalid angle for field of view', () => {
 		expect(() => {
 			new Raycaster(640, -1);
 		}).toThrow();
