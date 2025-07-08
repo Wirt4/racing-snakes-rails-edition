@@ -4,7 +4,7 @@ import { RendererInterface } from '../renderer';
 import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';
 import { ColorName } from './color/color_name';
-import { Point } from '../point';
+import { Point } from '../geometry/point';
 import { Coordinates } from '../geometry/coordinates';
 
 interface Intersection {
