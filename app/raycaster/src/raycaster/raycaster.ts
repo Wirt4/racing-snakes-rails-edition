@@ -3,6 +3,7 @@ import { assertIsPositiveInteger } from '../utils';
 
 class Raycaster implements RaycasterInterface {
 	private offsets: Set<number>;
+	private fovOffset: number;
 	constructor(private resolution: number, private fieldOfView: number) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
@@ -17,6 +18,7 @@ class Raycaster implements RaycasterInterface {
 		for (let i = 0; i < this.resolution; i++) {
 			this.offsets.add(i * step);
 		}
+		this.fovOffset = this.fieldOfView / 2;
 	}
 
 	getViewRays(viewerAngle: number): Set<number> {
@@ -31,7 +33,7 @@ class Raycaster implements RaycasterInterface {
 		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
 		const rays: Set<number> = new Set<number>();
 		this.offsets.forEach((offset) => {
-			rays.add(this.normalizeAngle(offset + viewerAngle - (this.fieldOfView / 2)));
+			rays.add(this.normalizeAngle(offset + viewerAngle - (this.fovOffset)));
 		})
 		return rays;
 	}
