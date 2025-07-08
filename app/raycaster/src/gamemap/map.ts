@@ -60,5 +60,4 @@ export class GameMap implements GameMapInterface {
 		};
 	}
 
-	// Additional methods for game map functionality can be added here
 }
