@@ -1,4 +1,4 @@
-import { Player } from '../player';
+import { Player } from './player';
 import { Wall } from '../wall';
 import { RendererInterface } from '../renderer';
 import { Settings } from '../settings';

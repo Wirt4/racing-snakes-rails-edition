@@ -1,7 +1,7 @@
-import { Point } from './point';
-import { RendererInterface } from './renderer';
-import { ColorName } from './game/color/color_name';
-import { Coordinates } from './geometry/coordinates';
+import { Point } from '../point';
+import { RendererInterface } from '../renderer';
+import { ColorName } from './color/color_name';
+import { Coordinates } from '../geometry/coordinates';
 class Player {
 	position: Point;
 	angle: number;
