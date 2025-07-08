@@ -25,11 +25,11 @@ class Game {
 		renderer.fillColor(ColorName.BLACK, .01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
-			const angle = this.getRayAngle(i);
-			const { distance, color, gridHits } = this.castRay(angle);
-			const correctedDistance = this.removeFishEye(distance, angle)
-			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);
-			const brightness = this.calculateBrightness(correctedDistance);
+			const angle = this.getRayAngle(i); //raycaster logic
+			const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
+			const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
+			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
+			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
 		}
@@ -168,8 +168,6 @@ class Game {
 		//track the grid
 		for (const hit of gridMarks) {
 			const corrected = this.removeFishEye(hit.distance, angle);
-			//const y = GameMap.HORIZON_Y + this.calculateSliceHeight(corrected, Settings.CANVAS_HEIGHT);
-			//const y = GameMap.HORIZON_Y + (Settings.CANVAS_HEIGHT / corrected);
 			const projectedHeight = Settings.CANVAS_HEIGHT / corrected;
 			const y = Game.HORIZON_Y + projectedHeight / 2;
 

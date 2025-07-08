@@ -8,4 +8,10 @@ interface LineSegment {
 	end: Coordinates;
 }
 
-export { Coordinates, LineSegment };
+interface Ray {
+	origin: Coordinates;
+	angle: number; //in radians -- todo: refactor all angles to radians, then reduce the angle object
+	magnitude: number;
+}
+
+export { Coordinates, LineSegment, Ray };
