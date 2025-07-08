@@ -55,7 +55,7 @@ export class GameMap implements GameMapInterface {
 	private initializeWall(start: Coordinates, end: Coordinates): WallInterface {
 		return {
 			line: { start, end },
-			color: ColorName.BLACK
+			color: ColorName.RED
 		};
 	}
 
