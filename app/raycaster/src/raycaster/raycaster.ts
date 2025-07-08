@@ -31,9 +31,19 @@ class Raycaster implements RaycasterInterface {
 		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
 		const rays: Set<number> = new Set<number>();
 		this.offsets.forEach((offset) => {
-			rays.add((offset + viewerAngle - this.fieldOfView / 2));
+			rays.add(this.normalizeAngle(offset + viewerAngle - (this.fieldOfView / 2)));
 		})
 		return rays;
+	}
+
+	private normalizeAngle(angle: number): number {
+		if (angle < 0) {
+			return angle + 2 * Math.PI;
+		}
+		if (angle > 2 * Math.PI) {
+			return angle - 2 * Math.PI;
+		}
+		return angle;
 	}
 }
 
