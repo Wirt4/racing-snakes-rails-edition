@@ -29,22 +29,16 @@ export class GameMap implements GameMapInterface {
 				}
 			)
 		}
-		this.walls = [{
-			line: { start: { x: 0, y: 0 }, end: { x: 0, y: height } },
-			color: ColorName.BLACK
-		}, {
-			line: { start: { x: 0, y: 0 }, end: { x: width, y: 0 } },
-			color: ColorName.BLACK
-		},
-		{
-			line: { start: { x: width, y: 0 }, end: { x: width, y: height } },
-			color: ColorName.BLACK
-		},
-		{
-			line: { start: { x: 0, y: height }, end: { x: width, y: height } },
-			color: ColorName.BLACK
-		},
+		const left_top = { x: 0, y: 0 };
+		const left_bottom = { x: 0, y: height };
+		const right_top = { x: width, y: 0 };
+		const right_bottom = { x: width, y: height };
 
+		this.walls = [
+			this.initializeWall(left_top, left_bottom),
+			this.initializeWall(left_top, right_top),
+			this.initializeWall(right_top, right_bottom),
+			this.initializeWall(left_bottom, right_bottom),
 		];
 	}
 
@@ -56,6 +50,13 @@ export class GameMap implements GameMapInterface {
 
 	turnPlayer(angle: number = 0): void {
 		this.playerAngle += angle;
+	}
+
+	private initializeWall(start: Coordinates, end: Coordinates): WallInterface {
+		return {
+			line: { start, end },
+			color: ColorName.BLACK
+		};
 	}
 
 	// Additional methods for game map functionality can be added here
