@@ -26,9 +26,14 @@ async function main(): Promise<void> {
 		}
 	}
 	walls.push(new Wall(0, 51, 100, 51, ColorName.YELLOW));
+	const gridLines: Wall[] = [];
+	for (let i = 0; i < 100; i++) {
+		gridLines.push(new Wall(i, 0, i, 100, ColorName.BLUE));
+		gridLines.push(new Wall(0, i, 100, i, ColorName.BLUE));
+	}
 
 	const player = new Player({ x: 1, y: 50 });
-	const gameMap = new GameMap(player, walls);
+	const gameMap = new GameMap(player, walls, gridLines);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	while (true) {
 		renderer.reset();

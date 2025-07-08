@@ -15,32 +15,28 @@ interface Intersection {
 }
 
 class GameMap {
-	player: Player;
+	player: Player
 	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
-	walls: Wall[];
-	gridLines: Wall[]; //todo: either rename or make polymorphic 
-
-	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
-	constructor(player: Player, walls: Wall[], gridLines: Wall[]) {
+	walls: Wall[]
+	constructor(player: Player, walls: Wall[]) {
 		this.player = player;
 		this.walls = walls;
-		this.gridLines = gridLines;
 	}
 
 	draw(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLACK, .01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+		this.drawFloorAndCeilingGrid(renderer);
 		for (let i = 0; i < Settings.RESOLUTION; i++) {
 			const angle = this.getRayAngle(i);
-			const { distance, color, gridHits } = this.castRay(angle);
+			const { distance, color } = this.castRay(angle);
 			const correctedDistance = this.removeFishEye(distance, angle)
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);
 			const brightness = this.calculateBrightness(correctedDistance);
 			renderer.fillColor(color, brightness);
-			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
-			//this.renderFloor();
+			this.renderVerticalSlice(renderer, i, sliceHeight);
 		}
-		this.draw2DMap(renderer);
+		// this.draw2DMap(renderer);
 	}
 
 	update(): void {
@@ -50,18 +46,65 @@ class GameMap {
 		**/
 		this.player.position.x += 0.01; //travels horizontally
 	}
+	private drawFloorAndCeilingGrid(renderer: RendererInterface): void {
+		const screenWidth = Settings.CANVAS_WIDTH;
+		const screenHeight = Settings.CANVAS_HEIGHT;
+		const posX = this.player.position.x;
+		const posY = this.player.position.y;
+		const dirX = Math.cos(this.player.angle);
+		const dirY = Math.sin(this.player.angle);
+		const fov = this.fieldOfVision;
+
+		// camera plane perpendicular to direction
+		const planeX = -dirY * Math.tan(fov / 2);
+		const planeY = dirX * Math.tan(fov / 2);
+
+		const gridSize = 1;
+		const edgeThreshold = 0.05;
+		const posZ = 0.5 * screenHeight; // height from the floor plane
+
+		const halfHeight = Math.floor(screenHeight / 2);
+
+		for (let y = 0; y < halfHeight; y++) {
+			const p = y - halfHeight;
+			if (p === 0) continue; // avoid division by zero
+			const rowDistance = posZ / p;
+
+			// compute direction of left and right rays
+			const rayDirX0 = dirX - planeX;
+			const rayDirY0 = dirY - planeY;
+			const rayDirX1 = dirX + planeX;
+			const rayDirY1 = dirY + planeY;
+
+			const floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
+			const floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
+
+			let floorX = posX + rowDistance * rayDirX0;
+			let floorY = posY + rowDistance * rayDirY0;
+
+			for (let x = 0; x < screenWidth; x++) {
+				const dx = floorX % gridSize;
+				const dy = floorY % gridSize;
+				const isGridLine =
+					dx < edgeThreshold || dx > 1 - edgeThreshold ||
+					dy < edgeThreshold || dy > 1 - edgeThreshold;
+
+				const brightness = 100//Math.max(0.05, 0.4 - rowDistance * 0.01);
+				renderer.fillColor(isGridLine ? ColorName.BLUE : ColorName.BLACK, brightness);
+				renderer.rect({ x, y: y + halfHeight }, 1, 1); // floor
+				renderer.rect({ x, y: halfHeight - y - 1 }, 1, 1); // ceiling (mirrored)
+
+				floorX += floorStepX;
+				floorY += floorStepY;
+			}
+		}
+	}
 
 	private getRayAngle(index: number): number {
 		return this.player.angle - this.fieldOfVision / 2 + (index / Settings.RESOLUTION) * this.fieldOfVision;
 	}
 
-	private castRay(angle: number): {
-		distance: number,
-		color: ColorName,
-		gridHits: { distance: number, color: ColorName }[],
-		hitpoint: Coordinates
-	} {
-		//floor grid would go here, return the distances of both the wall and the grid lines
+	private castRay(angle: number): { distance: number, color: ColorName } {
 		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
 		let color = ColorName.NONE;
 		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
@@ -72,20 +115,12 @@ class GameMap {
 				color = wall.color
 			}
 		}
-		//measure the grid lines
-		const maxDistance = closest.isValid ? closest.distance : Settings.MAX_DISTANCE;
-		const endX = this.player.position.x + rayDirection.x * maxDistance;
-		const endY = this.player.position.y + rayDirection.y * maxDistance;
-		const rayEnd = { x: endX, y: endY };
 
-		const gridHits: { distance: number, color: ColorName }[] = [];
-		for (const grid of this.gridLines) {
-			const hit = this.rayIntersectsWall(this.player.position, rayDirection, grid);
-			if (hit.isValid && hit.distance < maxDistance) {
-				gridHits.push({ distance: hit.distance, color: grid.color });
-			}
+		if (closest.isValid) {
+			return { distance: closest.distance, color }
 		}
-		return { distance: closest.isValid ? closest.distance : Settings.MAX_DISTANCE, color, gridHits, hitpoint: rayEnd };
+
+		return { distance: Settings.MAX_DISTANCE, color };
 
 	}
 
@@ -158,26 +193,11 @@ class GameMap {
 		return Math.max(Settings.MIN_PERCENT_BRIGHTNESS, Settings.MAX_PERCENT_BRIGHTNESS - distance * Settings.FADE_DISTANCE);
 	}
 
-	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number, gridMarks: { distance: number, color: ColorName }[], angle: number): void {
-		const wallY = GameMap.HORIZON_Y - (sliceHeight / 2);
-		const origin = { x: fieldOfVisionXCoord, y: wallY };
+	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number): void {
+		const horizon = Settings.HORIZON_HEIGHT / Settings.CANVAS_HEIGHT;
+		const origin = { x: fieldOfVisionXCoord, y: ((Settings.CANVAS_HEIGHT - sliceHeight) * horizon) + Settings.FRAME_HEIGHT };
 		renderer.rect(origin, 1, sliceHeight);
-
-		//track the grid
-		for (const hit of gridMarks) {
-			const corrected = this.removeFishEye(hit.distance, angle);
-			//const y = GameMap.HORIZON_Y + this.calculateSliceHeight(corrected, Settings.CANVAS_HEIGHT);
-			//const y = GameMap.HORIZON_Y + (Settings.CANVAS_HEIGHT / corrected);
-			const projectedHeight = Settings.CANVAS_HEIGHT / corrected;
-			const y = GameMap.HORIZON_Y + projectedHeight / 2;
-
-
-			const brightness = this.calculateBrightness(corrected);
-			renderer.fillColor(hit.color, brightness);
-			renderer.rect({ x: fieldOfVisionXCoord, y: y }, 1, 1); // 1-pixel line
-		}
 	}
-
 	private draw2DMap(renderer: RendererInterface): void {
 		renderer.save();
 		renderer.scale(2.5);
