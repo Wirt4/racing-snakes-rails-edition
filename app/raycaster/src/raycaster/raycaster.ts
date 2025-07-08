@@ -11,7 +11,7 @@ class Raycaster implements RaycasterInterface {
 		 * resolution is a positive integer
 		 **/
 		assertIsPositiveInteger(this.resolution);
-		if (this.fieldOfView < 0 || this.fieldOfView > 2 * Math.PI) {
+		if (this.fieldOfView < 0 || this.fieldOfView > FULL_CIRCLE) {
 			throw new Error("Field of view must be between 0 and 2*Math.PI");
 		}
 		this.offsets = new Set<number>();
