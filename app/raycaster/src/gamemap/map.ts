@@ -10,7 +10,8 @@ export class GameMap implements GameMapInterface {
 	playerPosition: Coordinates = { x: 0, y: 0 };
 	playerAngle: number = 0;
 
-	constructor(width: number, height: number, wallColor: ColorName = ColorName.BLACK) {
+
+	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK) {
 		this.gridLinesX = [];
 		this.gridLinesY = [];
 		for (let i = 0; i <= width; i += GRID_CELL) {
@@ -35,10 +36,10 @@ export class GameMap implements GameMapInterface {
 		const right_bottom = { x: width, y: height };
 
 		this.walls = [
-			this.initializeWall(left_top, left_bottom),
-			this.initializeWall(left_top, right_top),
-			this.initializeWall(right_top, right_bottom),
-			this.initializeWall(left_bottom, right_bottom),
+			this.initializeWall(left_top, left_bottom, boundaryColor),
+			this.initializeWall(left_top, right_top, boundaryColor),
+			this.initializeWall(right_top, right_bottom, boundaryColor),
+			this.initializeWall(left_bottom, right_bottom, boundaryColor),
 		];
 	}
 
@@ -52,10 +53,10 @@ export class GameMap implements GameMapInterface {
 		this.playerAngle += angle;
 	}
 
-	private initializeWall(start: Coordinates, end: Coordinates): WallInterface {
+	private initializeWall(start: Coordinates, end: Coordinates, color: ColorName): WallInterface {
 		return {
 			line: { start, end },
-			color: ColorName.RED
+			color
 		};
 	}
 
