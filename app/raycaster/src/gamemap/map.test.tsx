@@ -28,8 +28,8 @@ describe('GameMap object tests', () => {
 			expect(wall.color).toBe(ColorName.RED);
 		})
 	});
-	test('map should initialize with  gridlines', () => {
-		//todo
-		//assert(false);
+	test('map should initialize with configurable gridlines, x coords', () => {
+		const gameMap = new GameMap(10, 20, ColorName.RED, 1);
+		expect(gameMap.gridLinesX.length).toBe(10);
 	})
 })

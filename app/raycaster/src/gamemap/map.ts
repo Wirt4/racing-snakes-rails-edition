@@ -2,7 +2,6 @@ import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 
-const GRID_CELL = 1; // Size of the grid cells
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	gridLinesX: LineSegment[] = [];
@@ -11,10 +10,10 @@ export class GameMap implements GameMapInterface {
 	playerAngle: number = 0;
 
 
-	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK) {
+	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
 		this.gridLinesX = [];
 		this.gridLinesY = [];
-		for (let i = 0; i <= width; i += GRID_CELL) {
+		for (let i = gridCell; i <= width; i += gridCell) {
 			this.gridLinesX.push(
 				{
 					start: { x: i, y: 0 },
@@ -22,7 +21,7 @@ export class GameMap implements GameMapInterface {
 				}
 			);
 		}
-		for (let i = 0; i <= height; i += GRID_CELL) {
+		for (let i = gridCell; i <= height; i += gridCell) {
 			this.gridLinesY.push(
 				{
 					start: { x: 0, y: i },
