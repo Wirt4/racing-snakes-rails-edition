@@ -1,7 +1,7 @@
 import { ColorName } from "../game/color/color_name";
 import { hslFactory } from "./hsl/hsl_factory";
 import { HSL } from "./hsl/hsl";
-import { Coordinates } from "../geometry/interfaces";
+import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { assertIsPositiveInteger } from "../utils";
 import { RendererInterface } from "./interface";
 class Renderer implements RendererInterface {
@@ -70,11 +70,12 @@ class Renderer implements RendererInterface {
 		this.context.lineWidth = weight;
 	}
 
-	public line(start: Coordinates, end: Coordinates): void {
+	public line(line: LineSegment): void {
 		/**
 		 * Precondition: the context is a valid CanvasRenderingContext2D
 		 * Postcondition: the context draws a line from (x1, y1) to (x2, y2)
 		 */
+		const { start, end } = line;
 		this.context.beginPath();
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);

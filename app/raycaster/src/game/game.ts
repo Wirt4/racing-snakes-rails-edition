@@ -187,7 +187,7 @@ class Game {
 		for (const wall of this.map.walls) {
 			renderer.stroke(wall.color);
 			renderer.strokeWeight(0.1);
-			renderer.line(wall.line.start, wall.line.end);
+			renderer.line(wall.line);
 		}
 		renderer.fillColor(ColorName.RED, 100);
 		renderer.noStroke();
@@ -205,7 +205,7 @@ class Game {
 			const rayAngle = this.getRayAngle(i);
 			const { distance } = this.castRay(rayAngle);
 			const hit = this.nextLocation(this.map.playerPosition, rayAngle, distance);
-			renderer.line(this.map.playerPosition, hit);
+			renderer.line({ start: this.map.playerPosition, end: hit });
 		}
 	}
 
