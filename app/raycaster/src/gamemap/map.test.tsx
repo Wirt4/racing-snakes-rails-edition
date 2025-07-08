@@ -31,5 +31,10 @@ describe('GameMap object tests', () => {
 	test('map should initialize with configurable gridlines, x coords', () => {
 		const gameMap = new GameMap(10, 20, ColorName.RED, 1);
 		expect(gameMap.gridLinesX.length).toBe(10);
+	});
+	test('map should initialize with configurable gridlines, y coords', () => {
+		const gameMap = new GameMap(10, 20, ColorName.RED, 1);
+		expect(gameMap.gridLinesY.length).toBe(20);
 	})
+
 })
