@@ -1,5 +1,6 @@
 import { describe, test, expect } from '@jest/globals';
 import { GameMap } from './map';
+import { ColorName } from '../game/color/color_name';
 import { LineSegment } from '../geometry/interfaces';
 describe('GameMap object tests', () => {
 	test('map should intialize with walls aroundy', () => {
@@ -21,6 +22,12 @@ describe('GameMap object tests', () => {
 			}));
 		})
 	})
+	test('map walls should be configurable', () => {
+		const gameMap = new GameMap(10, 10, ColorName.RED);
+		gameMap.walls.forEach((wall) => {
+			expect(wall.color).toBe(ColorName.RED);
+		})
+	});
 	test('map should initialize with  gridlines', () => {
 		//todo
 		//assert(false);
