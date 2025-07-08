@@ -2,7 +2,7 @@
 import { sleep } from './sleep';
 import { Settings } from './settings';
 import { Renderer } from './renderer';
-import { Game } from './game';
+import { Game } from './game/game';
 import { Player } from './player';
 import { Wall } from './wall';
 import { ColorName } from './game/color/color_name';

@@ -1,11 +1,11 @@
-import { Player } from './player';
-import { Wall } from './wall';
-import { RendererInterface } from './renderer';
-import { Settings } from './settings';
-import { Angle } from './geometry/angle';
-import { ColorName } from './game/color/color_name';
-import { Point } from './point';
-import { Coordinates } from './geometry/coordinates';
+import { Player } from '../player';
+import { Wall } from '../wall';
+import { RendererInterface } from '../renderer';
+import { Settings } from '../settings';
+import { Angle } from '../geometry/angle';
+import { ColorName } from './color/color_name';
+import { Point } from '../point';
+import { Coordinates } from '../geometry/coordinates';
 
 interface Intersection {
 	isValid: boolean;
