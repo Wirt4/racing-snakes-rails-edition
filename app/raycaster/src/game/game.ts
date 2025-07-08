@@ -1,12 +1,10 @@
-import { Player } from './player';
-import { Wall } from './wall';
 import { RendererInterface } from '../renderer/renderer';
 import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';
 import { ColorName } from './color/color_name';
 import { Point } from '../geometry/point';
 import { Coordinates } from '../geometry/coordinates';
-
+import { GameMapInterface, WallInterface } from '../gamemap/interface';
 interface Intersection {
 	isValid: boolean;
 	x: number;
@@ -15,16 +13,12 @@ interface Intersection {
 }
 
 class Game {
-	player: Player;
 	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
-	walls: Wall[];
-	gridLines: Wall[]; //todo: either rename or make polymorphic 
+	map: GameMapInterface;
 
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
-	constructor(player: Player, walls: Wall[], gridLines: Wall[]) {
-		this.player = player;
-		this.walls = walls;
-		this.gridLines = gridLines;
+	constructor(map: GameMapInterface) {
+		this.map = map;
 	}
 
 	draw(renderer: RendererInterface): void {
@@ -38,7 +32,6 @@ class Game {
 			const brightness = this.calculateBrightness(correctedDistance);
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
-			//this.renderFloor();
 		}
 		this.draw2DMap(renderer);
 	}
@@ -48,12 +41,12 @@ class Game {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.player.position.x += 0.02;
-		this.player.angle += 0.02; //turns in little circles
+		this.map.turnPlayer(0.02);
+		this.map.movePlayer();
 	}
 
 	private getRayAngle(index: number): number {
-		return this.player.angle - this.fieldOfVision / 2 + (index / Settings.RESOLUTION) * this.fieldOfVision;
+		return this.map.playerAngle - this.fieldOfVision / 2 + (index / Settings.RESOLUTION) * this.fieldOfVision;
 	}
 
 	private castRay(angle: number): {
@@ -66,8 +59,8 @@ class Game {
 		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
 		let color = ColorName.NONE;
 		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
-		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(this.player.position, rayDirection, wall);
+		for (const wall of this.map.walls) {
+			const hit = this.rayIntersectsWall(this.map.playerPosition, rayDirection, wall);
 			if (hit.isValid && (!closest.isValid || hit.distance < closest.distance)) {
 				closest = hit
 				color = wall.color
@@ -75,23 +68,31 @@ class Game {
 		}
 		//measure the grid lines
 		const maxDistance = closest.isValid ? closest.distance : Settings.MAX_DISTANCE;
-		const endX = this.player.position.x + rayDirection.x * maxDistance;
-		const endY = this.player.position.y + rayDirection.y * maxDistance;
+		const endX = this.map.playerPosition.x + rayDirection.x * maxDistance;
+		const endY = this.map.playerPosition.y + rayDirection.y * maxDistance;
 		const rayEnd = { x: endX, y: endY };
 
 		const gridHits: { distance: number, color: ColorName }[] = [];
-		for (const grid of this.gridLines) {
-			const hit = this.rayIntersectsWall(this.player.position, rayDirection, grid);
+		for (const grid of this.map.gridLinesX) {
+			const hit = this.rayIntersectsWall(this.map.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
 			if (hit.isValid && hit.distance < maxDistance) {
-				gridHits.push({ distance: hit.distance, color: grid.color });
+				gridHits.push({ distance: hit.distance, color: ColorName.BLUE });
 			}
 		}
+		console.log('grid hits detected', gridHits.length);
+		for (const grid of this.map.gridLinesY) {
+			const hit = this.rayIntersectsWall(this.map.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
+			if (hit.isValid && hit.distance < maxDistance) {
+				gridHits.push({ distance: hit.distance, color: ColorName.BLUE });
+			}
+		}
+
 		return { distance: closest.isValid ? closest.distance : Settings.MAX_DISTANCE, color, gridHits, hitpoint: rayEnd };
 
 	}
 
-	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: Wall): Intersection {
-		const { start: wallStart, end: wallEnd } = wall;
+	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: WallInterface): Intersection {
+		const { start: wallStart, end: wallEnd } = wall.line;
 		const rayPoint = new Point(rayOrigin.x + direction.x, rayOrigin.y + direction.y);
 		const determinant = this.calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
 		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
@@ -113,7 +114,7 @@ class Game {
 		return result;
 	}
 
-	private calculateDeterminant(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, rayPoint: Point): number {
+	private calculateDeterminant(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): number {
 		return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
 	}
 
@@ -122,14 +123,14 @@ class Game {
 		return Math.abs(determinant) < threshold;
 	}
 
-	private wallIntersection(wallStart: Point, rayOrigin: Coordinates, rayPoint: Point, determinant: number): number {
+	private wallIntersection(wallStart: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates, determinant: number): number {
 		const numerator1 = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
 		const numerator2 = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
 		const diff = numerator1 - numerator2;
 		return diff / determinant;
 	}
 
-	private rayIntersection(wallStart: Point, wallEnd: Point, rayOrigin: Coordinates, determinant: number): number {
+	private rayIntersection(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, determinant: number): number {
 		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
 		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
 		const diff = -(numerator1 - numerator2);
@@ -145,7 +146,7 @@ class Game {
 	}
 
 	private removeFishEye(distance: number, angle: number): number {
-		return distance * Math.cos(angle - this.player.angle);
+		return distance * Math.cos(angle - this.map.playerAngle);
 	}
 
 	private calculateSliceHeight(distance: number, height: number): number {
@@ -183,10 +184,15 @@ class Game {
 		renderer.save();
 		renderer.scale(2.5);
 		renderer.stroke(ColorName.WHITE);
-		for (const wall of this.walls) {
-			wall.draw2D(renderer);
+		for (const wall of this.map.walls) {
+			renderer.stroke(wall.color);
+			renderer.strokeWeight(0.1);
+			renderer.line(wall.line.start, wall.line.end);
 		}
-		this.player.draw2D(renderer);
+		renderer.fillColor(ColorName.RED, 100);
+		renderer.noStroke();
+		renderer.ellipse(this.map.playerPosition, 0.2);
+
 		this.drawRays(renderer);
 		renderer.restore();
 	}
@@ -198,9 +204,16 @@ class Game {
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i += resolution) {
 			const rayAngle = this.getRayAngle(i);
 			const { distance } = this.castRay(rayAngle);
-			const hit = this.player.position.nextLocation(rayAngle, distance);
-			renderer.line(this.player.position, hit);
+			const hit = this.nextLocation(this.map.playerPosition, rayAngle, distance);
+			renderer.line(this.map.playerPosition, hit);
 		}
+	}
+
+	private nextLocation(coordinates: Coordinates, angle: number, distance: number): Coordinates {
+		return {
+			x: coordinates.x + Math.cos(angle) * distance,
+			y: coordinates.y + Math.sin(angle) * distance
+		};
 	}
 }
 export { Game };

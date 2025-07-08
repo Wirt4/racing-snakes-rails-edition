@@ -6,13 +6,14 @@ import { Game } from './game/game';
 import { Player } from './game/player';
 import { Wall } from './game/wall';
 import { ColorName } from './game/color/color_name';
+import { GameMap } from './gamemap/map';
 
 
 async function main(): Promise<void> {
-	const topWall = new Wall(0, 0, 100, 0, ColorName.GREEN);
-	const rightWall = new Wall(100, 0, 100, 100, ColorName.GREEN);
-	const bottomWall = new Wall(100, 100, 0, 100, ColorName.GREEN);
-	const leftWall = new Wall(0, 100, 0, 0, ColorName.GREEN);
+	const topWall = { color: ColorName.GREEN, line: { start: { x: 0, y: 0 }, end: { x: 100, y: 0 } } } //new Wall(0, 0, 100, 0, ColorName.GREEN);
+	const rightWall = { color: ColorName.GREEN, line: { start: { x: 100, y: 0 }, end: { x: 100, y: 100 } } } //new Wall(100, 0, 100, 100, ColorName.GREEN);
+	const bottomWall = { color: ColorName.GREEN, line: { start: { x: 100, y: 100 }, end: { x: 0, y: 100 } } } //new Wall(100, 100, 0, 100, ColorName.GREEN);
+	const leftWall = { color: ColorName.GREEN, line: { start: { x: 0, y: 100 }, end: { x: 0, y: 0 } } } // new Wall(0, 100, 0, 0, ColorName.GREEN);
 	const walls = [
 		topWall,
 		rightWall,
@@ -20,20 +21,19 @@ async function main(): Promise<void> {
 		leftWall,
 	];
 	for (let i = 0; i < 10; i++) {
-		walls.push(new Wall(i * 10, 0, i * 10, 49, ColorName.RED));
+		walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 100 }, end: { x: 10 * i, y: 55 } } })
 		if (i % 2 == 0) {
-			walls.push(new Wall(i * 10, 49, (i + 1) * 10, 49, ColorName.RED));
+			walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 55 }, end: { x: 10 * (i + 1), y: 55 } } })
 		}
 	}
-	walls.push(new Wall(0, 51, 100, 51, ColorName.YELLOW));
-	const gridLines: Wall[] = [];
-	for (let i = 0; i < 100; i++) {
-		gridLines.push(new Wall(i, 0, i, 100, ColorName.BLUE));
-		gridLines.push(new Wall(0, i, 100, i, ColorName.BLUE));
-	}
+	walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
 
-	const player = new Player({ x: 20, y: 50 });
-	const game = new Game(player, walls, gridLines);
+
+	const gameMap = new GameMap(100, 100);
+	gameMap.playerAngle = 0
+	gameMap.playerPosition = { x: 20, y: 50 };
+	gameMap.walls = walls;
+	const game = new Game(gameMap);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 
 	while (true) {
