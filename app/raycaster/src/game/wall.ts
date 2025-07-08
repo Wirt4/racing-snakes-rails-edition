@@ -1,6 +1,6 @@
-import { Point } from './geometry/point';
-import { RendererInterface } from './renderer';
-import { ColorName } from './game/color/color_name';
+import { Point } from '../geometry/point';
+import { RendererInterface } from '../renderer';
+import { ColorName } from './color/color_name';
 class Wall {
 	start: Point;
 	end: Point;

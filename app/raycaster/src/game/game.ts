@@ -1,5 +1,5 @@
 import { Player } from './player';
-import { Wall } from '../wall';
+import { Wall } from './wall';
 import { RendererInterface } from '../renderer';
 import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';

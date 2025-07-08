@@ -4,7 +4,7 @@ import { Settings } from './settings';
 import { Renderer } from './renderer';
 import { Game } from './game/game';
 import { Player } from './game/player';
-import { Wall } from './wall';
+import { Wall } from './game/wall';
 import { ColorName } from './game/color/color_name';
 
 
