@@ -1,4 +1,4 @@
-import { ColorName } from "./color/color_name";
+import { ColorName } from "./game/color/color_name";
 import { hslFactory } from "./renderer/hsl_factory";
 import { HSL } from "./renderer/hsl";
 import { Coordinates } from "./geometry/coordinates";

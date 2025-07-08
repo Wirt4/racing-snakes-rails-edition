@@ -5,7 +5,7 @@ import { Renderer } from './renderer';
 import { Game } from './game';
 import { Player } from './player';
 import { Wall } from './wall';
-import { ColorName } from './color/color_name';
+import { ColorName } from './game/color/color_name';
 
 
 async function main(): Promise<void> {
@@ -33,12 +33,13 @@ async function main(): Promise<void> {
 	}
 
 	const player = new Player({ x: 20, y: 50 });
-	const gameMap = new Game(player, walls, gridLines);
+	const game = new Game(player, walls, gridLines);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+
 	while (true) {
 		renderer.reset();
-		gameMap.draw(renderer);
-		gameMap.update();
+		game.draw(renderer);
+		game.update();
 		await sleep(Settings.FRAMES_PER_SECOND);
 	}
 }
