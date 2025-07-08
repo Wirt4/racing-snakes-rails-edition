@@ -1,6 +1,5 @@
 import { GameMapInterface, WallInterface } from './interface';
-import { Coordinates } from '../geometry/interfaces';
-import { LineSegment } from '../geometry/line_segment';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 
 const GRID_CELL = 1; // Size of the grid cells
 export class GameMap implements GameMapInterface {

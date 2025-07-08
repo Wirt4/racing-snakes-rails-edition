@@ -3,4 +3,9 @@ interface Coordinates {
 	y: number;
 }
 
-export { Coordinates };
+interface LineSegment {
+	start: Coordinates;
+	end: Coordinates;
+}
+
+export { Coordinates, LineSegment };
