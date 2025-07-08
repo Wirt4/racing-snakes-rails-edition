@@ -30,18 +30,18 @@ export class GameMap implements GameMapInterface {
 			)
 		}
 		this.walls = [{
-			line: { start: { x: 0, y: 0 }, end: { x: 0, y: 10 } },
+			line: { start: { x: 0, y: 0 }, end: { x: 0, y: height } },
 			color: ColorName.BLACK
 		}, {
-			line: { start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+			line: { start: { x: 0, y: 0 }, end: { x: width, y: 0 } },
 			color: ColorName.BLACK
 		},
 		{
-			line: { start: { x: 10, y: 0 }, end: { x: 10, y: 10 } },
+			line: { start: { x: width, y: 0 }, end: { x: width, y: height } },
 			color: ColorName.BLACK
 		},
 		{
-			line: { start: { x: 0, y: 10 }, end: { x: 10, y: 10 } },
+			line: { start: { x: 0, y: height }, end: { x: width, y: height } },
 			color: ColorName.BLACK
 		},
 
