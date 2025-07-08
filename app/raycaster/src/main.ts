@@ -9,7 +9,7 @@ import { ColorName } from './color/color_name';
 
 
 async function main(): Promise<void> {
-	const topWall = new Wall(0, 0, 58, 0, ColorName.GREEN);
+	const topWall = new Wall(0, 0, 100, 0, ColorName.GREEN);
 	const rightWall = new Wall(100, 0, 100, 100, ColorName.GREEN);
 	const bottomWall = new Wall(100, 100, 0, 100, ColorName.GREEN);
 	const leftWall = new Wall(0, 100, 0, 0, ColorName.GREEN);
@@ -19,6 +19,13 @@ async function main(): Promise<void> {
 		bottomWall,
 		leftWall,
 	];
+	for (let i = 0; i < 10; i++) {
+		walls.push(new Wall(i * 10, 0, i * 10, 49, ColorName.RED));
+		if (i % 2 == 0) {
+			walls.push(new Wall(i * 10, 49, (i + 1) * 10, 49, ColorName.RED));
+		}
+	}
+	walls.push(new Wall(0, 51, 100, 51, ColorName.YELLOW));
 
 	const player = new Player({ x: 1, y: 50 });
 	const gameMap = new GameMap(player, walls);

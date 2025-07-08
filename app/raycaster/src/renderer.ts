@@ -112,13 +112,13 @@ class Renderer implements RendererInterface {
 
 		const brightnessPercent = brightness / 100;
 		let hsl: HSL;
-
-		if (color == ColorName.RED) {
-			hsl = hslFactory(ColorName.RED);
+		if (color == ColorName.NONE) {
+			hsl = hslFactory(ColorName.WHITE);
 		} else {
-			hsl = hslFactory(ColorName.PURPLE);
+			hsl = hslFactory(color);
 		}
-		hsl.lightness *= brightnessPercent;
+
+		hsl.lightness = brightnessPercent;
 		this.context.fillStyle = hsl.toHex();
 	}
 

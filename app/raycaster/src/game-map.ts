@@ -33,7 +33,8 @@ class GameMap {
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);
 			const brightness = this.calculateBrightness(correctedDistance);
 			renderer.fillColor(color, brightness);
-			this.renderVerticalSlice(renderer, i, sliceHeight);
+			this.renderVerticalSlice(renderer, i, sliceHeight, angle);
+			//this.renderFloor();
 		}
 		this.draw2DMap(renderer);
 	}
@@ -43,7 +44,7 @@ class GameMap {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.player.position.x += 1;
+		this.player.position.x += 0.01; //travels horizontally
 	}
 
 	private getRayAngle(index: number): number {
@@ -140,8 +141,11 @@ class GameMap {
 	}
 
 	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number): void {
-		const origin = { x: fieldOfVisionXCoord, y: Settings.CANVAS_HEIGHT / 2 - sliceHeight / 2 };
+		const horizon = Settings.HORIZON_HEIGHT / Settings.CANVAS_HEIGHT;
+		const origin = { x: fieldOfVisionXCoord, y: ((Settings.CANVAS_HEIGHT - sliceHeight) * horizon) + Settings.FRAME_HEIGHT };
 		renderer.rect(origin, 1, sliceHeight);
+
+		//track the grid
 	}
 
 	private draw2DMap(renderer: RendererInterface): void {
