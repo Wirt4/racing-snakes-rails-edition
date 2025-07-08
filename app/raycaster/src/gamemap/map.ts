@@ -29,12 +29,13 @@ export class GameMap implements GameMapInterface {
 				}
 			)
 		}
-		this.walls = [
-			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK },
-			{ line: { start: { x: 0, y: 0 }, end: { x: width, y: 0 } }, color: ColorName.BLACK },
-			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK },
-			{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, color: ColorName.BLACK }
-		]
+		this.walls = [];
+		for (let i = 0; i < 4; i++) {
+			this.walls.push({
+				line: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } },
+				color: ColorName.BLACK
+			});
+		}
 	}
 
 	movePlayer(): void {
