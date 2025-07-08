@@ -1,5 +1,5 @@
 import { Point } from '../geometry/point';
-import { RendererInterface } from '../renderer';
+import { RendererInterface } from '../renderer/renderer';
 import { ColorName } from './color/color_name';
 class Wall {
 	start: Point;

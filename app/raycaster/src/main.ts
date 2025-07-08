@@ -1,7 +1,7 @@
 // test for game loop
 import { sleep } from './sleep';
 import { Settings } from './settings';
-import { Renderer } from './renderer';
+import { Renderer } from './renderer/renderer';
 import { Game } from './game/game';
 import { Player } from './game/player';
 import { Wall } from './game/wall';

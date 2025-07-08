@@ -1,6 +1,6 @@
 import { Player } from './player';
 import { Wall } from './wall';
-import { RendererInterface } from '../renderer';
+import { RendererInterface } from '../renderer/renderer';
 import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';
 import { ColorName } from './color/color_name';
