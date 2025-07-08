@@ -3,13 +3,12 @@ import { sleep } from './sleep';
 import { Settings } from './settings';
 import { Renderer } from './renderer/renderer';
 import { Game } from './game/game';
-import { Player } from './game/player';
-import { Wall } from './game/wall';
 import { ColorName } from './game/color/color_name';
 import { GameMap } from './gamemap/map';
 
 
 async function main(): Promise<void> {
+	//below is test data etc.
 	const topWall = { color: ColorName.GREEN, line: { start: { x: 0, y: 0 }, end: { x: 100, y: 0 } } } //new Wall(0, 0, 100, 0, ColorName.GREEN);
 	const rightWall = { color: ColorName.GREEN, line: { start: { x: 100, y: 0 }, end: { x: 100, y: 100 } } } //new Wall(100, 0, 100, 100, ColorName.GREEN);
 	const bottomWall = { color: ColorName.GREEN, line: { start: { x: 100, y: 100 }, end: { x: 0, y: 100 } } } //new Wall(100, 100, 0, 100, ColorName.GREEN);
@@ -28,7 +27,7 @@ async function main(): Promise<void> {
 	}
 	walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
 
-
+	//TODO: Add boundary walls to the game map's constructor, also unit test the grid lines and walls
 	const gameMap = new GameMap(100, 100);
 	gameMap.playerAngle = 0
 	gameMap.playerPosition = { x: 20, y: 50 };
