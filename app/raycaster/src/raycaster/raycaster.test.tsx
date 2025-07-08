@@ -24,4 +24,12 @@ describe('Raycaster tests', () => {
 			new Raycaster(-1, Math.PI / 3);
 		}).toThrow();
 	});
+	test('object may not be instantiaed with invalid angle for field of view', () => {
+		expect(() => {
+			new Raycaster(640, -1);
+		}).toThrow();
+		expect(() => {
+			new Raycaster(640, 2 * Math.PI + 0.01);
+		}).toThrow();
+	});
 });
