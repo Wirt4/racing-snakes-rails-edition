@@ -19,9 +19,9 @@ describe('Raycaster tests', () => {
 	test('object may not be instantiaed with invalid resolutions', () => {
 		expect(() => {
 			new Raycaster(8.98, Math.PI / 3);
-		}).toThrow('Resolution must be a positive integer');
+		}).toThrow();
 		expect(() => {
 			new Raycaster(-1, Math.PI / 3);
-		}).toThrow('Resolution must be a positive integer');
+		}).toThrow();
 	});
 });

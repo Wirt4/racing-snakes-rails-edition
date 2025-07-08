@@ -1,4 +1,5 @@
 import { RaycasterInterface } from './interface';
+import { assertIsPositiveInteger } from '../utils';
 
 class Raycaster implements RaycasterInterface {
 	private offsets: Set<number>;
@@ -7,9 +8,7 @@ class Raycaster implements RaycasterInterface {
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
 		 * resolution is a positive integer
 		 **/
-		if (this.resolution <= 0 || !Number.isInteger(this.resolution)) {
-			throw new Error('Resolution must be a positive integer');
-		}
+		assertIsPositiveInteger(this.resolution);
 		this.offsets = new Set<number>();
 		const step = this.fieldOfView / this.resolution;
 		for (let i = 0; i < this.resolution; i++) {
