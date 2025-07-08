@@ -1,6 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
 import { GameMap } from './map';
-import { ColorName } from '../game/color/color_name';
 import { LineSegment } from '../geometry/interfaces';
 describe('GameMap object tests', () => {
 	test('map should intialize with walls aroundy', () => {
@@ -17,9 +16,9 @@ describe('GameMap object tests', () => {
 			{ start: { x: 0, y: 10 }, end: { x: 10, y: 10 } }
 		]
 		expectedLocations.forEach((location) => {
-			expect(gameMap.walls).toContainEqual({
+			expect(gameMap.walls).toContainEqual(expect.objectContaining({
 				line: location
-			});
+			}));
 		})
 	})
 	test('map should initialize with  gridlines', () => {
