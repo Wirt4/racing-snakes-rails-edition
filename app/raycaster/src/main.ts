@@ -32,7 +32,7 @@ async function main(): Promise<void> {
 		gridLines.push(new Wall(0, i, 100, i, ColorName.BLUE));
 	}
 
-	const player = new Player({ x: 1, y: 50 });
+	const player = new Player({ x: 20, y: 50 });
 	const gameMap = new GameMap(player, walls, gridLines);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	while (true) {

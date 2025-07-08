@@ -48,7 +48,8 @@ class GameMap {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.player.position.x += 0.01; //travels horizontally
+		this.player.position.x += 0.02;
+		this.player.angle += 0.02; //turns in little circles
 	}
 
 	private getRayAngle(index: number): number {
