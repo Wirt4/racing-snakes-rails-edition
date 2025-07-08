@@ -10,7 +10,7 @@ export class GameMap implements GameMapInterface {
 	playerPosition: Coordinates = { x: 0, y: 0 };
 	playerAngle: number = 0;
 
-	constructor(width: number, height: number) {
+	constructor(width: number, height: number, wallColor: ColorName = ColorName.BLACK) {
 		this.gridLinesX = [];
 		this.gridLinesY = [];
 		for (let i = 0; i <= width; i += GRID_CELL) {
