@@ -50,10 +50,10 @@ export class GameMap implements GameMapInterface {
 		//floor grid would go here, return the distances of both the wall and the grid lines
 		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
 		let color = ColorName.NONE;
-		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
+		let closest = { isValid: false, x: -1, y: -1, distance: maximumAllowableDistance };
 		for (const wall of this.walls) {
 			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, wall);
-			if (hit.isValid && (!closest.isValid || hit.distance < closest.distance)) {
+			if (hit.isValid && (hit.distance < closest.distance)) {
 				closest = hit
 				color = wall.color
 			}
