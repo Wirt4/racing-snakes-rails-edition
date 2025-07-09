@@ -62,9 +62,25 @@ describe('RemoveFishEye', () => {
 	test('removeFishEye should return the same distance when angle is 0', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
 		const distance = 10;
-		const angle = 0;
-		const result = raycaster.removeFishEye(distance, angle);
+		const rayAngle = 0;
+		const centerAngle = 0;
+		const result = raycaster.removeFishEye(distance, centerAngle, rayAngle);
 		expect(result).toEqual(distance);
+	});
+	test('removeFishEye should return the shorter and shorter distances the farther the ray is from the center', () => {
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
+		const distance = 10;
+		const centerAngle = SIXTY_DEGREES;
+		const correctedDistances = [];
+		for (let rayAngle = centerAngle; rayAngle <= FORTY_FIVE_DEGREES + centerAngle; rayAngle += FORTY_FIVE_DEGREES / 5) {
+			const result = raycaster.removeFishEye(distance, centerAngle, rayAngle);
+			correctedDistances.push(result);
+		}
+		expect(correctedDistances.length).toEqual(6);
+		for (let i = 1; i < correctedDistances.length; i++) {
+			expect(correctedDistances[i] < correctedDistances[i - 1]).toEqual(true);
+		}
+
 	});
 
 })

@@ -41,11 +41,10 @@ class Raycaster implements RaycasterInterface {
 		return rays;
 	}
 
-	removeFishEye(distance: number, angle: number): number {
+	removeFishEye(distance: number, centerAngle: number, relativeAngle: number): number {
 		/**
 		 * Precondition: distance is a positive number, angle is between 0 and 2*Math.PI
-		 * Postcondition: returns the corrected distance
-		 * The correction is done by dividing the distance by the cosine of the angle
+		 * Postcondition: returns the corrected distance, the greater the ditstance between the center and relative angle, the greater the correction
 		 * This is to account for the fish-eye effect in a raycaster
 		 */
 		return distance;
