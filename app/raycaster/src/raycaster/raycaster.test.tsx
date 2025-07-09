@@ -120,4 +120,16 @@ describe('wallHeightToSliceHeight', () => {
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
 		expect(Math.abs(result - expected)).toBeLessThan(1e-5);
 	});
+});
+
+describe('calculateBrightness', () => {
+	let raycaster: Raycaster;
+	beforeEach(() => {
+		raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT);
+	});
+	test('calculateBrightness should return 1 for distance 0', () => {
+		const distance = 0;
+		const result = raycaster.calculateBrightness(distance);
+		expect(result).toEqual(1);
+	})
 })

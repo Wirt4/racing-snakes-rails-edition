@@ -70,6 +70,10 @@ class Raycaster implements RaycasterInterface {
 		return (height * this.focalLength) / distance;
 	}
 
+	calculateBrightness(distance: number): number {
+		throw new Error("Not implemented yet");
+	}
+
 
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
@@ -80,6 +84,7 @@ class Raycaster implements RaycasterInterface {
 		}
 		return angle;
 	}
+
 }
 
 export { Raycaster };
