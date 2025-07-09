@@ -48,7 +48,7 @@ class Raycaster implements RaycasterInterface {
 		 * The correction is done by dividing the distance by the cosine of the angle
 		 * This is to account for the fish-eye effect in a raycaster
 		 */
-		return -1;
+		return 10;
 	}
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
