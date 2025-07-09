@@ -38,12 +38,12 @@ export class GameMap implements GameMapInterface {
 
 	movePlayer(): void {
 		// stubbed
-		this.playerPosition.x += 0.02;
+		//	this.playerPosition.x += 0.02;
 
 	}
 
 	turnPlayer(angle: number = 0): void {
-		this.playerAngle += angle;
+		//	this.playerAngle += angle;
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {

@@ -29,7 +29,9 @@ class Game {
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle); //raycaster logic
-			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
+			//const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
+			const sliceHeight = raycaster.wallHeightToSliceHeight(correctedDistance, Settings.WALL_HEIGHT);//stupid test value
+			console.log('slice height', sliceHeight, 'distance', correctedDistance, 'angle', angle);
 			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);

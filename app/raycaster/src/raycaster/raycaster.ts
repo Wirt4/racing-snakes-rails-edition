@@ -4,8 +4,8 @@ import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
-	private fieldOfView: number;
-	constructor(private resolution: number, fieldOfView: number) {
+	private focalLength: number;
+	constructor(private resolution: number, private fieldOfView: number, private screenWidth: number, screenHeight: number) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
 		 * resolution is a positive integer
@@ -21,6 +21,11 @@ class Raycaster implements RaycasterInterface {
 			this.offsets.push(i * step);
 		}
 		this.fovOffset = this.fieldOfView / 2;
+
+		const aspectRatio = screenWidth / screenHeight;
+		const verticalFOV = 2 * Math.atan(Math.tan(this.fieldOfView / 2) / aspectRatio);
+
+		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
 	getViewRays(viewerAngle: number): Array<number> {
@@ -59,7 +64,10 @@ class Raycaster implements RaycasterInterface {
 		 * */
 		assertIsNonNegative(distance);
 		assertIsPositive(height);
-		return height;
+		if (distance === 0) {
+			return height;
+		}
+		return height / (distance * this.focalLength);
 	}
 
 

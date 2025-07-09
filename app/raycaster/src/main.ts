@@ -21,11 +21,11 @@ async function main(): Promise<void> {
 
 	const gameMap = new GameMap(100, 100, ColorName.GREEN);
 	gameMap.playerAngle = 0
-	gameMap.playerPosition = { x: 20, y: 50 };
+	gameMap.playerPosition = { x: 20, y: 54 };
 	gameMap.walls = [...walls, ...gameMap.walls];
 	const game = new Game(gameMap);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-	const raycaster = new Raycaster(Settings.RESOLUTION, Math.PI / 2);
+	const raycaster = new Raycaster(Settings.RESOLUTION, Math.PI / 3, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	while (true) {
 		renderer.reset();
 		game.draw(renderer, raycaster);
