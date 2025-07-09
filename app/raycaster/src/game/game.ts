@@ -27,9 +27,8 @@ class Game {
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		rays.forEach((angle, i) => {
-			//			const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
-			const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
+			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle); //raycaster logic
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
 			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
 			renderer.fillColor(color, brightness);
