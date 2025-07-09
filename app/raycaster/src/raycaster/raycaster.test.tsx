@@ -1,6 +1,24 @@
 import { describe, test, expect } from '@jest/globals';
 import { Raycaster } from './raycaster';
-describe('Raycaster tests', () => {
+describe('Raycaster instantiation', () => {
+	test('object may not be instantiated with invalid resolutions', () => {
+		expect(() => {
+			new Raycaster(8.98, Math.PI / 3);
+		}).toThrow();
+		expect(() => {
+			new Raycaster(-1, Math.PI / 3);
+		}).toThrow();
+	});
+	test('object may not be instantiated with invalid angle for field of view', () => {
+		expect(() => {
+			new Raycaster(640, -1);
+		}).toThrow();
+		expect(() => {
+			new Raycaster(640, 2 * Math.PI + 0.01);
+		}).toThrow();
+	});
+});
+describe('getViewRays tests', () => {
 
 	test('getViewRays should return a set with one ray per point of resolution', () => {
 		const raycaster = new Raycaster(640, Math.PI / 3);
@@ -29,14 +47,6 @@ describe('Raycaster tests', () => {
 			expect(ray).toBeLessThanOrEqual(3 * Math.PI / 4);
 		});
 	});
-	test('object may not be instantiated with invalid resolutions', () => {
-		expect(() => {
-			new Raycaster(8.98, Math.PI / 3);
-		}).toThrow();
-		expect(() => {
-			new Raycaster(-1, Math.PI / 3);
-		}).toThrow();
-	});
 	test('no ray in result may exist outside the cone of vision: straddles origin', () => {
 		const raycaster = new Raycaster(640, Math.PI / 2); // 90 degrees field of view
 		const rays = raycaster.getViewRays(0); //looking straight to the right
@@ -45,12 +55,4 @@ describe('Raycaster tests', () => {
 		});
 	});
 
-	test('object may not be instantiated with invalid angle for field of view', () => {
-		expect(() => {
-			new Raycaster(640, -1);
-		}).toThrow();
-		expect(() => {
-			new Raycaster(640, 2 * Math.PI + 0.01);
-		}).toThrow();
-	});
 });
