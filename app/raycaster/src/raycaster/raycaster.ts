@@ -55,10 +55,13 @@ class Raycaster implements RaycasterInterface {
 
 	wallHeightToSliceHeight(distance: number, height: number): number {
 		/**
-		 * Precondition: distance is a positive number, height is a positive number
+		 * Precondition: distance is a non-negative number, height is a positive number
 		 * Postcondition: returns the height of the slice in pixels, must be a positive number
 		 * */
-		throw new Error("Method not implemented.");
+		if (distance < 0 || height <= 0) {
+			throw new Error("Distance and height must be positive numbers");
+		}
+		return height;
 	}
 
 

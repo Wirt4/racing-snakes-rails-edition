@@ -98,4 +98,13 @@ describe('wallHeightToSliceHeight', () => {
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
 		expect(result).toEqual(height);
 	});
+	test('arguments must be positive', () => {
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
+		expect(() => {
+			raycaster.wallHeightToSliceHeight(-1, 10);
+		}).toThrow();
+		expect(() => {
+			raycaster.wallHeightToSliceHeight(10, -1);
+		}).toThrow();
+	});
 })
