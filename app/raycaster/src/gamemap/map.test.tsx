@@ -53,38 +53,6 @@ describe('GameMap configuration options', () => {
 		});
 	});
 });
-//
-// describe('castRay method', () => {
-// 	let gameMap: GameMap;
-//
-// 	beforeEach(() => {
-// 		gameMap = new GameMap(10, 11, ColorName.GREEN);
-// 		gameMap.playerPosition = { x: 1, y: 1 }
-//
-// 	});
-//
-// 	test('should return the correcy distance for a wall, basic example', () => {
-// 		const expectedDistance = 9
-// 		const slice = gameMap.castRay(0, 11)
-// 		expect(slice.distance).toEqual(expectedDistance)
-// 	})
-//
-// 	test('should return the correct distance for a wall, with an angle', () => {
-// 		const expectedDistance = 9 * Math.sqrt(2)
-// 		const slice = gameMap.castRay(Math.PI / 4, 11) //45 degrees for an easy calculation
-// 		expect(slice.distance).toEqual(expectedDistance)
-// 	})
-//
-// 	test('should return the correct color for the wall', () => {
-// 		const coloredGameMap = new GameMap(10, 10, ColorName.GREEN);
-// 		coloredGameMap.playerPosition = { x: 1, y: 1 };
-// 		coloredGameMap.appendWall({ line: { start: { x: 5, y: 0 }, end: { x: 5, y: 10 } }, color: ColorName.RED });
-// 		const slice = coloredGameMap.castRay(0, 11);
-// 		expect(slice.color).toEqual(ColorName.RED);
-//
-// 	})
-//
-// })
 
 describe('castRay method', () => {
 	let gameMap: GameMap;
@@ -111,40 +79,33 @@ describe('castRay method', () => {
 		gameMap.playerPosition = { x: 16, y: 5 };
 		const slice = gameMap.castRay(Math.PI, 15); // Facing negative x direction
 		expect(slice.distance).toEqual(15);
-		//expect(slice.color).toEqual(ColorName.NONE);
+		expect(slice.color).toEqual(ColorName.NONE);
 	});
 
-	// test('should detect grid hit before wall hit', () => {
-	// 	const gameMapWithGrid = new GameMap(10, 10, ColorName.GREEN, 1);
-	// 	gameMapWithGrid.playerPosition = { x: 1, y: 1 };
-	// 	const slice = gameMapWithGrid.castRay(0, 11);
-	// 	expect(slice.gridHits.length).toBeGreaterThan(0);
-	// 	expect(slice.distance).toBeGreaterThan(0);
-	// });
-	//
-	// test('should return same point for zero-length ray', () => {
-	// 	const slice = gameMap.castRay(0, 0);
-	// 	expect(slice.distance).toEqual(0);
-	// 	expect(slice.intersection).toEqual(gameMap.playerPosition);
-	// });
-	//
-	// test('should return correct intersection for vertical ray', () => {
-	// 	const slice = gameMap.castRay(Math.PI / 2, 11); // Upward
-	// 	expect(slice.intersection.x).toBeCloseTo(1, 5);
-	// 	expect(slice.intersection.y).toBeGreaterThan(1);
-	// });
-	//
-	// test('should handle grazing corner case gracefully', () => {
-	// 	// Grazing between two walls at (0,0)
-	// 	gameMap.playerPosition = { x: 0.001, y: 0.001 };
-	// 	const slice = gameMap.castRay(Math.PI, 11); // Facing left
-	// 	expect(slice.distance).toBeGreaterThan(0);
-	// });
-	//
-	// test('should not crash on near-parallel ray to a wall', () => {
-	// 	const epsilon = 1e-8;
-	// 	const slice = gameMap.castRay(epsilon, 20);
-	// 	expect(slice.distance).toBeGreaterThan(0);
-	// });
+
+	test('should return same point for zero-length ray', () => {
+		const slice = gameMap.castRay(0, 0);
+		expect(slice.distance).toEqual(0);
+		expect(slice.intersection).toEqual(gameMap.playerPosition);
+	});
+
+	test('should return correct intersection for vertical ray', () => {
+		const slice = gameMap.castRay(Math.PI / 2, 11); // Upward
+		expect(slice.intersection.x).toBeCloseTo(1, 5);
+		expect(slice.intersection.y).toBeGreaterThan(1);
+	});
+
+	test('should handle grazing corner case gracefully', () => {
+		// Grazing between two walls at (0,0)
+		gameMap.playerPosition = { x: 0.001, y: 0.001 };
+		const slice = gameMap.castRay(Math.PI, 11); // Facing left
+		expect(slice.distance).toBeGreaterThan(0);
+	});
+
+	test('should not crash on near-parallel ray to a wall', () => {
+		const epsilon = 1e-8;
+		const slice = gameMap.castRay(epsilon, 20);
+		expect(slice.distance).toBeGreaterThan(0);
+	});
 });
 

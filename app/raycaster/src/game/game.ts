@@ -35,15 +35,6 @@ class Game {
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
 
 		})
-		// for (let i = 0; i < Settings.RESOLUTION; i++) {
-		// 	const angle = this.getRayAngle(i); //raycaster logic
-		// 	const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
-		// 	const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
-		// 	const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
-		// 	const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
-		// 	renderer.fillColor(color, brightness);
-		// 	this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
-		// }
 		this.draw2DMap(renderer);
 	}
 

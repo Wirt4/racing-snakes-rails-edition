@@ -47,40 +47,52 @@ export class GameMap implements GameMapInterface {
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {
-		//floor grid would go here, return the distances of both the wall and the grid lines
-		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
+		const rayDirection = {
+			x: Math.cos(angle),
+			y: Math.sin(angle)
+		};
+
+		let closest: Intersection = {
+			isValid: false,
+			x: -1,
+			y: -1,
+			distance: maximumAllowableDistance
+		};
 		let color = ColorName.NONE;
-		let closest = { isValid: false, x: -1, y: -1, distance: maximumAllowableDistance };
+
 		for (const wall of this.walls) {
 			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, wall);
-			if (hit.isValid && (hit.distance < closest.distance)) {
-				closest = hit
-				color = wall.color
+			if (hit.isValid && hit.distance < closest.distance) {
+				closest = hit;
+				color = wall.color;
 			}
 		}
-		//measure the grid lines
+
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
-		const endX = this.playerPosition.x + rayDirection.x * maxDistance;
-		const endY = this.playerPosition.y + rayDirection.y * maxDistance;
-		const rayEnd = { x: endX, y: endY };
+
+		const rayEnd = {
+			x: this.playerPosition.x + rayDirection.x * maxDistance,
+			y: this.playerPosition.y + rayDirection.y * maxDistance
+		};
 
 		const gridHits: number[] = [];
-		for (const grid of this.gridLinesX) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
-			if (hit.isValid && hit.distance < maxDistance) {
-				gridHits.push(hit.distance);
 
-			}
-		}
-		for (const grid of this.gridLinesY) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
+		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
+			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, {
+				line: grid,
+				color: ColorName.BLUE
+			});
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
 			}
 		}
 
-		return { distance: closest.isValid ? closest.distance : maximumAllowableDistance, color, gridHits, intersection: rayEnd };
-
+		return {
+			distance: closest.distance,
+			color,
+			gridHits,
+			intersection: rayEnd
+		};
 	}
 	private rayIntersection(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, determinant: number): number {
 		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
