@@ -54,3 +54,14 @@ describe('GameMap configuration options', () => {
 	});
 });
 
+describe('castRay method', () => {
+	test('should return the correct color and distance for a wall', () => {
+		const gameMap = new GameMap(10, 10, ColorName.GREEN);
+		expect(gameMap.playerPosition).toEqual({ x: 0, y: 0 })
+		expect(gameMap.playerAngle).toEqual(0)
+		const expectedDistance = 10
+		const slice = gameMap.castRay(0)
+		expect(slice.distance).toEqual(expectedDistance)
+
+	})
+})
