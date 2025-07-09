@@ -27,7 +27,8 @@ class Game {
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		rays.forEach((angle, i) => {
-			const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
+			//			const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
+			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
 			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
@@ -162,20 +163,20 @@ class Game {
 		return Math.max(Settings.MIN_PERCENT_BRIGHTNESS, Settings.MAX_PERCENT_BRIGHTNESS - distance * Settings.FADE_DISTANCE);
 	}
 
-	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number, gridMarks: { distance: number, color: ColorName }[], angle: number): void {
+	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number, gridMarks: Array<number>, angle: number): void {
 		const wallY = Game.HORIZON_Y - (sliceHeight / 2);
 		const origin = { x: fieldOfVisionXCoord, y: wallY };
 		renderer.rect(origin, 1, sliceHeight);
 
 		//track the grid
 		for (const hit of gridMarks) {
-			const corrected = this.removeFishEye(hit.distance, angle);
+			const corrected = this.removeFishEye(hit, angle);
 			const projectedHeight = Settings.CANVAS_HEIGHT / corrected;
 			const y = Game.HORIZON_Y + projectedHeight / 2;
 
 
 			const brightness = this.calculateBrightness(corrected);
-			renderer.fillColor(hit.color, brightness);
+			renderer.fillColor(ColorName.BLUE, brightness);
 			renderer.rect({ x: fieldOfVisionXCoord, y: y }, 1, 1); // 1-pixel line
 		}
 	}
