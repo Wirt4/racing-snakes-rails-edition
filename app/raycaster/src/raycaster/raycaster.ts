@@ -1,7 +1,6 @@
 import { RaycasterInterface } from './interface';
-import { assertIsPositiveInteger } from '../utils';
+import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
-
 class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
@@ -58,9 +57,8 @@ class Raycaster implements RaycasterInterface {
 		 * Precondition: distance is a non-negative number, height is a positive number
 		 * Postcondition: returns the height of the slice in pixels, must be a positive number
 		 * */
-		if (distance < 0 || height <= 0) {
-			throw new Error("Distance and height must be positive numbers");
-		}
+		assertIsNonNegative(distance);
+		assertIsPositive(height);
 		return height;
 	}
 
