@@ -1,6 +1,6 @@
 import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger } from '../utils';
-import { FULL_CIRCLE } from '../geometry/constants';
+import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 
 class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
@@ -47,6 +47,9 @@ class Raycaster implements RaycasterInterface {
 		 * Postcondition: returns the corrected distance, the greater the ditstance between the center and relative angle, the greater the correction
 		 * This is to account for the fish-eye effect in a raycaster
 		 */
+		if (this.fieldOfView >= NINETY_DEGREES) {
+			return distance; //no correction needed for wide FOV
+		}
 		return distance * Math.cos(relativeAngle - centerAngle);
 	}
 
