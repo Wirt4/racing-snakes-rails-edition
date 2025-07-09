@@ -2,21 +2,21 @@ import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 import { Slice } from '../gamemap/interface';
-
-
+interface Intersection {
+	isValid: boolean;
+	x: number;
+	y: number;
+	distance: number;
+}
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	playerPosition: Coordinates = { x: 0, y: 0 };
 	playerAngle: number = 0;
-	private height: number;
-	private width: number;
 
 
 	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
-		this.width = width;
-		this.height = height;
 		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
 		const left_top = { x: 0, y: 0 };
@@ -32,6 +32,10 @@ export class GameMap implements GameMapInterface {
 		];
 	}
 
+	appendWall(wall: WallInterface): void {
+		this.walls.push(wall);
+	}
+
 	movePlayer(): void {
 		// stubbed
 		this.playerPosition.x += 0.02;
@@ -42,25 +46,93 @@ export class GameMap implements GameMapInterface {
 		this.playerAngle += angle;
 	}
 
-	castRay(angle: number): Slice {
-		// iterate through all walls (need to because they're positions are dynamically generated)
-		//	if there's no intersection, continue
-		//	if the interesction is off the game grid, continue
-		//	find the distance between the points
-
-		let distance: number = -1
-		this.walls.forEach(wall => {
-			const intersection = this.intersects(angle, wall.line)
-			if (intersection.isValid && intersection.x >= 0 && intersection.x <= this.width && intersection.y >= 0 && intersection.y <= this.height) {
-				//distance = Math.sqrt(Math.pow(this.playerPosition.x - intersection.x, 2)+ Math.pow(this.playerPosition, 2))
-				distance = Math.abs(intersection.x - this.playerPosition.x) / Math.sin(angle % (Math.PI / 2))
+	castRay(angle: number, maximumAllowableDistance: number): Slice {
+		//floor grid would go here, return the distances of both the wall and the grid lines
+		const rayDirection = { x: Math.cos(angle), y: Math.sin(angle) }
+		let color = ColorName.NONE;
+		let closest = { isValid: false, x: -1, y: -1, distance: Infinity };
+		for (const wall of this.walls) {
+			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, wall);
+			if (hit.isValid && (!closest.isValid || hit.distance < closest.distance)) {
+				closest = hit
+				color = wall.color
 			}
-		})
-		return { distance: 10, color: ColorName.RED, gridHits: null }
+		}
+		//measure the grid lines
+		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
+		const endX = this.playerPosition.x + rayDirection.x * maxDistance;
+		const endY = this.playerPosition.y + rayDirection.y * maxDistance;
+		const rayEnd = { x: endX, y: endY };
+
+		const gridHits: number[] = [];
+		for (const grid of this.gridLinesX) {
+			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
+			if (hit.isValid && hit.distance < maxDistance) {
+				gridHits.push(hit.distance);
+
+			}
+		}
+		for (const grid of this.gridLinesY) {
+			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, { line: grid, color: ColorName.BLUE });
+			if (hit.isValid && hit.distance < maxDistance) {
+				gridHits.push(hit.distance);
+			}
+		}
+
+		return { distance: closest.isValid ? closest.distance : maximumAllowableDistance, color, gridHits, intersection: rayEnd };
+
+	}
+	private rayIntersection(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, determinant: number): number {
+		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
+		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
+		const diff = -(numerator1 - numerator2);
+		return diff / determinant;
 	}
 
-	private intersects(angle: number, line: LineSegment): { x: number, y: number, isValid: boolean } {
-		throw new Error("not implemented")
+	private isInsideWall(wall_intersection: number, ray_intersection: number): boolean {
+		return wall_intersection >= 0 && wall_intersection <= 1 && ray_intersection >= 0;
+	}
+
+	private dist(coordinatesA: Coordinates, coordinatesB: Coordinates): number {
+		return Math.sqrt((coordinatesB.x - coordinatesA.x) ** 2 + (coordinatesB.y - coordinatesA.y) ** 2);
+	}
+
+	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: WallInterface): Intersection {
+		const { start: wallStart, end: wallEnd } = wall.line;
+		const rayPoint: Coordinates = { x: rayOrigin.x + direction.x, y: rayOrigin.y + direction.y };
+		const determinant = this.calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
+		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
+
+		if (this.isParallel(determinant)) {
+			return result;
+		}
+
+		const wall_intersection = this.wallIntersection(wallStart, rayOrigin, rayPoint, determinant);
+		const ray_intersection = this.rayIntersection(wallStart, wallEnd, rayOrigin, determinant);
+		if (!this.isInsideWall(wall_intersection, ray_intersection)) {
+			return result;
+		}
+
+		result.isValid = true;
+		result.x = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
+		result.y = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
+		result.distance = this.dist(rayOrigin, result);
+		return result;
+	}
+
+	private wallIntersection(wallStart: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates, determinant: number): number {
+		const numerator1 = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
+		const numerator2 = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
+		const diff = numerator1 - numerator2;
+		return diff / determinant;
+	}
+
+	private calculateDeterminant(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): number {
+		return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
+	}
+
+	private isParallel(determinant: number): boolean {
+		return Math.abs(determinant) < 1e-5;
 	}
 
 	private initializeWall(start: Coordinates, end: Coordinates, color: ColorName): WallInterface {

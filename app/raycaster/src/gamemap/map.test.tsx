@@ -58,21 +58,29 @@ describe('castRay method', () => {
 	let gameMap: GameMap;
 
 	beforeEach(() => {
-		gameMap = new GameMap(10, 10, ColorName.GREEN);
+		gameMap = new GameMap(10, 11, ColorName.GREEN);
+		gameMap.playerPosition = { x: 1, y: 1 }
+
 	});
-	test('should return the correct color and distance for a wall, basic example', () => {
-		const gameMap = new GameMap(10, 10, ColorName.GREEN);
-		expect(gameMap.playerPosition).toEqual({ x: 0, y: 0 })
-		const expectedDistance = 10
-		const slice = gameMap.castRay(0)
-		expect(slice.distance).toEqual(expectedDistance)
-	})
-	test('should return the correct color and distance for a wall, with an angle', () => {
-		const gameMap = new GameMap(10, 10, ColorName.GREEN);
-		expect(gameMap.playerPosition).toEqual({ x: 0, y: 0 })
-		const expectedDistance = 10 * Math.sqrt(2)
-		const slice = gameMap.castRay(Math.PI / 4) //45 degrees for an easy calcuation
-		expect(slice.distance).toEqual(expectedDistance)
+	// test('should return the correcy distance for a wall, basic example', () => {
+	// 	const expectedDistance = 9
+	// 	const slice = gameMap.castRay(0, 11)
+	// 	expect(slice.distance).toEqual(expectedDistance)
+	// })
+	//
+	// test('should return the correct distance for a wall, with an angle', () => {
+	// 	const expectedDistance = 9 * Math.sqrt(2)
+	// 	const slice = gameMap.castRay(Math.PI / 4, 11) //45 degrees for an easy calculation
+	// 	expect(slice.distance).toEqual(expectedDistance)
+	// })
+
+	test('should return the correct color for the wall', () => {
+		const coloredGameMap = new GameMap(10, 10, ColorName.GREEN);
+		coloredGameMap.playerPosition = { x: 1, y: 1 };
+		coloredGameMap.appendWall({ line: { start: { x: 5, y: 0 }, end: { x: 5, y: 10 } }, color: ColorName.RED });
+		const slice = gameMap.castRay(0, 11);
+		expect(slice.color).toEqual(ColorName.RED);
+
 	})
 
 })

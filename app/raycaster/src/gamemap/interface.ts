@@ -9,7 +9,8 @@ interface WallInterface {
 interface Slice {
 	distance: number;
 	color: ColorName;
-	gridHits: Slice[] | null;
+	gridHits: number[];
+	intersection: Coordinates;
 }
 
 interface GameMapInterface {
@@ -20,7 +21,8 @@ interface GameMapInterface {
 	playerAngle: number;
 	movePlayer(): void;
 	turnPlayer(angle: number): void;
-	castRay(angle: number): Slice;
+	castRay(angle: number, maximumAllowableDistance: number): Slice;
+	appendWall(wall: WallInterface): void;
 }
 
 export { GameMapInterface, WallInterface, Slice };
