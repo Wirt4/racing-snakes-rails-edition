@@ -88,7 +88,14 @@ describe('RemoveFishEye', () => {
 		const centerAngle = 0;
 		const result = raycaster.removeFishEye(distance, centerAngle, rayAngle);
 		expect(result).toEqual(distance);
-
 	})
-
+})
+describe('wallHeightToSliceHeight', () => {
+	test('wallHeightToSliceHeight should return the actual height when distance is 0', () => {
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
+		const height = 10;
+		const distance = 0;
+		const result = raycaster.wallHeightToSliceHeight(distance, height);
+		expect(result).toEqual(height);
+	});
 })

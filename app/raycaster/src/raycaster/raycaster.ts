@@ -53,6 +53,15 @@ class Raycaster implements RaycasterInterface {
 		return distance * Math.cos(relativeAngle - centerAngle);
 	}
 
+	wallHeightToSliceHeight(distance: number, height: number): number {
+		/**
+		 * Precondition: distance is a positive number, height is a positive number
+		 * Postcondition: returns the height of the slice in pixels, must be a positive number
+		 * */
+		throw new Error("Method not implemented.");
+	}
+
+
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
 			return angle + FULL_CIRCLE;
