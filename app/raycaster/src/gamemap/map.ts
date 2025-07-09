@@ -10,9 +10,13 @@ export class GameMap implements GameMapInterface {
 	gridLinesY: LineSegment[] = [];
 	playerPosition: Coordinates = { x: 0, y: 0 };
 	playerAngle: number = 0;
+	private height: number;
+	private width: number;
 
 
 	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
+		this.width = width;
+		this.height = height;
 		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
 		const left_top = { x: 0, y: 0 };
@@ -39,14 +43,31 @@ export class GameMap implements GameMapInterface {
 	}
 
 	castRay(angle: number): Slice {
+		// iterate through all walls (need to because they're positions are dynamically generated)
+		//	if there's no intersection, continue
+		//	if the interesction is off the game grid, continue
+		//	find the distance between the points
+
+		let distance: number = -1
+		this.walls.forEach(wall => {
+			const intersection = this.intersects(angle, wall.line)
+			if (intersection.isValid && intersection.x >= 0 && intersection.x <= this.width && intersection.y >= 0 && intersection.y <= this.height) {
+				//distance = Math.sqrt(Math.pow(this.playerPosition.x - intersection.x, 2)+ Math.pow(this.playerPosition, 2))
+				distance = Math.abs(intersection.x - this.playerPosition.x) / Math.sin(angle % (Math.PI / 2))
+			}
+		})
 		return { distance: 10, color: ColorName.RED, gridHits: null }
+	}
+
+	private intersects(angle: number, line: LineSegment): { x: number, y: number, isValid: boolean } {
+		throw new Error("not implemented")
 	}
 
 	private initializeWall(start: Coordinates, end: Coordinates, color: ColorName): WallInterface {
 		return {
 			line: { start, end },
 			color
-		};
+		}
 	}
 
 	private generateGridLines(step: number, primary: number, secondary: number, isVerical: boolean = false): LineSegment[] {
