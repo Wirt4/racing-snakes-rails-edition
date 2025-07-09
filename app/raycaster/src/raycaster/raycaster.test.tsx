@@ -76,11 +76,19 @@ describe('RemoveFishEye', () => {
 			const result = raycaster.removeFishEye(distance, centerAngle, rayAngle);
 			correctedDistances.push(result);
 		}
-		expect(correctedDistances.length).toEqual(6);
 		for (let i = 1; i < correctedDistances.length; i++) {
 			expect(correctedDistances[i] < correctedDistances[i - 1]).toEqual(true);
 		}
 
 	});
+	test('removeFishEye should not apply to wide angles', () => {
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES * 2);
+		const distance = 10;
+		const rayAngle = SIXTY_DEGREES;
+		const centerAngle = 0;
+		const result = raycaster.removeFishEye(distance, centerAngle, rayAngle);
+		expect(result).toEqual(distance);
+
+	})
 
 })

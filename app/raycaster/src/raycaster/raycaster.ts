@@ -47,8 +47,9 @@ class Raycaster implements RaycasterInterface {
 		 * Postcondition: returns the corrected distance, the greater the ditstance between the center and relative angle, the greater the correction
 		 * This is to account for the fish-eye effect in a raycaster
 		 */
-		return distance;
+		return distance * Math.cos(relativeAngle - centerAngle);
 	}
+
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
 			return angle + FULL_CIRCLE;
