@@ -1,3 +1,5 @@
 const FULL_CIRCLE = Math.PI * 2;
-
-export { FULL_CIRCLE };
+const SIXTY_DEGREES = Math.PI / 3;
+const NINETY_DEGREES = Math.PI / 2;
+const FORTY_FIVE_DEGREES = Math.PI / 4;
+export { FULL_CIRCLE, SIXTY_DEGREES, NINETY_DEGREES, FORTY_FIVE_DEGREES };

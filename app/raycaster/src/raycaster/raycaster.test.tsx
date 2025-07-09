@@ -1,58 +1,70 @@
 import { describe, test, expect } from '@jest/globals';
+import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '../geometry/constants';
 import { Raycaster } from './raycaster';
+const TEST_RESOLUTION = 640;
 describe('Raycaster instantiation', () => {
 	test('object may not be instantiated with invalid resolutions', () => {
 		expect(() => {
-			new Raycaster(8.98, Math.PI / 3);
+			new Raycaster(8.98, SIXTY_DEGREES);
 		}).toThrow();
 		expect(() => {
-			new Raycaster(-1, Math.PI / 3);
+			new Raycaster(-1, SIXTY_DEGREES);
 		}).toThrow();
 	});
 	test('object may not be instantiated with invalid angle for field of view', () => {
 		expect(() => {
-			new Raycaster(640, -1);
+			new Raycaster(TEST_RESOLUTION, -1);
 		}).toThrow();
 		expect(() => {
-			new Raycaster(640, 2 * Math.PI + 0.01);
+			new Raycaster(TEST_RESOLUTION, FULL_CIRCLE + 0.01);
 		}).toThrow();
 	});
 });
 describe('getViewRays tests', () => {
 
 	test('getViewRays should return a set with one ray per point of resolution', () => {
-		const raycaster = new Raycaster(640, Math.PI / 3);
-		const expectedRayNumber = 640;
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
+		const expectedRayNumber = TEST_RESOLUTION;
 		const actualRayNumber = raycaster.getViewRays(0).length;
 		expect(actualRayNumber).toEqual(expectedRayNumber);
 	});
 	test('getViewRays should return rays in the range of 0 to 2*PI', () => {
-		const raycaster = new Raycaster(640, Math.PI / 3);
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
 		const rays = raycaster.getViewRays(0);
 		rays.forEach(ray => {
 			expect(ray).toBeGreaterThanOrEqual(0);
-			expect(ray).toBeLessThanOrEqual(2 * Math.PI);
+			expect(ray).toBeLessThanOrEqual(FULL_CIRCLE);
 		});
 	});
 	test('getViewRays should return rays in order', () => {
-		const raycaster = new Raycaster(640, Math.PI / 2);
-		const rays = raycaster.getViewRays(Math.PI / 4);
-		expect(Math.abs(rays[0] - Math.PI / 2)).toBeLessThan(0.00001);
+		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES);
+		const rays = raycaster.getViewRays(FORTY_FIVE_DEGREES);
+		expect(Math.abs(rays[0] - NINETY_DEGREES)).toBeLessThan(0.00001);
 	});
 	test('no ray in result may exist outside the cone of vision: happy path', () => {
-		const raycaster = new Raycaster(640, Math.PI / 2); // 90 degrees field of view
-		const rays = raycaster.getViewRays(Math.PI / 2); //looking straight up
+		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES); // 90 degrees field of view
+		const rays = raycaster.getViewRays(NINETY_DEGREES); //looking straight up
 		rays.forEach(ray => {
-			expect(ray).toBeGreaterThanOrEqual(Math.PI / 4);
-			expect(ray).toBeLessThanOrEqual(3 * Math.PI / 4);
+			expect(ray).toBeGreaterThanOrEqual(FORTY_FIVE_DEGREES);
+			expect(ray).toBeLessThanOrEqual(3 * FORTY_FIVE_DEGREES);
 		});
 	});
 	test('no ray in result may exist outside the cone of vision: straddles origin', () => {
-		const raycaster = new Raycaster(640, Math.PI / 2); // 90 degrees field of view
+		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES); // 90 degrees field of view
 		const rays = raycaster.getViewRays(0); //looking straight to the right
 		rays.forEach(ray => {
-			expect((ray <= Math.PI / 4 && ray >= 0) || (ray <= 2 * Math.PI && ray >= 7 * Math.PI / 4)).toEqual(true);
+			expect((ray <= FORTY_FIVE_DEGREES && ray >= 0) || (ray <= FULL_CIRCLE && ray >= 7 * FORTY_FIVE_DEGREES)).toEqual(true);
 		});
 	});
-
 });
+
+describe('RemoveFishEye', () => {
+	test('removeFishEye should return the same distance when angle is 0', () => {
+		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES);
+		const distance = 10;
+		const angle = 0;
+		const result = raycaster.removeFishEye(distance, angle);
+		expect(result).toEqual(distance);
+	});
+
+})

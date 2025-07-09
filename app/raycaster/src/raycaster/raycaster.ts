@@ -5,11 +5,13 @@ import { FULL_CIRCLE } from '../geometry/constants';
 class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
-	constructor(private resolution: number, private fieldOfView: number) {
+	private fieldOfView: number;
+	constructor(private resolution: number, fieldOfView: number) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
 		 * resolution is a positive integer
 		 **/
+		this.fieldOfView = fieldOfView;
 		assertIsPositiveInteger(this.resolution);
 		if (this.fieldOfView < 0 || this.fieldOfView > FULL_CIRCLE) {
 			throw new Error("Field of view must be between 0 and 2*Math.PI");
@@ -39,6 +41,15 @@ class Raycaster implements RaycasterInterface {
 		return rays;
 	}
 
+	removeFishEye(distance: number, angle: number): number {
+		/**
+		 * Precondition: distance is a positive number, angle is between 0 and 2*Math.PI
+		 * Postcondition: returns the corrected distance
+		 * The correction is done by dividing the distance by the cosine of the angle
+		 * This is to account for the fish-eye effect in a raycaster
+		 */
+		return -1;
+	}
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
 			return angle + FULL_CIRCLE;
