@@ -1,6 +1,7 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
+import { Slice } from '../gamemap/interface';
 
 
 export class GameMap implements GameMapInterface {
@@ -35,6 +36,10 @@ export class GameMap implements GameMapInterface {
 
 	turnPlayer(angle: number = 0): void {
 		this.playerAngle += angle;
+	}
+
+	castRay(angle: number): Slice {
+		throw new Error('Method not implemented.');
 	}
 
 	private initializeWall(start: Coordinates, end: Coordinates, color: ColorName): WallInterface {

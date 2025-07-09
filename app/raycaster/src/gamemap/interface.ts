@@ -6,6 +6,12 @@ interface WallInterface {
 	color: ColorName
 }
 
+interface Slice {
+	distance: number;
+	color: ColorName;
+	gridHits: Slice[] | null;
+}
+
 interface GameMapInterface {
 	walls: WallInterface[];
 	gridLinesX: LineSegment[];
@@ -14,6 +20,7 @@ interface GameMapInterface {
 	playerAngle: number;
 	movePlayer(): void;
 	turnPlayer(angle: number): void;
+	castRay(angle: number): Slice;
 }
 
-export { GameMapInterface, WallInterface };
+export { GameMapInterface, WallInterface, Slice };
