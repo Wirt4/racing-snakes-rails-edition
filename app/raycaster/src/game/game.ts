@@ -1,4 +1,5 @@
 import { RendererInterface } from '../renderer/renderer';
+import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { Angle } from '../geometry/angle';
 import { ColorName } from './color/color_name';
@@ -21,18 +22,28 @@ class Game {
 		this.map = map;
 	}
 
-	draw(renderer: RendererInterface): void {
+	draw(renderer: RendererInterface, raycaster: RaycasterInterface): void {
 		renderer.fillColor(ColorName.BLACK, .01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-		for (let i = 0; i < Settings.RESOLUTION; i++) {
-			const angle = this.getRayAngle(i); //raycaster logic
+		const rays = raycaster.getViewRays(this.map.playerAngle);
+		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
 			const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
 			const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
 			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
 			renderer.fillColor(color, brightness);
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
-		}
+
+		})
+		// for (let i = 0; i < Settings.RESOLUTION; i++) {
+		// 	const angle = this.getRayAngle(i); //raycaster logic
+		// 	const { distance, color, gridHits } = this.castRay(angle);// map logic: that structure contains all the color and grid info
+		// 	const correctedDistance = this.removeFishEye(distance, angle); //raycaster logic
+		// 	const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
+		// 	const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
+		// 	renderer.fillColor(color, brightness);
+		// 	this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
+		// }
 		this.draw2DMap(renderer);
 	}
 

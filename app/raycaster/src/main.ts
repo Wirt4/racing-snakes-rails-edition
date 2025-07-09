@@ -5,6 +5,7 @@ import { Renderer } from './renderer/renderer';
 import { Game } from './game/game';
 import { ColorName } from './game/color/color_name';
 import { GameMap } from './gamemap/map';
+import { Raycaster } from './raycaster/raycaster';
 
 
 async function main(): Promise<void> {
@@ -24,10 +25,10 @@ async function main(): Promise<void> {
 	gameMap.walls = [...walls, ...gameMap.walls];
 	const game = new Game(gameMap);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-
+	const raycaster = new Raycaster(Settings.RESOLUTION, Math.PI / 2);
 	while (true) {
 		renderer.reset();
-		game.draw(renderer);
+		game.draw(renderer, raycaster);
 		game.update();
 		await sleep(Settings.FRAMES_PER_SECOND);
 	}

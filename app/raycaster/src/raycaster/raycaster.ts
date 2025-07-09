@@ -3,7 +3,7 @@ import { assertIsPositiveInteger } from '../utils';
 import { FULL_CIRCLE } from '../geometry/constants';
 
 class Raycaster implements RaycasterInterface {
-	private offsets: Set<number>;
+	private offsets: Array<number>;
 	private fovOffset: number;
 	constructor(private resolution: number, private fieldOfView: number) {
 		/**
@@ -14,15 +14,15 @@ class Raycaster implements RaycasterInterface {
 		if (this.fieldOfView < 0 || this.fieldOfView > FULL_CIRCLE) {
 			throw new Error("Field of view must be between 0 and 2*Math.PI");
 		}
-		this.offsets = new Set<number>();
+		this.offsets = [];
 		const step = this.fieldOfView / this.resolution;
-		for (let i = 0; i < this.resolution; i++) {
-			this.offsets.add(i * step);
+		for (let i = this.resolution - step; i >= 0; i--) {
+			this.offsets.push(i * step);
 		}
 		this.fovOffset = this.fieldOfView / 2;
 	}
 
-	getViewRays(viewerAngle: number): Set<number> {
+	getViewRays(viewerAngle: number): Array<number> {
 		/*Precondition: 0<=viewerAngle<=2*Math.PI
 		 * Postconditions: 
 		 * returns an array of rays
@@ -32,9 +32,9 @@ class Raycaster implements RaycasterInterface {
 		 */
 
 		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
-		const rays: Set<number> = new Set<number>();
+		const rays: Array<number> = new Array<number>();
 		this.offsets.forEach((offset) => {
-			rays.add(this.normalizeAngle(offset + viewerAngle - (this.fovOffset)));
+			rays.push(this.normalizeAngle(offset + viewerAngle - (this.fovOffset)));
 		})
 		return rays;
 	}

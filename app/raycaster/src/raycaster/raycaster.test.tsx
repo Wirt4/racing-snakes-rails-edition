@@ -5,7 +5,7 @@ describe('Raycaster tests', () => {
 	test('getViewRays should return a set with one ray per point of resolution', () => {
 		const raycaster = new Raycaster(640, Math.PI / 3);
 		const expectedRayNumber = 640;
-		const actualRayNumber = raycaster.getViewRays(0).size;
+		const actualRayNumber = raycaster.getViewRays(0).length;
 		expect(actualRayNumber).toEqual(expectedRayNumber);
 	});
 	test('getViewRays should return rays in the range of 0 to 2*PI', () => {
@@ -15,7 +15,12 @@ describe('Raycaster tests', () => {
 			expect(ray).toBeGreaterThanOrEqual(0);
 			expect(ray).toBeLessThanOrEqual(2 * Math.PI);
 		});
-	})
+	});
+	test('getViewRays should return rays in order', () => {
+		const raycaster = new Raycaster(640, Math.PI / 2);
+		const rays = raycaster.getViewRays(Math.PI / 4);
+		expect(Math.abs(rays[0] - Math.PI / 2)).toBeLessThan(0.00001);
+	});
 	test('no ray in result may exist outside the cone of vision: happy path', () => {
 		const raycaster = new Raycaster(640, Math.PI / 2); // 90 degrees field of view
 		const rays = raycaster.getViewRays(Math.PI / 2); //looking straight up
