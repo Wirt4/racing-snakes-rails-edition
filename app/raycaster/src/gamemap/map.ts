@@ -39,7 +39,7 @@ export class GameMap implements GameMapInterface {
 	}
 
 	castRay(angle: number): Slice {
-		throw new Error('Method not implemented.');
+		return { distance: 10, color: ColorName.RED, gridHits: null }
 	}
 
 	private initializeWall(start: Coordinates, end: Coordinates, color: ColorName): WallInterface {
