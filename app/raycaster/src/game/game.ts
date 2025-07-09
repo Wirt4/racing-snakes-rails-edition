@@ -165,7 +165,7 @@ class Game {
 	}
 
 	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number, gridMarks: Array<number>, angle: number): void {
-		const wallY = Game.HORIZON_Y - (sliceHeight / 2);
+		const wallY = Game.HORIZON_Y - (sliceHeight * Settings.HORIZON_LINE_RATIO);
 		const origin = { x: fieldOfVisionXCoord, y: wallY };
 		renderer.rect(origin, 1, sliceHeight);
 

@@ -5,7 +5,7 @@ class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
 	private focalLength: number;
-	constructor(private resolution: number, private fieldOfView: number, private screenWidth: number, screenHeight: number) {
+	constructor(private resolution: number, private fieldOfView: number, private screenWidth: number, private screenHeight: number) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
 		 * resolution is a positive integer
@@ -65,9 +65,9 @@ class Raycaster implements RaycasterInterface {
 		assertIsNonNegative(distance);
 		assertIsPositive(height);
 		if (distance === 0) {
-			return height;
+			return this.screenHeight;
 		}
-		return height / (distance * this.focalLength);
+		return (height * this.focalLength) / distance;
 	}
 
 

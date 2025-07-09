@@ -96,12 +96,12 @@ describe('RemoveFishEye', () => {
 	})
 })
 describe('wallHeightToSliceHeight', () => {
-	test('wallHeightToSliceHeight should return the actual height when distance is 0', () => {
+	test('wallHeightToSliceHeight should fill the screen when distance is 0', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT);
 		const height = 10;
 		const distance = 0;
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
-		expect(result).toEqual(height);
+		expect(result).toEqual(TEST_HEIGHT);
 	});
 	test('arguments must be positive', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT);
@@ -116,9 +116,8 @@ describe('wallHeightToSliceHeight', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES, 640, TEST_HEIGHT); //control for a focal length
 		const height = 10;
 		const distance = 5;
-		const expected = 0.006640625
+		const expected = 602.3529411764706;
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
-		console.log(result);
 		expect(Math.abs(result - expected)).toBeLessThan(1e-5);
 	});
 })
