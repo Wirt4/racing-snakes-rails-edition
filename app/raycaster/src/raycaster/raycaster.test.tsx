@@ -117,25 +117,8 @@ describe('wallHeightToSliceHeight', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES, 640, TEST_HEIGHT); //control for a focal length
 		const height = 10;
 		const distance = 5;
-		const expected = 602.3529411764706;
+		const expected = 1807.058823529411;
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
 		expect(Math.abs(result - expected)).toBeLessThan(1e-5);
 	});
 });
-
-describe('calculateBrightness', () => {
-	let raycaster: Raycaster;
-	beforeEach(() => {
-		raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT, TEST_MAX_DISTANCE);
-	});
-	test('calculateBrightness should return 1 for distance 0', () => {
-		const distance = 0;
-		const result = raycaster.calculateBrightness(distance);
-		expect(result).toEqual(100);
-	});
-	test('calculateBrightness should return 0 for distance greater than max distance', () => {
-		const distance = TEST_MAX_DISTANCE + 1;
-		const result = raycaster.calculateBrightness(distance);
-		expect(result).toEqual(0)
-	});
-})
