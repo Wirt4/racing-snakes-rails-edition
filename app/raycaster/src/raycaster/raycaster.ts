@@ -1,11 +1,20 @@
 import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
+
 class Raycaster implements RaycasterInterface {
+
 	private offsets: Array<number>;
 	private fovOffset: number;
 	private focalLength: number;
-	constructor(private resolution: number, private fieldOfView: number, private screenWidth: number, private screenHeight: number) {
+
+	constructor(
+		private resolution: number,
+		private fieldOfView: number,
+		private screenWidth: number,
+		private screenHeight: number,
+		private maxDistance: number = 1000
+	) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
 		 * resolution is a positive integer
@@ -71,9 +80,11 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	calculateBrightness(distance: number): number {
-		return 1
+		if (distance > this.maxDistance) {
+			return 0;
+		}
+		return 100 * (1 - (distance / this.maxDistance));
 	}
-
 
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
@@ -84,7 +95,6 @@ class Raycaster implements RaycasterInterface {
 		}
 		return angle;
 	}
-
 }
 
 export { Raycaster };

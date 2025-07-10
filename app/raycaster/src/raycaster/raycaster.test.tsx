@@ -4,6 +4,7 @@ import { Raycaster } from './raycaster';
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
 const TEST_RESOLUTION = 640;
+const TEST_MAX_DISTANCE = 1000;
 
 describe('Raycaster instantiation', () => {
 	test('object may not be instantiated with invalid resolutions', () => {
@@ -125,11 +126,16 @@ describe('wallHeightToSliceHeight', () => {
 describe('calculateBrightness', () => {
 	let raycaster: Raycaster;
 	beforeEach(() => {
-		raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT);
+		raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT, TEST_MAX_DISTANCE);
 	});
 	test('calculateBrightness should return 1 for distance 0', () => {
 		const distance = 0;
 		const result = raycaster.calculateBrightness(distance);
-		expect(result).toEqual(1);
-	})
+		expect(result).toEqual(100);
+	});
+	test('calculateBrightness should return 0 for distance greater than max distance', () => {
+		const distance = TEST_MAX_DISTANCE + 1;
+		const result = raycaster.calculateBrightness(distance);
+		expect(result).toEqual(0)
+	});
 })

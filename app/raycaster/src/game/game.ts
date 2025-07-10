@@ -6,6 +6,7 @@ import { ColorName } from './color/color_name';
 import { Point } from '../geometry/point';
 import { Coordinates } from '../geometry/interfaces';
 import { GameMapInterface, WallInterface } from '../gamemap/interface';
+import { BrightnessInterface } from '../brightness/interface';
 interface Intersection {
 	isValid: boolean;
 	x: number;
@@ -22,18 +23,16 @@ class Game {
 		this.map = map;
 	}
 
-	draw(renderer: RendererInterface, raycaster: RaycasterInterface): void {
+	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface): void {
 		renderer.fillColor(ColorName.BLACK, .01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
-			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle); //raycaster logic
-			//const sliceHeight = this.calculateSliceHeight(correctedDistance, Settings.CANVAS_HEIGHT);//raycaster logic
-			const sliceHeight = raycaster.wallHeightToSliceHeight(correctedDistance, Settings.WALL_HEIGHT);//stupid test value
-			console.log('slice height', sliceHeight, 'distance', correctedDistance, 'angle', angle);
-			const brightness = this.calculateBrightness(correctedDistance); //raycaster logic
-			renderer.fillColor(color, brightness);
+			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
+			const sliceHeight = raycaster.wallHeightToSliceHeight(correctedDistance, Settings.WALL_HEIGHT);
+			const b = brightness.calculateBrightness(correctedDistance);
+			renderer.fillColor(color, b);
 			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
 
 		})

@@ -6,7 +6,7 @@ import { Game } from './game/game';
 import { ColorName } from './game/color/color_name';
 import { GameMap } from './gamemap/map';
 import { Raycaster } from './raycaster/raycaster';
-
+import { Brightness } from './brightness/brightness';
 
 async function main(): Promise<void> {
 	//below is test data etc.
@@ -25,10 +25,17 @@ async function main(): Promise<void> {
 	gameMap.walls = [...walls, ...gameMap.walls];
 	const game = new Game(gameMap);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-	const raycaster = new Raycaster(Settings.RESOLUTION, Math.PI / 3, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+	const raycaster = new Raycaster(
+		Settings.RESOLUTION,
+		Math.PI / 3,
+		Settings.CANVAS_WIDTH,
+		Settings.CANVAS_HEIGHT,
+		Settings.MAX_DISTANCE);
+	const brightness = new Brightness(Settings.MAX_DISTANCE);
 	while (true) {
 		renderer.reset();
-		game.draw(renderer, raycaster);
+		//stub
+		game.draw(renderer, raycaster, brightness);
 		game.update();
 		await sleep(Settings.FRAMES_PER_SECOND);
 	}
