@@ -13,11 +13,11 @@ interface HSLInterface {
 function nameToProfile(color_label: ColorName): HSLInterface {
 	switch (color_label) {
 		case ColorName.YELLOW:
-			return { hue: 90, saturation: 0.25, lightness: 0.5 };
+			return { hue: 60, saturation: 1, lightness: 0.5 };
 		case ColorName.BLUE:
-			return { hue: 240, saturation: 0.5, lightness: 0.6 };
+			return { hue: 240, saturation: 1, lightness: 0.6 };
 		case ColorName.RED:
-			return { hue: 0, saturation: 0.30, lightness: 0.6 };
+			return { hue: 0, saturation: 1, lightness: 0.6 };
 		case ColorName.GREEN:
 			return { hue: 120, saturation: 1, lightness: 0.5 };
 		case ColorName.WHITE:

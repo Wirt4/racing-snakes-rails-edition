@@ -1,21 +1,9 @@
-import { ColorName } from "./color/color_name";
-import { hslFactory } from "./renderer/hsl_factory";
-import { HSL } from "./renderer/hsl";
-import { Coordinates } from "./geometry/coordinates";
-import { assertIsPositiveInteger } from "./utils";
-interface RendererInterface {
-	fillColor(color: ColorName, brightness: number): void;
-	rect(origin: Coordinates, width: number, height: number): void;
-	save(): void;
-	scale(scale: number): void;
-	stroke(color: ColorName): void;
-	restore(): void;
-	strokeWeight(weight: number): void;
-	line(start: Coordinates, end: Coordinates): void;
-	ellipse(origin: Coordinates, stroke: number): void;
-	noStroke(): void;
-}
-
+import { ColorName } from "../game/color/color_name";
+import { hslFactory } from "./hsl/hsl_factory";
+import { HSL } from "./hsl/hsl";
+import { Coordinates, LineSegment } from "../geometry/interfaces";
+import { assertIsPositiveInteger } from "../utils";
+import { RendererInterface } from "./interface";
 class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
 	constructor(targetId: string, width: number, height: number) {
@@ -82,11 +70,12 @@ class Renderer implements RendererInterface {
 		this.context.lineWidth = weight;
 	}
 
-	public line(start: Coordinates, end: Coordinates): void {
+	public line(line: LineSegment): void {
 		/**
 		 * Precondition: the context is a valid CanvasRenderingContext2D
 		 * Postcondition: the context draws a line from (x1, y1) to (x2, y2)
 		 */
+		const { start, end } = line;
 		this.context.beginPath();
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);
@@ -112,13 +101,13 @@ class Renderer implements RendererInterface {
 
 		const brightnessPercent = brightness / 100;
 		let hsl: HSL;
-
-		if (color == ColorName.RED) {
-			hsl = hslFactory(ColorName.RED);
+		if (color == ColorName.NONE) {
+			hsl = hslFactory(ColorName.WHITE);
 		} else {
-			hsl = hslFactory(ColorName.PURPLE);
+			hsl = hslFactory(color);
 		}
-		hsl.lightness *= brightnessPercent;
+
+		hsl.lightness = brightnessPercent;
 		this.context.fillStyle = hsl.toHex();
 	}
 

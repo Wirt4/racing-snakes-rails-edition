@@ -1,5 +1,5 @@
-import { ColorName } from '../color/color_name';
-import { nameToProfile } from '../color/color_profiles';
+import { ColorName } from '../../game/color/color_name';
+import { nameToProfile } from '../../game/color/color_profiles';
 import { HSL } from './hsl';
 
 export function hslFactory(colorName: ColorName): HSL {

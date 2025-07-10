@@ -1,35 +1,41 @@
 // test for game loop
 import { sleep } from './sleep';
 import { Settings } from './settings';
-import { Renderer } from './renderer';
-import { GameMap } from './game-map';
-import { Player } from './player';
-import { Wall } from './wall';
-import { ColorName } from './color/color_name';
-
+import { Renderer } from './renderer/renderer';
+import { Game } from './game/game';
+import { ColorName } from './game/color/color_name';
+import { GameMap } from './gamemap/map';
+import { Raycaster } from './raycaster/raycaster';
+import { Brightness } from './brightness/brightness';
 
 async function main(): Promise<void> {
-	const topWall = new Wall(1, 1, 58, 1, ColorName.GREEN);
-	const rightWall = new Wall(58, 1, 58, 58, ColorName.GREEN);
-	const bottomWall = new Wall(58, 58, 1, 58, ColorName.GREEN);
-	const leftWall = new Wall(1, 58, 1, 1, ColorName.GREEN);
-	const walls = [
-		topWall,
-		new Wall(40, 30, 5, 10, ColorName.RED),
-		new Wall(5, 10, 70, 30, ColorName.RED),
-		rightWall,
-		bottomWall,
-		leftWall,
-	];
+	//below is test data etc.
+	const walls = [];
+	for (let i = 0; i < 10; i++) {
+		walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 100 }, end: { x: 10 * i, y: 55 } } })
+		if (i % 2 == 0) {
+			walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 55 }, end: { x: 10 * (i + 1), y: 55 } } })
+		}
+	}
+	walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
 
-	const player = new Player({ x: 4.5, y: 4.5 })
-
-	const gameMap = new GameMap(player, walls);
+	const gameMap = new GameMap(100, 100, ColorName.GREEN);
+	gameMap.playerAngle = 0
+	gameMap.playerPosition = { x: 20, y: 54 };
+	gameMap.walls = [...walls, ...gameMap.walls];
+	const game = new Game(gameMap);
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+	const raycaster = new Raycaster(
+		Settings.RESOLUTION,
+		Settings.FIELD_OF_VISION,
+		Settings.CANVAS_WIDTH,
+		Settings.CANVAS_HEIGHT,
+		Settings.MAX_DISTANCE);
+	const brightness = new Brightness(Settings.MAX_DISTANCE, Settings.MAX_BRIGHTNESS);
 	while (true) {
 		renderer.reset();
-		gameMap.draw(renderer);
-		gameMap.update();
+		game.draw(renderer, raycaster, brightness);
+		game.update();
 		await sleep(Settings.FRAMES_PER_SECOND);
 	}
 }
