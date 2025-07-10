@@ -43,7 +43,7 @@ export class GameMap implements GameMapInterface {
 	}
 
 	turnPlayer(angle: number = 0): void {
-		//	this.playerAngle += angle;
+		this.playerAngle += angle;
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {

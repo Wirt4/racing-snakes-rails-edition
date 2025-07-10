@@ -23,22 +23,44 @@ class Game {
 		this.map = map;
 	}
 
+
 	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface): void {
-		renderer.fillColor(ColorName.BLACK, .01);
+		renderer.fillColor(ColorName.BLACK, 0.01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+
 		const rays = raycaster.getViewRays(this.map.playerAngle);
+
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
-			const sliceHeight = raycaster.wallHeightToSliceHeight(correctedDistance, Settings.WALL_HEIGHT);
-			const b = brightness.calculateBrightness(correctedDistance);
-			renderer.fillColor(color, b);
-			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle, raycaster);
 
-		})
+			// Project top and bottom of the wall slice
+			const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
+			const wallBottomOffset = -Settings.CAMERA_HEIGHT;
+
+			const topY = Game.HORIZON_Y - (wallTopOffset * raycaster.focalLength) / correctedDistance;
+			const bottomY = Game.HORIZON_Y - (wallBottomOffset * raycaster.focalLength) / correctedDistance;
+			const sliceHeight = bottomY - topY;
+
+			// Draw the wall slice
+			const wallBrightness = brightness.calculateBrightness(correctedDistance);
+			renderer.fillColor(color, wallBrightness);
+			renderer.rect({ x: i, y: topY }, 1, sliceHeight);
+
+			// Draw floor grid hits
+			for (const hit of gridHits) {
+				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
+				const floorOffset = -Settings.CAMERA_HEIGHT;
+				const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / correctedGridDistance;
+
+				const gridBrightness = brightness.calculateBrightness(correctedGridDistance);
+				renderer.fillColor(ColorName.BLUE, gridBrightness);
+				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
+			}
+		});
+
 		this.draw2DMap(renderer);
 	}
-
 	update(): void {
 		/** Update game state, e.g., player position, wall states, etc.
 		* This method can be expanded based on game logic
@@ -169,7 +191,8 @@ class Game {
 		sliceHeight: number,
 		gridMarks: Array<number>,
 		angle: number,
-		raycaster: RaycasterInterface): void {
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface): void {
 		const wallY = Game.HORIZON_Y - (sliceHeight * Settings.HORIZON_LINE_RATIO);
 		const origin = { x: fieldOfVisionXCoord, y: wallY };
 		renderer.rect(origin, 1, sliceHeight);
@@ -180,8 +203,8 @@ class Game {
 			const floorOffset = 0 - Settings.CAMERA_HEIGHT;
 			const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / corrected;
 
-			const brightness = this.calculateBrightness(corrected);
-			renderer.fillColor(ColorName.BLUE, brightness);
+			const luminosity = brightness.calculateBrightness(corrected);
+			renderer.fillColor(ColorName.BLUE, luminosity);
 			renderer.rect({ x: fieldOfVisionXCoord, y: projectedFloorY }, 1, 1); // 1-pixel line
 		}
 	}
