@@ -72,7 +72,15 @@ class Game {
 		renderer.noStroke();
 		renderer.ellipse(this.map.playerPosition, 0.2);
 
-		this.drawRays(renderer);
+		//drawing the rays
+		renderer.stroke(ColorName.GREEN);
+		renderer.strokeWeight(0.05);
+		rays.forEach((angle, i) => {
+			const { distance } = this.map.castRay(angle, Settings.MAX_DISTANCE);
+			const hit = this.nextLocation(this.map.playerPosition, angle, distance);
+			renderer.line({ start: this.map.playerPosition, end: hit });
+		})
+
 		renderer.restore();
 
 
