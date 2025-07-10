@@ -15,7 +15,7 @@ interface Intersection {
 }
 
 class Game {
-	fieldOfVision: number = Angle.fromDegrees(Settings.DEGREES_OF_VISION).radians;
+	fieldOfVision: number = Settings.FIELD_OF_VISION;
 	map: GameMapInterface;
 
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
