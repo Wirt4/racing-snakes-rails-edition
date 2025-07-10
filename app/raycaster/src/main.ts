@@ -27,14 +27,13 @@ async function main(): Promise<void> {
 	const renderer = new Renderer("app", Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	const raycaster = new Raycaster(
 		Settings.RESOLUTION,
-		Math.PI / 3,
+		Settings.FIELD_OF_VISION,
 		Settings.CANVAS_WIDTH,
 		Settings.CANVAS_HEIGHT,
 		Settings.MAX_DISTANCE);
-	const brightness = new Brightness(Settings.MAX_DISTANCE);
+	const brightness = new Brightness(Settings.MAX_DISTANCE, Settings.MAX_BRIGHTNESS);
 	while (true) {
 		renderer.reset();
-		//stub
 		game.draw(renderer, raycaster, brightness);
 		game.update();
 		await sleep(Settings.FRAMES_PER_SECOND);
