@@ -3,14 +3,16 @@ export enum Settings {
 	HORIZON_LINE_RATIO = 0.65,
 	FRAME_HEIGHT = -200,
 	MAX_BRIGHTNESS = 60,
-	WALL_HEIGHT = 25,
+	WALL_HEIGHT = 30,
+	CAMERA_HEIGHT = 10,
 	FRAMES_PER_SECOND = 60,
-	FIELD_OF_VISION = 2 * Math.PI / 3,
+	FIELD_OF_VISION = Math.PI / 2,
 	MAX_DISTANCE = 100,
 	MAX_PERCENT_BRIGHTNESS = 60,
 	MIN_PERCENT_BRIGHTNESS = 30,
 	FADE_DISTANCE = 2,
 	CANVAS_WIDTH = 400,
+	HORIZON_Y = 200,
 	CANVAS_HEIGHT = 640,
 	RESOLUTION = 400, //TODO: fix game implementation so that display isn't squashed when this is smaller than CANVAS_WIDTH
 }

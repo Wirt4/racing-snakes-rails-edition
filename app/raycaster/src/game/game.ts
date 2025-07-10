@@ -33,7 +33,7 @@ class Game {
 			const sliceHeight = raycaster.wallHeightToSliceHeight(correctedDistance, Settings.WALL_HEIGHT);
 			const b = brightness.calculateBrightness(correctedDistance);
 			renderer.fillColor(color, b);
-			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle);
+			this.renderVerticalSlice(renderer, i, sliceHeight, gridHits, angle, raycaster);
 
 		})
 		this.draw2DMap(renderer);
@@ -163,7 +163,13 @@ class Game {
 		return Math.max(Settings.MIN_PERCENT_BRIGHTNESS, Settings.MAX_PERCENT_BRIGHTNESS - distance * Settings.FADE_DISTANCE);
 	}
 
-	private renderVerticalSlice(renderer: RendererInterface, fieldOfVisionXCoord: number, sliceHeight: number, gridMarks: Array<number>, angle: number): void {
+	private renderVerticalSlice(
+		renderer: RendererInterface,
+		fieldOfVisionXCoord: number,
+		sliceHeight: number,
+		gridMarks: Array<number>,
+		angle: number,
+		raycaster: RaycasterInterface): void {
 		const wallY = Game.HORIZON_Y - (sliceHeight * Settings.HORIZON_LINE_RATIO);
 		const origin = { x: fieldOfVisionXCoord, y: wallY };
 		renderer.rect(origin, 1, sliceHeight);
@@ -171,13 +177,12 @@ class Game {
 		//track the grid
 		for (const hit of gridMarks) {
 			const corrected = this.removeFishEye(hit, angle);
-			const projectedHeight = Settings.CANVAS_HEIGHT / corrected;
-			const y = Game.HORIZON_Y + projectedHeight / 2;
-
+			const floorOffset = 0 - Settings.CAMERA_HEIGHT;
+			const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / corrected;
 
 			const brightness = this.calculateBrightness(corrected);
 			renderer.fillColor(ColorName.BLUE, brightness);
-			renderer.rect({ x: fieldOfVisionXCoord, y: y }, 1, 1); // 1-pixel line
+			renderer.rect({ x: fieldOfVisionXCoord, y: projectedFloorY }, 1, 1); // 1-pixel line
 		}
 	}
 

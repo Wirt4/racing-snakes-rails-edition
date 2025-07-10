@@ -1,19 +1,21 @@
 import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
+import { Settings } from '../settings';
 
 class Raycaster implements RaycasterInterface {
 
+	public focalLength: number;
 	private offsets: Array<number>;
 	private fovOffset: number;
-	private focalLength: number;
 
 	constructor(
 		private resolution: number,
 		private fieldOfView: number,
 		private screenWidth: number,
 		private screenHeight: number,
-		private maxDistance: number = 1000
+		private maxDistance: number = 1000,
+		private horizonY: number = Settings.HORIZON_Y,
 	) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
@@ -76,7 +78,21 @@ class Raycaster implements RaycasterInterface {
 		if (distance === 0) {
 			return this.screenHeight;
 		}
-		return (height * this.focalLength) / distance;
+		const wallBase = 0; // world Y = 0
+		const wallTop = wallBase + Settings.WALL_HEIGHT;
+		const cameraY = Settings.CAMERA_HEIGHT;
+
+		// distances from eye
+		const topOffset = wallTop - cameraY;
+		const bottomOffset = wallBase - cameraY;
+
+		// project both
+		const topY = this.horizonY - (topOffset * this.focalLength) / distance;
+		const bottomY = this.horizonY - (bottomOffset * this.focalLength) / distance;
+
+		return bottomY - topY;
+
+		// return (height * this.focalLength) / distance;
 	}
 
 	calculateBrightness(distance: number): number {
