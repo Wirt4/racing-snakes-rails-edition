@@ -10,6 +10,6 @@ export class Brightness implements BrightnessInterface {
 		if (distance > this.maxDistance) {
 			return 0;
 		}
-		return 100;
+		return (1 - (distance / this.maxDistance)) * 100;
 	}
 }
