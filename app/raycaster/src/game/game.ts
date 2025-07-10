@@ -50,6 +50,7 @@ class Game {
 				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
 			}
 		});
+		if (!Settings.HUD_ON) return;
 		// overlay the 2D map
 		renderer.save();
 		renderer.scale(2.5);
