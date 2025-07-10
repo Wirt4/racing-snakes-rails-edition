@@ -58,8 +58,24 @@ class Game {
 				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
 			}
 		});
+		// overlay the 2D map
+		renderer.save();
+		renderer.scale(2.5);
+		this.map.walls.forEach(wall => {
+			renderer.stroke(wall.color);
+			renderer.strokeWeight(0.5);
+			renderer.line(wall.line);
+		})
 
-		this.draw2DMap(renderer);
+		renderer.stroke(ColorName.WHITE);
+		renderer.fillColor(ColorName.RED, 100);
+		renderer.noStroke();
+		renderer.ellipse(this.map.playerPosition, 0.2);
+
+		this.drawRays(renderer);
+		renderer.restore();
+
+
 	}
 	update(): void {
 		/** Update game state, e.g., player position, wall states, etc.
