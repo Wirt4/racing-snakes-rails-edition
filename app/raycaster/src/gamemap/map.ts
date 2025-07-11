@@ -37,8 +37,10 @@ export class GameMap implements GameMapInterface {
 	}
 
 	movePlayer(): void {
-		// stubbed
-		//	this.playerPosition.x += 0.02;
+		const speed = 0.2; // Define a constant speed for player movement
+		// TODO: calculate speed
+		this.playerPosition.x += Math.cos(this.playerAngle) * speed;
+		this.playerPosition.y += Math.sin(this.playerAngle) * speed;
 
 	}
 

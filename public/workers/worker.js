@@ -278,6 +278,9 @@ var GameMap = class {
     this.walls.push(wall);
   }
   movePlayer() {
+    const speed = 0.2;
+    this.playerPosition.x += Math.cos(this.playerAngle) * speed;
+    this.playerPosition.y += Math.sin(this.playerAngle) * speed;
   }
   turnPlayer(angle = 0) {
     this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
