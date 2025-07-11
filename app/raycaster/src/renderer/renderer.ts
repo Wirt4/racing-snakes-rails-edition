@@ -6,31 +6,10 @@ import { assertIsPositiveInteger } from "../utils";
 import { RendererInterface } from "./interface";
 
 class Renderer implements RendererInterface {
-	private context: CanvasRenderingContext2D
 	private hslCache: Record<ColorName, HSL> = {} as Record<ColorName, HSL>;
 	private lastFillColorStyle: string = "transparent";
 	private lastStrokeColorStyle: string = "transparent";
-	constructor(targetId: string, width: number, height: number) {
-		assertIsPositiveInteger(width);
-		assertIsPositiveInteger(height);
-
-		const app = document.getElementById(targetId);
-		if (!app) {
-			throw new Error(`Element with id ${targetId} not found`);
-		}
-
-		const canvas = document.createElement("canvas");
-		canvas.id = 'game-window';
-		canvas.width = width;
-		canvas.height = height;
-		app.appendChild(canvas);
-
-		const context: CanvasRenderingContext2D | null = canvas.getContext("2d");
-		if (!context) {
-			throw new Error("Failed to get canvas context");
-		}
-
-		this.context = context;
+	constructor(private context: OffscreenCanvasRenderingContext2D) {
 	}
 
 	public scale(scale: number): void {
