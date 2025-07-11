@@ -6,6 +6,7 @@ import { ColorName } from './color/color_name';
 import { Coordinates } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
 
+type BatchedRect = { x: number, y: number, width: number, height: number };
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
@@ -21,6 +22,8 @@ class Game {
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 
 		const rays = raycaster.getViewRays(this.map.playerAngle);
+		const wallBatches: Record<string, BatchedRect[]> = {}
+
 
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
@@ -36,20 +39,29 @@ class Game {
 
 			// Draw the wall slice
 			const wallBrightness = brightness.calculateBrightness(correctedDistance);
-			renderer.fillColor(color, wallBrightness);
-			renderer.rect({ x: i, y: topY }, 1, sliceHeight);
+			//batch the walls
+			const key = `${color}_${Math.round(wallBrightness * 100)}`;
+			if (!wallBatches[key]) wallBatches[key] = [];
+			wallBatches[key].push({ x: i, y: topY, width: 1, height: sliceHeight });
+
 
 			// Draw floor grid hits
+			renderer.fillColor(ColorName.BLUE, 50);
+
 			for (const hit of gridHits) {
 				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
 				const floorOffset = -Settings.CAMERA_HEIGHT;
 				const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / correctedGridDistance;
 
-				const gridBrightness = brightness.calculateBrightness(correctedGridDistance);
-				renderer.fillColor(ColorName.BLUE, gridBrightness);
 				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
 			}
 		});
+		// Draw batched walls
+		for (const [key, rects] of Object.entries(wallBatches)) {
+			const [colorName, brightness] = key.split("_");
+			renderer.fillColor(colorName as ColorName, Number(brightness) / 100);
+			rects.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+		}
 		if (!Settings.HUD_ON) return;
 		// overlay the 2D map
 		renderer.save();
