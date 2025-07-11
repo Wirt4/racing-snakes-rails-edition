@@ -44,6 +44,9 @@ onmessage = (e) => {
 	if (msg.type === "mouseTurn") {
 		game.map.turnPlayer(msg.angleDelta);
 	}
+	if (msg.type === "KeyDown") {
+		game.map.turnPlayer
+	}
 };
 
 function startLoop() {

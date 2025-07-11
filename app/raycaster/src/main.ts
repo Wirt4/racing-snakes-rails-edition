@@ -4,7 +4,8 @@ import { ColorName } from './game/color/color_name';
 import { GameMap } from './gamemap/map';
 
 const canvas = document.createElement("canvas");
-canvas.width = Settings.CANVAS_WIDTH;
+const width = Settings.CANVAS_WIDTH;
+canvas.width = width;;
 canvas.height = Settings.CANVAS_HEIGHT;
 canvas.id = "game-window";
 document.getElementById("app")?.appendChild(canvas);
@@ -58,13 +59,12 @@ canvas.addEventListener("mouseleave", () => {
 
 canvas.addEventListener("mousemove", (e) => {
 	if (!isDragging || lastX === null) return;
-
+	//TODO: figure out a turn radius, so you can hold the mouse and turn 
 	const deltaX = e.clientX - lastX;
 	lastX = e.clientX;
 
-	const sensitivity = 0.005; // tweak for feel
-	const turnDelta = deltaX * sensitivity;
-
+	const turnDelta = (deltaX / canvas.width) * 2 * Math.PI;
 	worker.postMessage({ type: "mouseTurn", angleDelta: turnDelta });
 });
+//TODO: choose between interfaces
 
