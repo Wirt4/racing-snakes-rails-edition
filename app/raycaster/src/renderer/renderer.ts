@@ -6,6 +6,8 @@ import { assertIsPositiveInteger } from "../utils";
 import { RendererInterface } from "./interface";
 class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
+	private hslCache: Record<ColorName, HSL> = {} as Record<ColorName, HSL>;
+
 	constructor(targetId: string, width: number, height: number) {
 		assertIsPositiveInteger(width);
 		assertIsPositiveInteger(height);
@@ -102,9 +104,9 @@ class Renderer implements RendererInterface {
 		const brightnessPercent = brightness / 100;
 		let hsl: HSL;
 		if (color == ColorName.NONE) {
-			hsl = hslFactory(ColorName.WHITE);
+			hsl = this.getCachedHSL(ColorName.WHITE)
 		} else {
-			hsl = hslFactory(color);
+			hsl = this.getCachedHSL(color)
 		}
 
 		hsl.lightness = brightnessPercent;
@@ -135,7 +137,14 @@ class Renderer implements RendererInterface {
 		 * Postcondition: the context is set to stroke with the specified color
 		 */
 		//TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
-		this.context.strokeStyle = hslFactory(color).toHex();
+		this.context.strokeStyle = this.getCachedHSL(color).toHex();
+	}
+
+	private getCachedHSL(color: ColorName): HSL {
+		if (!this.hslCache[color]) {
+			this.hslCache[color] = hslFactory(color);
+		}
+		return this.hslCache[color];
 	}
 
 }
