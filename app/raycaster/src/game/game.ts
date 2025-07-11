@@ -108,7 +108,6 @@ class Game {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.map.turnPlayer(0.16);
 		this.map.movePlayer();
 	}
 

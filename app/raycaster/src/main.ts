@@ -37,11 +37,34 @@ worker.postMessage({
 	},
 }, [offscreen]);
 
-// Game loop
-// function loop(): void {
-// 	// 	// You can also send input deltas here
-// 	worker.postMessage({ type: "tick" });
-// 	requestAnimationFrame(loop);
-// }
-// requestAnimationFrame(loop);
+//mouse detesction
+let isDragging = false;
+let lastX: number | null = null;
+
+canvas.addEventListener("mousedown", (e) => {
+	isDragging = true;
+	lastX = e.clientX;
+});
+
+canvas.addEventListener("mouseup", () => {
+	isDragging = false;
+	lastX = null;
+});
+
+canvas.addEventListener("mouseleave", () => {
+	isDragging = false;
+	lastX = null;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+	if (!isDragging || lastX === null) return;
+
+	const deltaX = e.clientX - lastX;
+	lastX = e.clientX;
+
+	const sensitivity = 0.005; // tweak for feel
+	const turnDelta = deltaX * sensitivity;
+
+	worker.postMessage({ type: "mouseTurn", angleDelta: turnDelta });
+});
 

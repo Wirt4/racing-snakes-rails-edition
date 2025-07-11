@@ -226,7 +226,6 @@ var _Game = class _Game {
     renderer2.restore();
   }
   update() {
-    this.map.turnPlayer(0.16);
     this.map.movePlayer();
   }
   calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint) {
@@ -281,7 +280,8 @@ var GameMap = class {
   movePlayer() {
   }
   turnPlayer(angle = 0) {
-    this.playerAngle += angle;
+    this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
+    if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
   }
   castRay(angle, maximumAllowableDistance) {
     const rayDirection = {
@@ -530,6 +530,9 @@ onmessage = (e) => {
     );
     brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
     startLoop();
+  }
+  if (msg.type === "mouseTurn") {
+    game.map.turnPlayer(msg.angleDelta);
   }
 };
 function startLoop() {

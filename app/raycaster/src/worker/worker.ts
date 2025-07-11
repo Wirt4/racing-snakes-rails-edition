@@ -41,6 +41,9 @@ onmessage = (e) => {
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		startLoop();
 	}
+	if (msg.type === "mouseTurn") {
+		game.map.turnPlayer(msg.angleDelta);
+	}
 };
 
 function startLoop() {
