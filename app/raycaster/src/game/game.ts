@@ -1,9 +1,9 @@
 import { RendererInterface } from '../renderer/renderer';
-import { WallInterface, GameMapInterface } from '../gamemap/interface';
+import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { ColorName } from './color/color_name';
-import { Coordinates } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
 
 type BatchedRect = { x: number, y: number, width: number, height: number };
@@ -69,11 +69,22 @@ class Game {
 		// overlay the 2D map
 		renderer.save();
 		renderer.scale(2.5);
-		this.map.walls.forEach((wall: WallInterface) => {
-			renderer.stroke(wall.color);
-			renderer.strokeWeight(0.5);
-			renderer.line(wall.line);
-		})
+
+		const hudWallGroups: Record<string, LineSegment[]> = {};
+		// key: `${color}_${weight}`
+
+		this.map.walls.forEach((wall) => {
+			const key = `${wall.color}_0.5`;
+			if (!hudWallGroups[key]) hudWallGroups[key] = [];
+			hudWallGroups[key].push(wall.line);
+		});
+		//batch draw the walls by color
+		for (const [key, lines] of Object.entries(hudWallGroups)) {
+			const [color, weight] = key.split("_");
+			renderer.stroke(color as ColorName);
+			renderer.strokeWeight(Number(weight));
+			lines.forEach(line => renderer.line(line));
+		}
 
 		renderer.stroke(ColorName.WHITE);
 		renderer.fillColor(ColorName.RED, 100);
@@ -97,7 +108,7 @@ class Game {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.map.turnPlayer(0.02);
+		this.map.turnPlayer(0.16);
 		this.map.movePlayer();
 	}
 
