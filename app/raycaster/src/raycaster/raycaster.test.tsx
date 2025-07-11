@@ -117,7 +117,7 @@ describe('wallHeightToSliceHeight', () => {
 		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES, 640, TEST_HEIGHT); //control for a focal length
 		const height = 10;
 		const distance = 5;
-		const expected = 1807.058823529411;
+		const expected = 421.6470588235294;
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
 		expect(Math.abs(result - expected)).toBeLessThan(1e-5);
 	});

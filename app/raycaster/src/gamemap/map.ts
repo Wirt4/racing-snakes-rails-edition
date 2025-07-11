@@ -37,13 +37,16 @@ export class GameMap implements GameMapInterface {
 	}
 
 	movePlayer(): void {
-		// stubbed
-		//	this.playerPosition.x += 0.02;
+		const speed = 0.2; // Define a constant speed for player movement
+		// TODO: calculate speed
+		this.playerPosition.x += Math.cos(this.playerAngle) * speed;
+		this.playerPosition.y += Math.sin(this.playerAngle) * speed;
 
 	}
 
 	turnPlayer(angle: number = 0): void {
-		this.playerAngle += angle;
+		this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
+		if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {

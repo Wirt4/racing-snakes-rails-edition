@@ -24,5 +24,8 @@ end
 
 desc 'Run Rails server locally'
 task :localhost do
+  Dir.chdir('app/raycaster') do
+    system('npm run build:all') || abort('❌ Failed to build raycaster assets')
+  end
   sh 'bin/dev'
 end

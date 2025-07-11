@@ -12,7 +12,9 @@
     "typescript-eslint": "^8.35.1"
   },
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --outfile=../assets/builds/raycaster.js --format=esm --target=es2020"
+  "build": "esbuild src/main.ts --bundle --outfile=../assets/builds/raycaster.js --format=esm --target=es2020",
+  "build:worker": "esbuild src/worker/worker.ts --bundle --outfile=../../public/workers/worker.js --format=esm --target=es2020",
+    "build:all": "npm run build && npm run build:worker"
   },
   "overrides": {
     "glob": "^10.3.10"
