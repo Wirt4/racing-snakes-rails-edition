@@ -24,7 +24,8 @@ class Game {
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		const wallBatches: Record<string, BatchedRect[]> = {}
 
-
+		// Calculate the focal length based on the field of vision
+		const gridBatch: Array<BatchedRect> = []
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
@@ -52,8 +53,7 @@ class Game {
 				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
 				const floorOffset = -Settings.CAMERA_HEIGHT;
 				const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / correctedGridDistance;
-
-				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
+				gridBatch.push({ x: i, y: projectedFloorY, width: 1, height: 1 });
 			}
 		});
 		// Draw batched walls
@@ -62,6 +62,9 @@ class Game {
 			renderer.fillColor(colorName as ColorName, Number(brightness) / 100);
 			rects.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 		}
+		// Draw the floor grid
+		renderer.fillColor(ColorName.BLUE, 50);
+		gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 		if (!Settings.HUD_ON) return;
 		// overlay the 2D map
 		renderer.save();
