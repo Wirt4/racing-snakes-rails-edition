@@ -4,10 +4,12 @@ import { HSL } from "./hsl/hsl";
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { assertIsPositiveInteger } from "../utils";
 import { RendererInterface } from "./interface";
+
 class Renderer implements RendererInterface {
 	private context: CanvasRenderingContext2D
 	private hslCache: Record<ColorName, HSL> = {} as Record<ColorName, HSL>;
-
+	private lastFillColorStyle: string = "transparent";
+	private lastStrokeColorStyle: string = "transparent";
 	constructor(targetId: string, width: number, height: number) {
 		assertIsPositiveInteger(width);
 		assertIsPositiveInteger(height);
@@ -110,7 +112,13 @@ class Renderer implements RendererInterface {
 		}
 
 		hsl.lightness = brightnessPercent;
-		this.context.fillStyle = hsl.toHex();
+		const hxcd = hsl.toHex();
+		if (this.lastFillColorStyle === hxcd) {
+			// no need to set the fill style if it hasn't changed
+			return;
+		}
+		this.context.fillStyle = hxcd;
+		this.lastFillColorStyle = hxcd;
 	}
 
 	public ellipse(origin: Coordinates, stroke: number): void {
@@ -128,6 +136,9 @@ class Renderer implements RendererInterface {
 		 * Precondition: the context is a valid CanvasRenderingContext2D
 		 * Postcondition: the context is set to not stroke shapes
 		 */
+		if (this.context.strokeStyle === "transparent") {
+			return
+		}
 		this.context.strokeStyle = "transparent";
 	}
 
@@ -136,8 +147,11 @@ class Renderer implements RendererInterface {
 		 * Precondition: the color is a valid Color object
 		 * Postcondition: the context is set to stroke with the specified color
 		 */
-		//TODO: get a unified color system that folds in HSL and uses a consistent format determined by the color class or enum
+		if (color === this.lastStrokeColorStyle) {
+			return
+		}
 		this.context.strokeStyle = this.getCachedHSL(color).toHex();
+		this.lastStrokeColorStyle = this.context.strokeStyle;
 	}
 
 	private getCachedHSL(color: ColorName): HSL {

@@ -11,15 +11,15 @@ import { Brightness } from './brightness/brightness';
 async function main(): Promise<void> {
 	//below is test data etc.
 	const walls = [];
-	for (let i = 0; i < 10; i++) {
-		walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 100 }, end: { x: 10 * i, y: 55 } } })
-		if (i % 2 == 0) {
-			walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 55 }, end: { x: 10 * (i + 1), y: 55 } } })
-		}
-	}
-	walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
-
-	const gameMap = new GameMap(100, 100, ColorName.GREEN);
+	// for (let i = 0; i < 10; i++) {
+	// 	walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 100 }, end: { x: 10 * i, y: 55 } } })
+	// 	if (i % 2 == 0) {
+	// 		walls.push({ color: ColorName.RED, line: { start: { x: 10 * i, y: 55 }, end: { x: 10 * (i + 1), y: 55 } } })
+	// 	}
+	// }
+	// walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
+	//
+	const gameMap = new GameMap(1000, 1000, ColorName.GREEN);
 	gameMap.playerAngle = 0
 	gameMap.playerPosition = { x: 20, y: 54 };
 	gameMap.walls = [...walls, ...gameMap.walls];
