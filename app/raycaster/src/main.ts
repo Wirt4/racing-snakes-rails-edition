@@ -32,12 +32,14 @@ async function main(): Promise<void> {
 		Settings.CANVAS_HEIGHT,
 		Settings.MAX_DISTANCE);
 	const brightness = new Brightness(Settings.MAX_DISTANCE, Settings.MAX_BRIGHTNESS);
-	while (true) {
+
+	function loop(): void {
 		renderer.reset();
 		game.draw(renderer, raycaster, brightness);
 		game.update();
-		await sleep(Settings.FRAMES_PER_SECOND);
+		requestAnimationFrame(loop);
 	}
+	requestAnimationFrame(loop);
 }
 
 main().catch((err) => {
