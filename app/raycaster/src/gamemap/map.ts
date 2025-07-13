@@ -1,6 +1,7 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
+import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
 interface Intersection {
 	isValid: boolean;
@@ -12,11 +13,18 @@ export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
+	player: PlayerInterface
 	playerPosition: Coordinates = { x: 0, y: 0 };
 	playerAngle: number = 0;
 
 
-	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
+	constructor(
+		width: number,
+		height: number,
+		boundaryColor: ColorName = ColorName.BLACK,
+		gridCell: number = 2,
+		player: PlayerInterface) {
+		this.player = player
 		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
 		const left_top = { x: 0, y: 0 };
@@ -47,6 +55,7 @@ export class GameMap implements GameMapInterface {
 	turnPlayer(angle: number = 0): void {
 		this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
 		if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
+		this.player.rotate(angle)
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {

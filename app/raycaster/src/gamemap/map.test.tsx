@@ -7,7 +7,7 @@ describe('GameMap basic map setup', () => {
 	let gameMap: GameMap;
 
 	beforeEach(() => {
-		gameMap = new GameMap(10, 10);
+		gameMap = new GameMap(10, 10, ColorName.BLACK, 1, { rotate: jest.fn() });
 	});
 
 	test('should initialize with 4 boundary walls', () => {
@@ -112,7 +112,7 @@ describe("TurnPlayer tests", () => {
 	test("angle should be passed to player class", () => {
 		const payload = Math.PI / 4
 		const player = { rotate: jest.fn((angle: number) => { }) }
-		const gameMap = new GameMap(10, 20, ColorName.RED, 1);
+		const gameMap = new GameMap(10, 20, ColorName.RED, 1, player);
 		gameMap.turnPlayer(Math.PI / 4)
 		expect(player.rotate).toHaveBeenLastCalledWith(payload)
 	})
