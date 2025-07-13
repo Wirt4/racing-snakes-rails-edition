@@ -1,11 +1,12 @@
 import { RendererInterface } from '../renderer/renderer';
-import { WallInterface, GameMapInterface } from '../gamemap/interface';
+import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { ColorName } from './color/color_name';
-import { Coordinates } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
 
+type BatchedRect = { x: number, y: number, width: number, height: number };
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
@@ -21,7 +22,10 @@ class Game {
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 
 		const rays = raycaster.getViewRays(this.map.playerAngle);
+		const wallBatches: Record<string, BatchedRect[]> = {}
 
+		// Calculate the focal length based on the field of vision
+		const gridBatch: Array<BatchedRect> = []
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
@@ -36,29 +40,51 @@ class Game {
 
 			// Draw the wall slice
 			const wallBrightness = brightness.calculateBrightness(correctedDistance);
-			renderer.fillColor(color, wallBrightness);
-			renderer.rect({ x: i, y: topY }, 1, sliceHeight);
+			//batch the walls
+			const key = `${color}_${Math.round(wallBrightness * 100)}`;
+			if (!wallBatches[key]) wallBatches[key] = [];
+			wallBatches[key].push({ x: i, y: topY, width: 1, height: sliceHeight });
+
 
 			// Draw floor grid hits
+			renderer.fillColor(ColorName.BLUE, 50);
+
 			for (const hit of gridHits) {
 				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
 				const floorOffset = -Settings.CAMERA_HEIGHT;
 				const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / correctedGridDistance;
-
-				const gridBrightness = brightness.calculateBrightness(correctedGridDistance);
-				renderer.fillColor(ColorName.BLUE, gridBrightness);
-				renderer.rect({ x: i, y: projectedFloorY }, 1, 1);
+				gridBatch.push({ x: i, y: projectedFloorY, width: 1, height: 1 });
 			}
 		});
+		// Draw batched walls
+		for (const [key, rects] of Object.entries(wallBatches)) {
+			const [colorName, brightness] = key.split("_");
+			renderer.fillColor(colorName as ColorName, Number(brightness) / 100);
+			rects.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+		}
+		// Draw the floor grid
+		renderer.fillColor(ColorName.BLUE, 50);
+		gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 		if (!Settings.HUD_ON) return;
 		// overlay the 2D map
 		renderer.save();
 		renderer.scale(2.5);
-		this.map.walls.forEach((wall: WallInterface) => {
-			renderer.stroke(wall.color);
-			renderer.strokeWeight(0.5);
-			renderer.line(wall.line);
-		})
+
+		const hudWallGroups: Record<string, LineSegment[]> = {};
+		// key: `${color}_${weight}`
+
+		this.map.walls.forEach((wall) => {
+			const key = `${wall.color}_0.5`;
+			if (!hudWallGroups[key]) hudWallGroups[key] = [];
+			hudWallGroups[key].push(wall.line);
+		});
+		//batch draw the walls by color
+		for (const [key, lines] of Object.entries(hudWallGroups)) {
+			const [color, weight] = key.split("_");
+			renderer.stroke(color as ColorName);
+			renderer.strokeWeight(Number(weight));
+			lines.forEach(line => renderer.line(line));
+		}
 
 		renderer.stroke(ColorName.WHITE);
 		renderer.fillColor(ColorName.RED, 100);
@@ -82,7 +108,6 @@ class Game {
 		* This method can be expanded based on game logic
 		* For now, it does nothing except demonstrate the 3D-ness
 		**/
-		this.map.turnPlayer(0.02);
 		this.map.movePlayer();
 	}
 
