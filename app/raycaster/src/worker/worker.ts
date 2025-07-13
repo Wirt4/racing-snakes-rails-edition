@@ -3,7 +3,6 @@ import { Game } from '../game/game';
 import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
-import { sleep } from '../sleep';
 
 let game: Game;
 let renderer: Renderer;
@@ -25,9 +24,8 @@ onmessage = (e) => {
 		renderer = new Renderer(ctx);
 		//note the hardcoded values here, these should be replaced with the settings from the main thread
 		//
-		const map = new GameMap(1000, 1000, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, position: { x: 0, y: 0 }, angle: 0 });
-		//		map.playerPosition = msg.mapData.playerPosition;
-		//		map.playerAngle = msg.mapData.playerAngle;
+		const mapSize = { width: 1000, height: 1000 };
+		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, position: { x: 0, y: 0 }, angle: 0 });
 		map.walls = msg.mapData.walls;
 
 		game = new Game(map);

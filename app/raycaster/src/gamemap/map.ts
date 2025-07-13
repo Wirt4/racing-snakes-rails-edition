@@ -1,5 +1,5 @@
 import { GameMapInterface, WallInterface } from './interface';
-import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
@@ -17,18 +17,17 @@ export class GameMap implements GameMapInterface {
 
 
 	constructor(
-		width: number,
-		height: number,
+		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
 		gridCell: number = 2,
 		player: PlayerInterface) {
 		this.player = player
-		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
-		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
+		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
+		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
 		const left_top = { x: 0, y: 0 };
-		const left_bottom = { x: 0, y: height };
-		const right_top = { x: width, y: 0 };
-		const right_bottom = { x: width, y: height };
+		const left_bottom = { x: 0, y: size.height };
+		const right_top = { x: size.width, y: 0 };
+		const right_bottom = { x: size.width, y: size.height };
 
 		this.walls = [
 			this.initializeWall(left_top, left_bottom, boundaryColor),
