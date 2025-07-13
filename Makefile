@@ -6,7 +6,7 @@ ruby-test:
 	bundle exec rspec --require ./spec/support/quickfix_formatter.rb --format QuickfixFormatter
 
 ts-compile:
-	cd app/raycaster && npx tsc
+	cd app/raycaster && npx tsc --noEmit
 
 ts-test:
 	cd app/raycaster && npx jest
