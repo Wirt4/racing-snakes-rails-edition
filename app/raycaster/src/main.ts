@@ -38,33 +38,10 @@ worker.postMessage({
 	},
 }, [offscreen]);
 
-//mouse detesction
-let isDragging = false;
-let lastX: number | null = null;
-
-canvas.addEventListener("mousedown", (e) => {
-	isDragging = true;
-	lastX = e.clientX;
-});
-
-canvas.addEventListener("mouseup", () => {
-	isDragging = false;
-	lastX = null;
-});
-
-canvas.addEventListener("mouseleave", () => {
-	isDragging = false;
-	lastX = null;
-});
-
-canvas.addEventListener("mousemove", (e) => {
-	if (!isDragging || lastX === null) return;
-	//TODO: figure out a turn radius, so you can hold the mouse and turn 
-	const deltaX = e.clientX - lastX;
-	lastX = e.clientX;
-
-	const turnDelta = (deltaX / canvas.width) * 2 * Math.PI;
-	worker.postMessage({ type: "mouseTurn", angleDelta: turnDelta });
-});
-//TODO: choose between interfaces
-
+onkeydown = (e: KeyboardEvent) => {
+	console.log("key pressed", e.key);
+	if (e.key === "ArrowLeft") {
+		console.log("calling turn left");
+		gameMap.turnPlayer(Math.PI / 2);
+	}
+}

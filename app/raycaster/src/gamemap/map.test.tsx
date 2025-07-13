@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
 import { ColorName } from '../game/color/color_name';
 import { LineSegment } from '../geometry/interfaces';
@@ -108,4 +108,13 @@ describe('castRay method', () => {
 		expect(slice.distance).toBeGreaterThan(0);
 	});
 });
+describe("TurnPlayer tests", () => {
+	test("angle should be passed to player class", () => {
+		const payload = Math.PI / 4
+		const player = { rotate: jest.fn((angle: number) => { }) }
+		const gameMap = new GameMap(10, 20, ColorName.RED, 1);
+		gameMap.turnPlayer(Math.PI / 4)
+		expect(player.rotate).toHaveBeenLastCalledWith(payload)
+	})
+})
 
