@@ -52,9 +52,7 @@ export class GameMap implements GameMapInterface {
 
 	}
 
-	turnPlayer(angle: number = 0): void {
-		this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
-		if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
+	turnPlayer(angle: number): void {
 		this.player.rotate(angle)
 	}
 
