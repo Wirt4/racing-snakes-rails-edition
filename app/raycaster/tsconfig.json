@@ -6,7 +6,8 @@
 
     "module": "ESNext",    
     "moduleResolution": "bundler",/* Specify what module code is generated. */
-    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
+    "rootDir": "./raycasster/src",  
+    "inblude": ["app/raycaster/src/**/*"],/* Specify the root folder within your source files. */
     "outDir": "./pulic/workers",                                   /* Specify an output folder for all emitted files. */
 
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
