@@ -14,8 +14,6 @@ export class GameMap implements GameMapInterface {
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	player: PlayerInterface
-	playerPosition: Coordinates = { x: 0, y: 0 };
-	playerAngle: number = 0;
 
 
 	constructor(
@@ -40,16 +38,20 @@ export class GameMap implements GameMapInterface {
 		];
 	}
 
+	get playerPosition(): Coordinates {
+		return this.player.position;
+	}
+
+	get playerAngle(): number {
+		return this.player.angle;
+	}
+
 	appendWall(wall: WallInterface): void {
 		this.walls.push(wall);
 	}
 
 	movePlayer(): void {
-		const speed = 0.2; // Define a constant speed for player movement
-		// TODO: calculate speed
-		this.playerPosition.x += Math.cos(this.playerAngle) * speed;
-		this.playerPosition.y += Math.sin(this.playerAngle) * speed;
-
+		this.player.move();
 	}
 
 	turnPlayer(angle: number): void {
@@ -79,16 +81,16 @@ export class GameMap implements GameMapInterface {
 		}
 
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
-
+		//TODO: law of demeter
 		const rayEnd = {
-			x: this.playerPosition.x + rayDirection.x * maxDistance,
-			y: this.playerPosition.y + rayDirection.y * maxDistance
+			x: this.player.position.x + rayDirection.x * maxDistance,
+			y: this.player.position.y + rayDirection.y * maxDistance
 		};
 
 		const gridHits: number[] = [];
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, {
+			const hit = this.rayIntersectsWall(this.player.position, rayDirection, {
 				line: grid,
 				color: ColorName.BLUE
 			});
