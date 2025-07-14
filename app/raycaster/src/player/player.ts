@@ -12,11 +12,13 @@ class Player implements PlayerInterface {
 	private isTurning: boolean = false;
 	private inbetweens: Array<number> = [];
 	private _trail: LineSegment[] = [];
+	private heading: number;
 	constructor(coordinates: Coordinates, angle: number, speed: number, turnRadius: number = 5) {
 		this.speed = speed;
 		this.x = coordinates.x;
 		this.y = coordinates.y;
 		this.angle = angle;
+		this.heading = angle;
 		this.turnDistance = turnRadius * Math.PI / 2 //a right angle turn
 		this._trail = [{ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }];
 	}
@@ -33,6 +35,7 @@ class Player implements PlayerInterface {
 			return
 		}
 		this.isTurning = true;
+		this.heading = normalizeAngle(this.heading + angle);
 		this.fillInbetweens(angle);
 	}
 
@@ -44,9 +47,10 @@ class Player implements PlayerInterface {
 			this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
 		} else {
 			this.isTurning = false;
+			this.angle = this.heading;
 		}
-		this.x += Math.round(Math.cos(this.angle)) * this.speed;
-		this.y += Math.sin(this.angle) * this.speed;
+		this.x += Math.round(Math.cos(this.heading)) * this.speed;
+		this.y += Math.sin(this.heading) * this.speed;
 		this._trail[this._trail.length - 1].end = { x: this.x, y: this.y };
 	}
 
