@@ -30,7 +30,8 @@
 !/tmp/storage/.keep
 
 /public/assets
-
+/public/workers
+# assumes public workers will compile according to the build process
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
