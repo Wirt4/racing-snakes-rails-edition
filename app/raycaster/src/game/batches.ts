@@ -26,4 +26,10 @@ export class Batches {
 		if (!this.mapBatches[key]) this.mapBatches[key] = [];
 		this.mapBatches[key].push(wall.line);
 	}
+
+	unpackMapKey(key: string): { color: ColorName, weight: number } {
+		const [color, weight] = key.split("_");
+		return { color: color as ColorName, weight: Number(weight) };
+
+	}
 }

@@ -14,8 +14,17 @@ class Game {
 	map: GameMapInterface;
 
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
+
 	constructor(map: GameMapInterface) {
 		this.map = map;
+	}
+
+	update(): void {
+		/** Update game state, e.g., player position, wall states, etc.
+		* This method can be expanded based on game logic
+		* For now, it does nothing except demonstrate the 3D-ness
+		**/
+		this.map.movePlayer();
 	}
 
 	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface, HUD: boolean = false): void {
@@ -25,9 +34,44 @@ class Game {
 		 * */
 		this.drawBackround(renderer);
 		const rays = raycaster.getViewRays(this.map.playerAngle);
-		// Calculate the focal length based on the field of vision
-		const batches = new Batches()
+		const batches = this.batchRenderData(rays, raycaster, brightness);
+		this.renderWalls(batches, renderer)
+		// Draw the floor grid
+		renderer.fillColor(ColorName.BLUE, 50);
+		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 
+		if (HUD) {
+			this.drawHUD(rays, renderer)
+		}
+	}
+
+	private drawHUD(rays: Array<number>, renderer: RendererInterface): void {
+		const batches = new Batches();
+		this.map.walls.forEach((wall) => {
+			batches.addMapWall(wall)
+		});
+		renderer.save();
+		for (const [key, lines] of Object.entries(batches.mapBatches)) {
+			const { color, weight } = batches.unpackMapKey(key)
+			renderer.stroke(color);
+			renderer.strokeWeight(weight);
+			lines.forEach(line => renderer.line(line));
+		}
+		renderer.stroke(ColorName.WHITE);
+		renderer.fillColor(ColorName.RED, 100);
+		renderer.noStroke();
+		renderer.ellipse(this.map.playerPosition, 0.2);
+
+		this.draw2DRays(renderer, rays);
+
+		renderer.restore()
+	}
+
+	private batchRenderData(
+		rays: Array<number>,
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface): Batches {
+		const batches = new Batches();
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
@@ -41,6 +85,18 @@ class Game {
 				batches.addGridPoint({ x: i, y });
 			}
 		});
+		return batches;
+	}
+
+	private renderGrid(batches: Batches, renderer: RendererInterface): void {
+		renderer.fillColor(ColorName.BLUE, 50);
+		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+	}
+
+	private renderWalls(batches: Batches, renderer: RendererInterface): void {
+		/** Renders the walls based on the batched data
+		 * This method is called after all wall slices have been added to the batches
+		 **/
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
 			const { color, brightness: brightnessValue } = batches.unpackWallKey(key);
 			renderer.fillColor(color, brightnessValue);
@@ -48,40 +104,7 @@ class Game {
 				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
 			});
 		}
-		// Draw the floor grid
-		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 
-		if (HUD) {
-			const hudWallGroups: Record<string, LineSegment[]> = {};
-			// key: `${color}_${weight}`
-
-			this.map.walls.forEach((wall) => {
-				batches.addMapWall(wall)
-			});
-
-			// overlay the 2D map
-			renderer.save();
-			renderer.scale(2.5);
-
-			//batch draw the walls by color
-			for (const [key, lines] of Object.entries(batches.mapBatches)) {
-				const [color, weight] = key.split("_");
-				renderer.stroke(color as ColorName);
-				renderer.strokeWeight(Number(weight));
-				lines.forEach(line => renderer.line(line));
-			}
-
-			renderer.stroke(ColorName.WHITE);
-			renderer.fillColor(ColorName.RED, 100);
-			renderer.noStroke();
-			renderer.ellipse(this.map.playerPosition, 0.2);
-
-
-			this.draw2DRays(renderer, rays);
-
-			renderer.restore();
-		}
 	}
 
 	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
@@ -115,15 +138,6 @@ class Game {
 	private drawBackround(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 0.01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-	}
-
-
-	update(): void {
-		/** Update game state, e.g., player position, wall states, etc.
-		* This method can be expanded based on game logic
-		* For now, it does nothing except demonstrate the 3D-ness
-		**/
-		this.map.movePlayer();
 	}
 
 	private calculateDeterminant(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): number {
