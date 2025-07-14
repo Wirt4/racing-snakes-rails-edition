@@ -23,7 +23,7 @@ for (let i = 0; i < 10; i++) {
 walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
 
 const gameMapSize = { width: 1000, height: 1000 };
-const gameMap = new GameMap(gameMapSize, ColorName.GREEN, 5, { rotate: () => { }, move: () => { }, position: { x: 1, y: 1 }, angle: 0 });
+const gameMap = new GameMap(gameMapSize, ColorName.GREEN, 5, { rotate: () => { }, move: () => { }, x: 1, y: 1, angle: 0 });
 gameMap.walls = [...walls, ...gameMap.walls];
 
 worker.postMessage({
@@ -38,9 +38,7 @@ worker.postMessage({
 }, [offscreen]);
 
 onkeydown = (e: KeyboardEvent) => {
-	console.log("key pressed", e.key);
 	if (e.key === "ArrowLeft") {
-		console.log("calling turn left");
 		gameMap.turnPlayer(Math.PI / 2);
 	}
 }

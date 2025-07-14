@@ -3,7 +3,6 @@ import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
-import { assertIsPositive } from '../utils';
 interface Intersection {
 	isValid: boolean;
 	x: number;
@@ -23,7 +22,7 @@ export class GameMap implements GameMapInterface {
 		gridCell: number = 2,
 		player: PlayerInterface
 	) {
-		if (!(this.isInRange(player.position.x, size.width) && this.isInRange(player.position.y, size.height))) {
+		if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
 			throw new Error("Player position is outside the map boundaries");
 		}
 		this.player = player
@@ -43,7 +42,8 @@ export class GameMap implements GameMapInterface {
 	}
 
 	get playerPosition(): Coordinates {
-		return this.player.position;
+		const { x, y } = this.player;
+		return { x, y };
 	}
 
 	get playerAngle(): number {
@@ -77,7 +77,8 @@ export class GameMap implements GameMapInterface {
 		let color = ColorName.NONE;
 
 		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, wall);
+			const { x, y } = this.player;
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = wall.color;
@@ -87,14 +88,15 @@ export class GameMap implements GameMapInterface {
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
 		//TODO: law of demeter
 		const rayEnd = {
-			x: this.player.position.x + rayDirection.x * maxDistance,
-			y: this.player.position.y + rayDirection.y * maxDistance
+			x: this.player.x + rayDirection.x * maxDistance,
+			y: this.player.y + rayDirection.y * maxDistance
 		};
 
 		const gridHits: number[] = [];
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
-			const hit = this.rayIntersectsWall(this.player.position, rayDirection, {
+			const { x, y } = this.player;
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, {
 				line: grid,
 				color: ColorName.BLUE
 			});

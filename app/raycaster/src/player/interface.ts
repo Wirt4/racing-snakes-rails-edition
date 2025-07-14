@@ -1,7 +1,8 @@
 import { Coordinates } from '../geometry/interfaces';
 export interface PlayerInterface {
-	position: Coordinates;
 	rotate: (angle: number) => void;
+	x: number;
+	y: number;
 	move: () => void;
 	angle: number;
 }

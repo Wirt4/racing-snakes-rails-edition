@@ -23,7 +23,7 @@ onmessage = (e) => {
 
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
-		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, position: { x: 1, y: 1 }, angle: 0 });
+		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, x: 1, y: 1, angle: 0 });
 		map.walls = msg.mapData.walls;
 
 		game = new Game(map);
