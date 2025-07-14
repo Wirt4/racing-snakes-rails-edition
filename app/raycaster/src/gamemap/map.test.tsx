@@ -1,5 +1,6 @@
 import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
+import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../game/color/color_name';
 import { LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
@@ -8,7 +9,7 @@ describe('GameMap basic map setup', () => {
 	let gameMap: GameMap;
 
 	beforeEach(() => {
-		gameMap = new GameMap({ height: 10, width: 10 }, ColorName.BLACK, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 0, y: 0 }, angle: 0 });
+		gameMap = new GameMap({ height: 10, width: 10 }, ColorName.BLACK, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 1, y: 1 }, angle: 0 });
 	});
 
 	test('should initialize with 4 boundary walls', () => {
@@ -32,7 +33,7 @@ describe('GameMap basic map setup', () => {
 
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
-		const gameMap = new GameMap({ width: 10, height: 10 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 0, y: 0 }, angle: 0 });
+		const gameMap = new GameMap({ width: 10, height: 10 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 1, y: 1 }, angle: 0 });
 		gameMap.walls.forEach(wall => {
 			expect(wall.color).toBe(ColorName.RED);
 		});
@@ -42,7 +43,7 @@ describe('GameMap configuration options', () => {
 		let gameMap: GameMap;
 
 		beforeEach(() => {
-			gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 0, y: 0 }, angle: 0 });
+			gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), position: { x: 1, y: 1 }, angle: 0 });
 		});
 
 		test('should initialize correct number of X gridlines', () => {
@@ -115,7 +116,7 @@ describe('castRay method', () => {
 describe("Player tests", () => {
 	let player: PlayerInterface;
 	beforeEach(() => {
-		player = { rotate: jest.fn((angle: number) => { }), move: jest.fn(() => { }), position: { x: 0, y: 0 }, angle: 0 };
+		player = { rotate: jest.fn((angle: number) => { }), move: jest.fn(() => { }), position: { x: 1, y: 1 }, angle: 0 };
 	})
 	test("angle should be passed to player class", () => {
 		const payload = Math.PI / 4
@@ -129,4 +130,33 @@ describe("Player tests", () => {
 		expect(player.move).toHaveBeenCalled()
 	})
 })
-
+describe('intialization tests', () => {
+	let dimensions: Dimensions
+	let color: ColorName
+	let grid_size: number
+	let player: PlayerInterface
+	beforeEach(() => {
+		dimensions = { width: 100, height: 200 }
+		color = ColorName.RED
+		grid_size = 5
+		player = {
+			rotate: () => { }, move: () => { }, position: { x: -1, y: -1 }, angle: 0
+		}
+	})
+	test('game map may not intialize with player position touching walls: left', () => {
+		player.position = { x: 0, y: 5 }
+		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	})
+	test('game map may not intialize with player position touching walls: top', () => {
+		player.position = { x: 5, y: 0 }
+		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	})
+	test('game map may not intialize with player position touching walls: right', () => {
+		player.position = { x: 100, y: 5 }
+		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	})
+	test('game map may not intialize with player position touching walls: bottom', () => {
+		player.position = { x: 4, y: 200 }
+		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	})
+})

@@ -3,6 +3,7 @@ import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
+import { assertIsPositive } from '../utils';
 interface Intersection {
 	isValid: boolean;
 	x: number;
@@ -20,7 +21,11 @@ export class GameMap implements GameMapInterface {
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
 		gridCell: number = 2,
-		player: PlayerInterface) {
+		player: PlayerInterface
+	) {
+		if (!(this.isInRange(player.position.x, size.width) && this.isInRange(player.position.y, size.height))) {
+			throw new Error("Player position is outside the map boundaries");
+		}
 		this.player = player
 		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
@@ -181,6 +186,10 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 		return lines;
+	}
+
+	private isInRange(value: number, limit: number): boolean {
+		return value < limit && value > 0
 	}
 
 }
