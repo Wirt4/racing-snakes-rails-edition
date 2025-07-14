@@ -3,11 +3,9 @@ import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { ColorName } from './color/color_name';
-import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { Coordinates } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
 import { Batches } from './batches'
-
-type BatchedRect = { x: number, y: number, width: number, height: number };
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
@@ -52,7 +50,7 @@ class Game {
 		});
 		renderer.save();
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
-			const { color, weight } = batches.unpackMapKey(key)
+			const { color, intensity: weight } = batches.unpackKey(key)
 			renderer.stroke(color);
 			renderer.strokeWeight(weight);
 			lines.forEach(line => renderer.line(line));
@@ -88,23 +86,17 @@ class Game {
 		return batches;
 	}
 
-	private renderGrid(batches: Batches, renderer: RendererInterface): void {
-		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
-	}
-
 	private renderWalls(batches: Batches, renderer: RendererInterface): void {
 		/** Renders the walls based on the batched data
 		 * This method is called after all wall slices have been added to the batches
 		 **/
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
-			const { color, brightness: brightnessValue } = batches.unpackWallKey(key);
+			const { color, intensity: brightnessValue } = batches.unpackKey(key);
 			renderer.fillColor(color, brightnessValue);
 			rects.forEach(r => {
 				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
 			});
 		}
-
 	}
 
 	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
@@ -132,7 +124,6 @@ class Game {
 			const hit = this.nextLocation(this.map.playerPosition, angle, distance);
 			renderer.line({ start: this.map.playerPosition, end: hit });
 		})
-
 	}
 
 	private drawBackround(renderer: RendererInterface): void {

@@ -4,32 +4,40 @@ import { ColorName } from "./color/color_name";
 type BatchedRect = { x: number, y: number, width: number, height: number };
 
 export class Batches {
-	wallBatches: Record<string, BatchedRect[]> = {};
 	gridBatch: BatchedRect[] = [];
-	mapBatches: Record<string, LineSegment[]> = {};
+	private wallHash: HashBatch = new HashBatch();
+	private mapHash: HashBatch = new HashBatch();
 
-	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void {
-		const key = `${color}_${brightness}`;
-		if (!this.wallBatches[key]) this.wallBatches[key] = [];
-		this.wallBatches[key].push({ x: origin.x, y: origin.y, width: 1, height });
+	get wallBatches(): Record<string, BatchedRect[]> {
+		return this.wallHash.record;
 	}
+	get mapBatches(): Record<string, LineSegment[]> {
+		return this.mapHash.record;
+	}
+	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void {
+		this.wallHash.add(`${color}_${brightness}`, { x: origin.x, y: origin.y, width: 1, height });
+	}
+
 	addGridPoint(origin: Coordinates): void {
 		this.gridBatch.push({ x: origin.x, y: origin.y, width: 1, height: 1 });
 	}
 
-	unpackWallKey(key: string): { color: ColorName, brightness: number } {
-		const { color, weight } = this.unpackMapKey(key);
-		return { color, brightness: weight };
-	}
-
 	addMapWall(wall: { color: ColorName, line: { start: Coordinates, end: Coordinates } }): void {
-		const key = `${wall.color}_0.5`;
-		if (!this.mapBatches[key]) this.mapBatches[key] = [];
-		this.mapBatches[key].push(wall.line);
+		this.mapHash.add(`${wall.color}_0.5`, wall.line);
 	}
 
-	unpackMapKey(key: string): { color: ColorName, weight: number } {
+	unpackKey(key: string): { color: ColorName, intensity: number } {
 		const [color, weight] = key.split("_");
-		return { color: color as ColorName, weight: Number(weight) };
+		return { color: color as ColorName, intensity: Number(weight) };
 	}
+}
+
+class HashBatch {
+	record: Record<string, Array<any>> = {};
+
+	add(key: string, value: any): void {
+		if (!this.record[key]) this.record[key] = [];
+		this.record[key].push(value);
+	}
+
 }
