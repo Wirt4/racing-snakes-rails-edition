@@ -12,7 +12,6 @@ class Game {
 	map: GameMapInterface;
 
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
-
 	constructor(map: GameMapInterface) {
 		this.map = map;
 	}
@@ -43,7 +42,6 @@ class Game {
 	private drawGrid(batches: Batches, renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 50);
 		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
-
 	}
 
 	private drawHUD(rays: Array<number>, renderer: RendererInterface): void {
@@ -125,24 +123,6 @@ class Game {
 	private drawBackround(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 0.01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-	}
-
-	private calculateDeterminant(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): number {
-		return (wallStart.x - wallEnd.x) * (rayOrigin.y - rayPoint.y) - (wallStart.y - wallEnd.y) * (rayOrigin.x - rayPoint.x);
-	}
-
-	private wallIntersection(wallStart: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates, determinant: number): number {
-		const numerator1 = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
-		const numerator2 = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
-		const diff = numerator1 - numerator2;
-		return diff / determinant;
-	}
-
-	private rayIntersection(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, determinant: number): number {
-		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
-		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
-		const diff = -(numerator1 - numerator2);
-		return diff / determinant;
 	}
 
 	private nextLocation(coordinates: Coordinates, angle: number, distance: number): Coordinates {

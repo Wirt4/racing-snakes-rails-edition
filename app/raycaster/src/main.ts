@@ -42,6 +42,7 @@ onkeydown = (e: KeyboardEvent) => {
 		worker.postMessage({ type: "turn", direction: "left" });
 	}
 	if (e.key === "ArrowRight") {
+		console.log("right pressed");
 		worker.postMessage({ type: "turn", direction: "right" });
 	}
 }
