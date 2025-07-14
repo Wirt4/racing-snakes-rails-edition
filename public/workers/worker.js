@@ -165,23 +165,29 @@ var _Game = class _Game {
     this.map = map;
   }
   draw(renderer2, raycaster2, brightness2) {
-    renderer2.fillColor("BLACK" /* BLACK */, 0.01);
+    renderer2.fillColor("GREEN" /* GREEN */, 0.01);
     renderer2.rect({ x: 0, y: 0 }, 400 /* CANVAS_WIDTH */, 640 /* CANVAS_HEIGHT */);
     const rays = raycaster2.getViewRays(this.map.playerAngle);
     const wallBatches = {};
     const gridBatch = [];
     rays.forEach((angle, i) => {
       const { distance, color, gridHits } = this.map.castRay(angle, 100 /* MAX_DISTANCE */);
+      console.log(`calling raycaster.removeFishEye with distance: ${distance}, angle: ${angle}, playerAngle: ${this.map.playerAngle}`);
       const correctedDistance = raycaster2.removeFishEye(distance, angle, this.map.playerAngle);
+      console.log(`correctedDistance: ${correctedDistance}`);
       const wallTopOffset = 7 /* WALL_HEIGHT */ - 5 /* CAMERA_HEIGHT */;
       const wallBottomOffset = -5 /* CAMERA_HEIGHT */;
       const topY = _Game.HORIZON_Y - wallTopOffset * raycaster2.focalLength / correctedDistance;
+      if (topY < 0) {
+        throw new Error("rendering coordinates may not be negative");
+      }
       const bottomY = _Game.HORIZON_Y - wallBottomOffset * raycaster2.focalLength / correctedDistance;
       const sliceHeight = bottomY - topY;
       const wallBrightness = brightness2.calculateBrightness(correctedDistance);
       const key = `${color}_${Math.round(wallBrightness * 100)}`;
       if (!wallBatches[key]) wallBatches[key] = [];
       wallBatches[key].push({ x: i, y: topY, width: 1, height: sliceHeight });
+      console.log(`added ${key} to wall batches`);
       renderer2.fillColor("BLUE" /* BLUE */, 50);
       for (const hit of gridHits) {
         const correctedGridDistance = raycaster2.removeFishEye(hit, angle, this.map.playerAngle);
@@ -193,7 +199,9 @@ var _Game = class _Game {
     for (const [key, rects] of Object.entries(wallBatches)) {
       const [colorName, brightness3] = key.split("_");
       renderer2.fillColor(colorName, Number(brightness3) / 100);
-      rects.forEach((r) => renderer2.rect({ x: r.x, y: r.y }, r.width, r.height));
+      rects.forEach((r) => {
+        renderer2.rect({ x: r.x, y: r.y }, r.width, r.height);
+      });
     }
     renderer2.fillColor("BLUE" /* BLUE */, 50);
     gridBatch.forEach((r) => renderer2.rect({ x: r.x, y: r.y }, r.width, r.height));
@@ -210,6 +218,7 @@ var _Game = class _Game {
       const [color, weight] = key.split("_");
       renderer2.stroke(color);
       renderer2.strokeWeight(Number(weight));
+      console.log(`Drawing ${lines.length} lines for color ${color} with weight ${weight}`);
       lines.forEach((line) => renderer2.line(line));
     }
     renderer2.stroke("WHITE" /* WHITE */);
@@ -255,18 +264,17 @@ var Game = _Game;
 
 // src/gamemap/map.ts
 var GameMap = class {
-  constructor(width, height, boundaryColor = "BLACK" /* BLACK */, gridCell = 2) {
+  constructor(size, boundaryColor = "BLACK" /* BLACK */, gridCell = 2, player) {
     this.walls = [];
     this.gridLinesX = [];
     this.gridLinesY = [];
-    this.playerPosition = { x: 0, y: 0 };
-    this.playerAngle = 0;
-    this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
-    this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
+    this.player = player;
+    this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
+    this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
     const left_top = { x: 0, y: 0 };
-    const left_bottom = { x: 0, y: height };
-    const right_top = { x: width, y: 0 };
-    const right_bottom = { x: width, y: height };
+    const left_bottom = { x: 0, y: size.height };
+    const right_top = { x: size.width, y: 0 };
+    const right_bottom = { x: size.width, y: size.height };
     this.walls = [
       this.initializeWall(left_top, left_bottom, boundaryColor),
       this.initializeWall(left_top, right_top, boundaryColor),
@@ -274,17 +282,20 @@ var GameMap = class {
       this.initializeWall(left_bottom, right_bottom, boundaryColor)
     ];
   }
+  get playerPosition() {
+    return this.player.position;
+  }
+  get playerAngle() {
+    return this.player.angle;
+  }
   appendWall(wall) {
     this.walls.push(wall);
   }
   movePlayer() {
-    const speed = 0.2;
-    this.playerPosition.x += Math.cos(this.playerAngle) * speed;
-    this.playerPosition.y += Math.sin(this.playerAngle) * speed;
+    this.player.move();
   }
-  turnPlayer(angle = 0) {
-    this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
-    if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
+  turnPlayer(angle) {
+    this.player.rotate(angle);
   }
   castRay(angle, maximumAllowableDistance) {
     const rayDirection = {
@@ -307,12 +318,12 @@ var GameMap = class {
     }
     const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
     const rayEnd = {
-      x: this.playerPosition.x + rayDirection.x * maxDistance,
-      y: this.playerPosition.y + rayDirection.y * maxDistance
+      x: this.player.position.x + rayDirection.x * maxDistance,
+      y: this.player.position.y + rayDirection.y * maxDistance
     };
     const gridHits = [];
     for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
-      const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, {
+      const hit = this.rayIntersectsWall(this.player.position, rayDirection, {
         line: grid,
         color: "BLUE" /* BLUE */
       });
@@ -395,6 +406,12 @@ var GameMap = class {
   }
 };
 
+// src/geometry/constants.ts
+var FULL_CIRCLE = Math.PI * 2;
+var SIXTY_DEGREES = Math.PI / 3;
+var NINETY_DEGREES = Math.PI / 2;
+var FORTY_FIVE_DEGREES = Math.PI / 4;
+
 // src/utils.ts
 function assertIsNonNegative(value) {
   if (typeof value !== "number" || value < 0) {
@@ -413,12 +430,6 @@ function assertIsPositiveInteger(value) {
     throw new Error("Value must be an integer");
   }
 }
-
-// src/geometry/constants.ts
-var FULL_CIRCLE = Math.PI * 2;
-var SIXTY_DEGREES = Math.PI / 3;
-var NINETY_DEGREES = Math.PI / 2;
-var FORTY_FIVE_DEGREES = Math.PI / 4;
 
 // src/raycaster/raycaster.ts
 var Raycaster = class {
@@ -519,9 +530,10 @@ onmessage = (e) => {
       return;
     }
     renderer = new Renderer(ctx);
-    const map = new GameMap(1e3, 1e3, msg.settings.MAP_COLOR);
-    map.playerPosition = msg.mapData.playerPosition;
-    map.playerAngle = msg.mapData.playerAngle;
+    const mapSize = { width: 1e3, height: 1e3 };
+    const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => {
+    }, move: () => {
+    }, position: { x: 1, y: 1 }, angle: 0 });
     map.walls = msg.mapData.walls;
     game = new Game(map);
     raycaster = new Raycaster(
@@ -534,14 +546,12 @@ onmessage = (e) => {
     brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
     startLoop();
   }
-  if (msg.type === "mouseTurn") {
-    game.map.turnPlayer(msg.angleDelta);
-  }
   if (msg.type === "KeyDown") {
-    game.map.turnPlayer;
+    game.map.turnPlayer(Math.PI / 4);
   }
 };
 function startLoop() {
+  console.log("Starting game loop");
   if (running) return;
   running = true;
   function loop() {

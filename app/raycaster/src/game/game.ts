@@ -18,23 +18,27 @@ class Game {
 	}
 
 	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface): void {
-		renderer.fillColor(ColorName.BLACK, 0.01);
+		renderer.fillColor(ColorName.GREEN, 0.01); //Sanity check to avoid black screen
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		const wallBatches: Record<string, BatchedRect[]> = {}
-
 		// Calculate the focal length based on the field of vision
 		const gridBatch: Array<BatchedRect> = []
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
+			console.log(`calling raycaster.removeFishEye with distance: ${distance}, angle: ${angle}, playerAngle: ${this.map.playerAngle}`);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
+			console.log(`correctedDistance: ${correctedDistance}`);
 
 			// Project top and bottom of the wall slice
 			const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
 			const wallBottomOffset = -Settings.CAMERA_HEIGHT;
 
 			const topY = Game.HORIZON_Y - (wallTopOffset * raycaster.focalLength) / correctedDistance;
+			if (topY < 0) {
+				throw new Error('rendering coordinates may not be negative');
+			}
 			const bottomY = Game.HORIZON_Y - (wallBottomOffset * raycaster.focalLength) / correctedDistance;
 			const sliceHeight = bottomY - topY;
 
@@ -44,7 +48,7 @@ class Game {
 			const key = `${color}_${Math.round(wallBrightness * 100)}`;
 			if (!wallBatches[key]) wallBatches[key] = [];
 			wallBatches[key].push({ x: i, y: topY, width: 1, height: sliceHeight });
-
+			console.log(`added ${key} to wall batches`)
 
 			// Draw floor grid hits
 			renderer.fillColor(ColorName.BLUE, 50);
@@ -58,9 +62,12 @@ class Game {
 		});
 		// Draw batched walls
 		for (const [key, rects] of Object.entries(wallBatches)) {
+
 			const [colorName, brightness] = key.split("_");
 			renderer.fillColor(colorName as ColorName, Number(brightness) / 100);
-			rects.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+			rects.forEach(r => {
+				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
+			});
 		}
 		// Draw the floor grid
 		renderer.fillColor(ColorName.BLUE, 50);
@@ -83,6 +90,7 @@ class Game {
 			const [color, weight] = key.split("_");
 			renderer.stroke(color as ColorName);
 			renderer.strokeWeight(Number(weight));
+			console.log(`Drawing ${lines.length} lines for color ${color} with weight ${weight}`);
 			lines.forEach(line => renderer.line(line));
 		}
 

@@ -25,7 +25,7 @@ onmessage = (e) => {
 		//note the hardcoded values here, these should be replaced with the settings from the main thread
 		//
 		const mapSize = { width: 1000, height: 1000 };
-		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, position: { x: 0, y: 0 }, angle: 0 });
+		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, position: { x: 1, y: 1 }, angle: 0 });
 		map.walls = msg.mapData.walls;
 
 		game = new Game(map);
@@ -39,15 +39,13 @@ onmessage = (e) => {
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		startLoop();
 	}
-	if (msg.type === "mouseTurn") {
-		game.map.turnPlayer(msg.angleDelta);
-	}
 	if (msg.type === "KeyDown") {
-		game.map.turnPlayer
+		game.map.turnPlayer(Math.PI / 4)
 	}
 };
 
 function startLoop() {
+	console.log("Starting game loop");
 	if (running) return;
 	running = true;
 	function loop(): void {
