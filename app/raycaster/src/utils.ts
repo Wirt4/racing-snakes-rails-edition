@@ -1,3 +1,4 @@
+import { FULL_CIRCLE } from './geometry/constants'
 function assertIsNonNegative(value: number): void {
 	if (typeof value !== 'number' || value < 0) {
 		throw new Error("Value must be a non-negative number");
@@ -17,4 +18,7 @@ function assertIsPositiveInteger(value: number): void {
 		throw new Error("Value must be an integer");
 	}
 }
-export { assertIsPositiveInteger, assertIsPositive, assertIsNonNegative };
+function normalizeAngle(angle: number): number {
+	return angle < 0 ? angle % FULL_CIRCLE + FULL_CIRCLE : angle % FULL_CIRCLE;
+}
+export { assertIsPositiveInteger, assertIsPositive, assertIsNonNegative, normalizeAngle };

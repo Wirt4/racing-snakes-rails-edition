@@ -1,6 +1,7 @@
 import { GameMapInterface, WallInterface } from './interface';
-import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../game/color/color_name';
+import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
 interface Intersection {
 	isValid: boolean;
@@ -12,17 +13,25 @@ export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
-	playerPosition: Coordinates = { x: 0, y: 0 };
-	playerAngle: number = 0;
+	player: PlayerInterface
 
 
-	constructor(width: number, height: number, boundaryColor: ColorName = ColorName.BLACK, gridCell: number = 2) {
-		this.gridLinesY = this.generateGridLines(gridCell, height, width, true);
-		this.gridLinesX = this.generateGridLines(gridCell, width, height, false);
+	constructor(
+		size: Dimensions,
+		boundaryColor: ColorName = ColorName.BLACK,
+		gridCell: number = 2,
+		player: PlayerInterface
+	) {
+		if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
+			throw new Error("Player position is outside the map boundaries");
+		}
+		this.player = player
+		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
+		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
 		const left_top = { x: 0, y: 0 };
-		const left_bottom = { x: 0, y: height };
-		const right_top = { x: width, y: 0 };
-		const right_bottom = { x: width, y: height };
+		const left_bottom = { x: 0, y: size.height };
+		const right_top = { x: size.width, y: 0 };
+		const right_bottom = { x: size.width, y: size.height };
 
 		this.walls = [
 			this.initializeWall(left_top, left_bottom, boundaryColor),
@@ -32,21 +41,25 @@ export class GameMap implements GameMapInterface {
 		];
 	}
 
+	get playerPosition(): Coordinates {
+		const { x, y } = this.player;
+		return { x, y };
+	}
+
+	get playerAngle(): number {
+		return this.player.angle;
+	}
+
 	appendWall(wall: WallInterface): void {
 		this.walls.push(wall);
 	}
 
 	movePlayer(): void {
-		const speed = 0.2; // Define a constant speed for player movement
-		// TODO: calculate speed
-		this.playerPosition.x += Math.cos(this.playerAngle) * speed;
-		this.playerPosition.y += Math.sin(this.playerAngle) * speed;
-
+		this.player.move();
 	}
 
-	turnPlayer(angle: number = 0): void {
-		this.playerAngle = (this.playerAngle + angle) % (2 * Math.PI);
-		if (this.playerAngle < 0) this.playerAngle += 2 * Math.PI;
+	turnPlayer(angle: number): void {
+		this.player.rotate(angle)
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {
@@ -64,7 +77,8 @@ export class GameMap implements GameMapInterface {
 		let color = ColorName.NONE;
 
 		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, wall);
+			const { x, y } = this.player;
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = wall.color;
@@ -72,16 +86,17 @@ export class GameMap implements GameMapInterface {
 		}
 
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
-
+		//TODO: law of demeter
 		const rayEnd = {
-			x: this.playerPosition.x + rayDirection.x * maxDistance,
-			y: this.playerPosition.y + rayDirection.y * maxDistance
+			x: this.player.x + rayDirection.x * maxDistance,
+			y: this.player.y + rayDirection.y * maxDistance
 		};
 
 		const gridHits: number[] = [];
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
-			const hit = this.rayIntersectsWall(this.playerPosition, rayDirection, {
+			const { x, y } = this.player;
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, {
 				line: grid,
 				color: ColorName.BLUE
 			});
@@ -173,6 +188,10 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 		return lines;
+	}
+
+	private isInRange(value: number, limit: number): boolean {
+		return value < limit && value > 0
 	}
 
 }

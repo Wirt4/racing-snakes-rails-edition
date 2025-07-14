@@ -17,7 +17,8 @@ class Renderer implements RendererInterface {
 		 * Precondition: * - The context is a valid CanvasRenderingContext2D.
 		 * Postcondition: * - The context is scaled by the specified factor.
 		 * **/
-		this.context.scale(scale, scale);
+		this.context.translate(0, this.context.canvas.height);
+		this.context.scale(scale, -scale);
 	}
 
 	public save(): void {

@@ -3,6 +3,11 @@ interface Coordinates {
 	y: number;
 }
 
+interface Dimensions {
+	width: number;
+	height: number;
+}
+
 interface LineSegment {
 	start: Coordinates;
 	end: Coordinates;
@@ -14,4 +19,4 @@ interface Ray {
 	magnitude: number;
 }
 
-export { Coordinates, LineSegment, Ray };
+export { Dimensions, Coordinates, LineSegment, Ray };

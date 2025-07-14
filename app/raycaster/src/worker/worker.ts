@@ -3,7 +3,7 @@ import { Game } from '../game/game';
 import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
-import { sleep } from '../sleep';
+import { Player } from '../player/player';
 
 let game: Game;
 let renderer: Renderer;
@@ -23,11 +23,9 @@ onmessage = (e) => {
 		}
 
 		renderer = new Renderer(ctx);
-		//note the hardcoded values here, these should be replaced with the settings from the main thread
-		//
-		const map = new GameMap(1000, 1000, msg.settings.MAP_COLOR);
-		map.playerPosition = msg.mapData.playerPosition;
-		map.playerAngle = msg.mapData.playerAngle;
+		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
+		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED);
+		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 		map.walls = msg.mapData.walls;
 
 		game = new Game(map);
@@ -41,11 +39,13 @@ onmessage = (e) => {
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		startLoop();
 	}
-	if (msg.type === "mouseTurn") {
-		game.map.turnPlayer(msg.angleDelta);
-	}
-	if (msg.type === "KeyDown") {
-		game.map.turnPlayer
+	if (msg.type === "turn") {
+		if (msg.direction === "left") {
+			game.map.turnPlayer(Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
+
+		} if (msg.direction === "right") {
+			game.map.turnPlayer(-Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
+		}
 	}
 };
 
@@ -54,7 +54,7 @@ function startLoop() {
 	running = true;
 	function loop(): void {
 		renderer.reset();
-		game.draw(renderer, raycaster, brightness);
+		game.draw(renderer, raycaster, brightness, true); //pass for debugging
 		game.update();
 		requestAnimationFrame(loop);
 	};

@@ -5,6 +5,7 @@ export enum Settings {
 	MAX_BRIGHTNESS = 60,
 	HUD_ON = 1,
 	WALL_HEIGHT = 7,
+	PLAYER_SPEED = 0.5,
 	CAMERA_HEIGHT = 5,
 	FRAMES_PER_SECOND = 60,
 	FIELD_OF_VISION = Math.PI / 3,

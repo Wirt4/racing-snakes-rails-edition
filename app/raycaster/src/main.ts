@@ -22,9 +22,8 @@ for (let i = 0; i < 10; i++) {
 }
 walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 100, y: 40 } } })
 
-const gameMap = new GameMap(1000, 1000, ColorName.GREEN);
-gameMap.playerAngle = 0
-gameMap.playerPosition = { x: 20, y: 54 };
+const gameMapSize = { width: 1000, height: 1000 };
+const gameMap = new GameMap(gameMapSize, ColorName.GREEN, 5, { rotate: () => { }, move: () => { }, x: 1, y: 1, angle: 0 });
 gameMap.walls = [...walls, ...gameMap.walls];
 
 worker.postMessage({
@@ -38,33 +37,11 @@ worker.postMessage({
 	},
 }, [offscreen]);
 
-//mouse detesction
-let isDragging = false;
-let lastX: number | null = null;
-
-canvas.addEventListener("mousedown", (e) => {
-	isDragging = true;
-	lastX = e.clientX;
-});
-
-canvas.addEventListener("mouseup", () => {
-	isDragging = false;
-	lastX = null;
-});
-
-canvas.addEventListener("mouseleave", () => {
-	isDragging = false;
-	lastX = null;
-});
-
-canvas.addEventListener("mousemove", (e) => {
-	if (!isDragging || lastX === null) return;
-	//TODO: figure out a turn radius, so you can hold the mouse and turn 
-	const deltaX = e.clientX - lastX;
-	lastX = e.clientX;
-
-	const turnDelta = (deltaX / canvas.width) * 2 * Math.PI;
-	worker.postMessage({ type: "mouseTurn", angleDelta: turnDelta });
-});
-//TODO: choose between interfaces
-
+onkeydown = (e: KeyboardEvent) => {
+	if (e.key === "ArrowLeft") {
+		worker.postMessage({ type: "turn", direction: "left" });
+	}
+	if (e.key === "ArrowRight") {
+		worker.postMessage({ type: "turn", direction: "right" });
+	}
+}
