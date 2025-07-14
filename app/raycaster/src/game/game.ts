@@ -20,7 +20,6 @@ class Game {
 	update(): void {
 		/** Update game state, e.g., player position, wall states, etc.
 		* This method can be expanded based on game logic
-		* For now, it does nothing except demonstrate the 3D-ness
 		**/
 		this.map.movePlayer();
 	}
@@ -87,9 +86,6 @@ class Game {
 	}
 
 	private renderWalls(batches: Batches, renderer: RendererInterface): void {
-		/** Renders the walls based on the batched data
-		 * This method is called after all wall slices have been added to the batches
-		 **/
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
 			const { color, intensity: brightnessValue } = batches.unpackKey(key);
 			renderer.fillColor(color, brightnessValue);
@@ -108,15 +104,11 @@ class Game {
 	}
 
 	private floorPoint(distance: number, focalLength: number): number {
-		/** Calculates the point on the floor based on distance and focal length
-		 **/
 		const floorOffset = -Settings.CAMERA_HEIGHT;
 		return Game.HORIZON_Y - (floorOffset * focalLength) / distance;
 	}
 
 	private draw2DRays(renderer: RendererInterface, rays: Array<number>): void {
-		/** Draws the rays in 2D for debugging purposes
-		 **/
 		renderer.stroke(ColorName.GREEN);
 		renderer.strokeWeight(0.05);
 		rays.forEach((angle) => {
