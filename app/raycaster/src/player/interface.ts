@@ -1,4 +1,3 @@
-import { Coordinates } from '../geometry/interfaces';
 export interface PlayerInterface {
 	rotate: (angle: number) => void;
 	x: number;
