@@ -1,15 +1,9 @@
 import { Coordinates } from "../geometry/interfaces";
-interface BatchecsInterface {
-	wallBatches: Record<string, BatchedRect[]>;
-	gridBatch: BatchedRect[];
-	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void;
-	addGridPoint(origin: Coordinates): void;
-}
-
+import { ColorName } from "./color/color_name";
 
 type BatchedRect = { x: number, y: number, width: number, height: number };
 
-export class Batches implements BatchecsInterface {
+export class Batches {
 	wallBatches: Record<string, BatchedRect[]> = {};
 	gridBatch: BatchedRect[] = [];
 	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void {
@@ -19,5 +13,10 @@ export class Batches implements BatchecsInterface {
 	}
 	addGridPoint(origin: Coordinates): void {
 		this.gridBatch.push({ x: origin.x, y: origin.y, width: 1, height: 1 });
+	}
+
+	unpackKey(key: string): { color: ColorName, brightness: number } {
+		const [color, brightness] = key.split("_");
+		return { color: color as ColorName, brightness: Number(brightness) / 100 };
 	}
 }

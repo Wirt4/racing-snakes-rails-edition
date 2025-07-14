@@ -32,7 +32,6 @@ class Game {
 		rays.forEach((angle, i) => {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
-			// Project top and bottom of the wall slice
 			const slice = this.sliceHeight(correctedDistance, raycaster.focalLength);
 			const wallBrightness = brightness.calculateBrightness(correctedDistance);
 			batches.addWallSlice(color, wallBrightness, { x: i, y: slice.origin }, slice.magnitude);
@@ -43,11 +42,10 @@ class Game {
 				batches.addGridPoint({ x: i, y });
 			}
 		});
-		// Draw batched walls
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
 
-			const [colorName, brightness] = key.split("_");
-			renderer.fillColor(colorName as ColorName, Number(brightness) / 100);
+			const { color, brightness: brightnessValue } = batches.unpackKey(key);
+			renderer.fillColor(color, brightnessValue);
 			rects.forEach(r => {
 				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
 			});
