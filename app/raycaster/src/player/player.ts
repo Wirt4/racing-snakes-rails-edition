@@ -18,23 +18,8 @@ class Player implements PlayerInterface {
 	}
 
 	move(): void {
-		switch (this.angle) {
-			case 0:
-				this.x += this.speed;
-				break;
-			case 2 * Math.PI:
-				this.x += this.speed;
-				break;
-			case Math.PI:
-				this.x -= this.speed;
-				break;
-			case 3 * Math.PI / 2:
-				this.y += this.speed;
-				break;
-			case Math.PI / 2:
-				this.y -= this.speed;
-				break;
-		}
+		this.x += Math.round(Math.cos(this.angle)) * this.speed;
+		this.y += Math.sin(this.angle) * this.speed;
 	}
 }
 export { Player };
