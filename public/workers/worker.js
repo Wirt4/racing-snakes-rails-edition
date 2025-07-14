@@ -268,6 +268,9 @@ var GameMap = class {
     this.walls = [];
     this.gridLinesX = [];
     this.gridLinesY = [];
+    if (!(this.isInRange(player.position.x, size.width) && this.isInRange(player.position.y, size.height))) {
+      throw new Error("Player position is outside the map boundaries");
+    }
     this.player = player;
     this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
     this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
@@ -404,6 +407,9 @@ var GameMap = class {
     }
     return lines;
   }
+  isInRange(value, limit) {
+    return value < limit && value > 0;
+  }
 };
 
 // src/geometry/constants.ts
@@ -420,7 +426,7 @@ function assertIsNonNegative(value) {
 }
 function assertIsPositive(value) {
   assertIsNonNegative(value);
-  if (value === 0) {
+  if (value == 0) {
     throw new Error("Value must be a positive number");
   }
 }
