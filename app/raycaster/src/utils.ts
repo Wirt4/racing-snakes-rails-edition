@@ -7,7 +7,7 @@ function assertIsNonNegative(value: number): void {
 
 function assertIsPositive(value: number): void {
 	assertIsNonNegative(value);
-	if (value == 0) {
+	if (value === 0) {
 		throw new Error("Value must be a positive number");
 	}
 }

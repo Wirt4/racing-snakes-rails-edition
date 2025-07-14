@@ -45,7 +45,6 @@ onmessage = (e) => {
 };
 
 function startLoop() {
-	console.log("Starting game loop");
 	if (running) return;
 	running = true;
 	function loop(): void {
