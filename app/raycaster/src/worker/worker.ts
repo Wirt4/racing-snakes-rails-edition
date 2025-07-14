@@ -24,7 +24,7 @@ onmessage = (e) => {
 
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
-		const player = new Player({ x: 1, y: 1 }, 0, msg.settings.PLAYER_SPEED);
+		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 		map.walls = msg.mapData.walls;
 
@@ -41,10 +41,10 @@ onmessage = (e) => {
 	}
 	if (msg.type === "turn") {
 		if (msg.direction === "left") {
-			game.map.turnPlayer(-Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
+			game.map.turnPlayer(Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
 
 		} if (msg.direction === "right") {
-			game.map.turnPlayer(Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
+			game.map.turnPlayer(-Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
 		}
 	}
 };
