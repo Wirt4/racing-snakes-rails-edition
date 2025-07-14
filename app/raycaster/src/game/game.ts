@@ -33,25 +33,14 @@ class Game {
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
 			// Project top and bottom of the wall slice
-			const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
-			const wallBottomOffset = -Settings.CAMERA_HEIGHT;
-			const topY = Game.HORIZON_Y - (wallTopOffset * raycaster.focalLength) / correctedDistance;
-			const bottomY = Game.HORIZON_Y - (wallBottomOffset * raycaster.focalLength) / correctedDistance;
-			const sliceHeight = this.sliceHeight(correctedDistance, raycaster.focalLength);
-
-			// Draw the wall slice
+			const slice = this.sliceHeight(correctedDistance, raycaster.focalLength);
 			const wallBrightness = brightness.calculateBrightness(correctedDistance);
-			//batch the walls
-			batches.addWallSlice(color, wallBrightness, { x: i, y: topY }, sliceHeight)
-			// Draw floor grid hits
-			renderer.fillColor(ColorName.BLUE, 50);
+			batches.addWallSlice(color, wallBrightness, { x: i, y: slice.origin }, slice.magnitude);
 
 			for (const hit of gridHits) {
 				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
-				const floorOffset = -Settings.CAMERA_HEIGHT;
-				const projectedFloorY = Game.HORIZON_Y - (floorOffset * raycaster.focalLength) / correctedGridDistance;
-				//gridBatch.push({ x: i, y: projectedFloorY, width: 1, height: 1 });
-				batches.addGridPoint({ x: i, y: projectedFloorY });
+				const y = this.floorPoint(correctedGridDistance, raycaster.focalLength);
+				batches.addGridPoint({ x: i, y });
 			}
 		});
 		// Draw batched walls
@@ -98,18 +87,23 @@ class Game {
 		renderer.restore();
 	}
 
-	private sliceHeight(distance: number, focalLength: number): number {
+	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
 		const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
 		const wallBottomOffset = -Settings.CAMERA_HEIGHT;
 		const topY = Game.HORIZON_Y - (wallTopOffset * focalLength) / distance;
 		const bottomY = Game.HORIZON_Y - (wallBottomOffset * focalLength) / distance;
-		return bottomY - topY;
+		return { origin: topY, magnitude: bottomY - topY }
+	}
+
+	private floorPoint(distance: number, focalLength: number): number {
+		/** Calculates the point on the floor based on distance and focal length
+		 **/
+		const floorOffset = -Settings.CAMERA_HEIGHT;
+		return Game.HORIZON_Y - (floorOffset * focalLength) / distance;
 	}
 
 	private draw2DRays(renderer: RendererInterface, rays: Array<number>): void {
 		/** Draws the rays in 2D for debugging purposes
-		 * This method can be expanded based on game logic
-		 * For now, it does nothing except demonstrate the 3D-ness
 		 **/
 		renderer.stroke(ColorName.GREEN);
 		renderer.strokeWeight(0.05);
