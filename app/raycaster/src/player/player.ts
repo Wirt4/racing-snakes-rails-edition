@@ -6,6 +6,7 @@ class Player implements PlayerInterface {
 	y: number;
 	angle: number;
 	private speed: number;
+
 	constructor(coordinates: Coordinates, angle: number, speed: number) {
 		this.speed = speed;
 		this.x = coordinates.x;
@@ -14,11 +15,8 @@ class Player implements PlayerInterface {
 	}
 
 	rotate(angle: number): void {
-		console.log("previous angle:", this.angle);
 		this.angle += angle
-		console.log('new angle', this.angle);
 		this.angle = normalizeAngle(this.angle);
-		console.log('normalized angle', this.angle);
 	}
 
 	move(): void {
