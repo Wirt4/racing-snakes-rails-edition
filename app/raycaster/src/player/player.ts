@@ -1,5 +1,6 @@
 import { PlayerInterface } from './interface';
 import { Coordinates } from '../geometry/interfaces';
+import { normalizeAngle } from '../utils';
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
@@ -13,7 +14,7 @@ class Player implements PlayerInterface {
 	}
 
 	rotate(angle: number): void {
-		this.angle += angle;
+		this.angle = normalizeAngle(angle + this.angle);
 	}
 
 	move(): void {
