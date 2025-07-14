@@ -26,7 +26,6 @@ onmessage = (e) => {
 		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
 		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_TURN_RADIUS);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
-		map.walls = msg.mapData.walls;
 
 		game = new Game(map);
 		raycaster = new Raycaster(
@@ -43,7 +42,6 @@ onmessage = (e) => {
 		if (msg.direction === "left") {
 			game.map.turnPlayer(Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
 		} else if (msg.direction === "right") {
-			console.log("Turning right");
 			game.map.turnPlayer(-Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
 		}
 	}

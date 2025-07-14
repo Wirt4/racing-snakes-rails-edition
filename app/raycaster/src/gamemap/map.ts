@@ -76,12 +76,20 @@ export class GameMap implements GameMapInterface {
 		};
 		let color = ColorName.NONE;
 
+		const { x, y } = this.player;
 		for (const wall of this.walls) {
-			const { x, y } = this.player;
-			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall.line);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = wall.color;
+			}
+		}
+
+		for (const wall of this.player.trail) {
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
+			if (hit.isValid && hit.distance > 0 && hit.distance < closest.distance) {
+				closest = hit;
+				color = this.player.color;
 			}
 		}
 
@@ -96,10 +104,7 @@ export class GameMap implements GameMapInterface {
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
 			const { x, y } = this.player;
-			const hit = this.rayIntersectsWall({ x, y }, rayDirection, {
-				line: grid,
-				color: ColorName.BLUE
-			});
+			const hit = this.rayIntersectsWall({ x, y }, rayDirection, grid);
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
 			}
@@ -127,25 +132,24 @@ export class GameMap implements GameMapInterface {
 		return Math.sqrt((coordinatesB.x - coordinatesA.x) ** 2 + (coordinatesB.y - coordinatesA.y) ** 2);
 	}
 
-	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: WallInterface): Intersection {
-		const { start: wallStart, end: wallEnd } = wall.line;
+	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: LineSegment): Intersection {
 		const rayPoint: Coordinates = { x: rayOrigin.x + direction.x, y: rayOrigin.y + direction.y };
-		const determinant = this.calculateDeterminant(wallStart, wallEnd, rayOrigin, rayPoint);
+		const determinant = this.calculateDeterminant(wall.start, wall.end, rayOrigin, rayPoint);
 		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
 
 		if (this.isParallel(determinant)) {
 			return result;
 		}
 
-		const wall_intersection = this.wallIntersection(wallStart, rayOrigin, rayPoint, determinant);
-		const ray_intersection = this.rayIntersection(wallStart, wallEnd, rayOrigin, determinant);
+		const wall_intersection = this.wallIntersection(wall.start, rayOrigin, rayPoint, determinant);
+		const ray_intersection = this.rayIntersection(wall.start, wall.end, rayOrigin, determinant);
 		if (!this.isInsideWall(wall_intersection, ray_intersection)) {
 			return result;
 		}
 
 		result.isValid = true;
-		result.x = wallStart.x + wall_intersection * (wallEnd.x - wallStart.x);
-		result.y = wallStart.y + wall_intersection * (wallEnd.y - wallStart.y);
+		result.x = wall.start.x + wall_intersection * (wall.end.x - wall.start.x);
+		result.y = wall.start.y + wall_intersection * (wall.end.y - wall.start.y);
 		result.distance = this.dist(rayOrigin, result);
 		return result;
 	}
