@@ -33,13 +33,17 @@ class Game {
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		const batches = this.batchRenderData(rays, raycaster, brightness);
 		this.renderWalls(batches, renderer)
-		// Draw the floor grid
-		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+		this.drawGrid(batches, renderer);
 
 		if (HUD) {
 			this.drawHUD(rays, renderer)
 		}
+	}
+
+	private drawGrid(batches: Batches, renderer: RendererInterface): void {
+		renderer.fillColor(ColorName.BLUE, 50);
+		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+
 	}
 
 	private drawHUD(rays: Array<number>, renderer: RendererInterface): void {
