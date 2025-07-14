@@ -20,7 +20,7 @@ class Player implements PlayerInterface {
 	}
 
 	move(): void {
-		this.x += Math.cos(this.angle) * this.speed;
+		this.x += Math.round(Math.cos(this.angle)) * this.speed;
 		this.y += Math.sin(this.angle) * this.speed;
 	}
 }
