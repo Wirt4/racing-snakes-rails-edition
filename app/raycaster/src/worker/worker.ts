@@ -54,7 +54,7 @@ function startLoop() {
 	running = true;
 	function loop(): void {
 		renderer.reset();
-		game.draw(renderer, raycaster, brightness);
+		game.draw(renderer, raycaster, brightness, true); //pass for debugging
 		game.update();
 		requestAnimationFrame(loop);
 	};
