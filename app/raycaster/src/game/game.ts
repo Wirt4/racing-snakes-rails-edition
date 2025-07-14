@@ -26,7 +26,6 @@ class Game {
 		this.drawBackround(renderer);
 		const rays = raycaster.getViewRays(this.map.playerAngle);
 		// Calculate the focal length based on the field of vision
-		const gridBatch: Array<BatchedRect> = []
 		const batches = new Batches()
 
 		rays.forEach((angle, i) => {
@@ -43,8 +42,7 @@ class Game {
 			}
 		});
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
-
-			const { color, brightness: brightnessValue } = batches.unpackKey(key);
+			const { color, brightness: brightnessValue } = batches.unpackWallKey(key);
 			renderer.fillColor(color, brightnessValue);
 			rects.forEach(r => {
 				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
@@ -53,36 +51,37 @@ class Game {
 		// Draw the floor grid
 		renderer.fillColor(ColorName.BLUE, 50);
 		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
-		if (!HUD) return;
-		// overlay the 2D map
-		renderer.save();
-		renderer.scale(2.5);
 
-		const hudWallGroups: Record<string, LineSegment[]> = {};
-		// key: `${color}_${weight}`
+		if (HUD) {
+			const hudWallGroups: Record<string, LineSegment[]> = {};
+			// key: `${color}_${weight}`
 
-		this.map.walls.forEach((wall) => {
-			const key = `${wall.color}_0.5`;
-			if (!hudWallGroups[key]) hudWallGroups[key] = [];
-			hudWallGroups[key].push(wall.line);
-		});
-		//batch draw the walls by color
-		for (const [key, lines] of Object.entries(hudWallGroups)) {
-			const [color, weight] = key.split("_");
-			renderer.stroke(color as ColorName);
-			renderer.strokeWeight(Number(weight));
-			lines.forEach(line => renderer.line(line));
+			this.map.walls.forEach((wall) => {
+				batches.addMapWall(wall)
+			});
+
+			// overlay the 2D map
+			renderer.save();
+			renderer.scale(2.5);
+
+			//batch draw the walls by color
+			for (const [key, lines] of Object.entries(batches.mapBatches)) {
+				const [color, weight] = key.split("_");
+				renderer.stroke(color as ColorName);
+				renderer.strokeWeight(Number(weight));
+				lines.forEach(line => renderer.line(line));
+			}
+
+			renderer.stroke(ColorName.WHITE);
+			renderer.fillColor(ColorName.RED, 100);
+			renderer.noStroke();
+			renderer.ellipse(this.map.playerPosition, 0.2);
+
+
+			this.draw2DRays(renderer, rays);
+
+			renderer.restore();
 		}
-
-		renderer.stroke(ColorName.WHITE);
-		renderer.fillColor(ColorName.RED, 100);
-		renderer.noStroke();
-		renderer.ellipse(this.map.playerPosition, 0.2);
-
-
-		this.draw2DRays(renderer, rays);
-
-		renderer.restore();
 	}
 
 	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
@@ -116,7 +115,6 @@ class Game {
 	private drawBackround(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 0.01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
-
 	}
 
 
