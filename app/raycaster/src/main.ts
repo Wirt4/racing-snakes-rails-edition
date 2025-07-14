@@ -24,8 +24,6 @@ walls.push({ color: ColorName.YELLOW, line: { start: { x: 0, y: 40 }, end: { x: 
 
 const gameMapSize = { width: 1000, height: 1000 };
 const gameMap = new GameMap(gameMapSize, ColorName.GREEN, 5, { rotate: () => { }, move: () => { }, position: { x: 1, y: 1 }, angle: 0 });
-//gameMap.playerAngle = 0
-//gameMap.playerPosition = { x: 20, y: 54 };
 gameMap.walls = [...walls, ...gameMap.walls];
 
 worker.postMessage({
