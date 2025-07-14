@@ -24,7 +24,7 @@ onmessage = (e) => {
 
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
-		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED);
+		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_TURN_RADIUS);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 		map.walls = msg.mapData.walls;
 

@@ -10,7 +10,7 @@ class Player implements PlayerInterface {
 	private isTurning: boolean = false;
 	private inbetweens: Array<number> = [];
 
-	constructor(coordinates: Coordinates, angle: number, speed: number, turnRadius: number = 10) {
+	constructor(coordinates: Coordinates, angle: number, speed: number, turnRadius: number = 5) {
 		this.speed = speed;
 		this.x = coordinates.x;
 		this.y = coordinates.y;
