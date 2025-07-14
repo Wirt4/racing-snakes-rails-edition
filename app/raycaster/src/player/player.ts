@@ -1,12 +1,11 @@
-import { ColorName } from '../game/color/color_name';
 import { PlayerInterface } from './interface';
 import { Coordinates } from '../geometry/interfaces';
 class Player implements PlayerInterface {
-	x: number = 10;
-	y: number = 5;
-	angle: number = 0;
+	x: number;
+	y: number;
+	angle: number;
 	private speed: number;
-	constructor(coordinates: Coordinates, angle: number = 0, speed: number) {
+	constructor(coordinates: Coordinates, angle: number, speed: number) {
 		this.speed = speed;
 		this.x = coordinates.x;
 		this.y = coordinates.y;
@@ -14,7 +13,7 @@ class Player implements PlayerInterface {
 	}
 
 	rotate(angle: number): void {
-		throw new Error('Method not implemented.');
+		this.angle += angle;
 	}
 
 	move(): void {

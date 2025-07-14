@@ -3,6 +3,7 @@ import { Game } from '../game/game';
 import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
+import { Player } from '../player/player';
 
 let game: Game;
 let renderer: Renderer;
@@ -23,7 +24,8 @@ onmessage = (e) => {
 
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_HEIGHT, height: msg.settings.CANVAS_WIDTH };
-		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, { rotate: () => { }, move: () => { }, x: 1, y: 1, angle: 0 });
+		const player = new Player({ x: 1, y: 1 }, 0, msg.settings.PLAYER_SPEED);
+		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 		map.walls = msg.mapData.walls;
 
 		game = new Game(map);
@@ -37,8 +39,9 @@ onmessage = (e) => {
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		startLoop();
 	}
-	if (msg.type === "KeyDown") {
-		game.map.turnPlayer(Math.PI / 4)
+	if (msg.type === "turn") {
+		console.log("KeyDown", msg.direction);
+		game.map.turnPlayer(Math.PI / 2)
 	}
 };
 

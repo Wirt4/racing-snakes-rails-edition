@@ -39,6 +39,6 @@ worker.postMessage({
 
 onkeydown = (e: KeyboardEvent) => {
 	if (e.key === "ArrowLeft") {
-		gameMap.turnPlayer(Math.PI / 2);
+		worker.postMessage({ type: "turn", direction: "left" });
 	}
 }

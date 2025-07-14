@@ -1,5 +1,6 @@
-import { describe, test, expect, } from '@jest/globals';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { Player } from './player'
+
 describe('Player.move())', () => {
 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
 		const player = new Player({ x: 5, y: 5 }, 0, 5);
@@ -20,4 +21,12 @@ describe('Player.move())', () => {
 		expect(player.y).toBe(3);
 	})
 
+})
+
+describe('Player.rotate()', () => {
+	test('rotating a player by 90 degrees should change the angle from 0 to Math.PI / 2', () => {
+		const player = new Player({ x: 1, y: 1 }, 0, 5);
+		player.rotate(Math.PI / 2)
+		expect(player.angle).toBe(Math.PI / 2);
+	})
 })
