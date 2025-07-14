@@ -40,8 +40,12 @@ onmessage = (e) => {
 		startLoop();
 	}
 	if (msg.type === "turn") {
-		console.log("KeyDown", msg.direction);
-		game.map.turnPlayer(Math.PI / 2)
+		if (msg.direction === "left") {
+			game.map.turnPlayer(-Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
+
+		} if (msg.direction === "right") {
+			game.map.turnPlayer(Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
+		}
 	}
 };
 

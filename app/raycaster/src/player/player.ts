@@ -14,8 +14,11 @@ class Player implements PlayerInterface {
 	}
 
 	rotate(angle: number): void {
-		this.angle = normalizeAngle(angle + this.angle);
-		console.log('player coordinates', this.x, this.y);
+		console.log("previous angle:", this.angle);
+		this.angle += angle
+		console.log('new angle', this.angle);
+		this.angle = normalizeAngle(this.angle);
+		console.log('normalized angle', this.angle);
 	}
 
 	move(): void {
