@@ -3,7 +3,7 @@ export enum Settings {
 	HORIZON_LINE_RATIO = 0.65,
 	FRAME_HEIGHT = -200,
 	MAX_BRIGHTNESS = 60,
-	HUD_ON = 0,
+	HUD_ON = 1,
 	WALL_HEIGHT = 7,
 	PLAYER_SPEED = 0,
 	CAMERA_HEIGHT = 5,

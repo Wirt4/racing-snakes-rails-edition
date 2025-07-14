@@ -18,6 +18,7 @@ class Game {
 	}
 
 	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface): void {
+		//TODO: check if these are neessary
 		renderer.fillColor(ColorName.GREEN, 0.01); //Sanity check to avoid black screen
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 
@@ -32,11 +33,7 @@ class Game {
 			// Project top and bottom of the wall slice
 			const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
 			const wallBottomOffset = -Settings.CAMERA_HEIGHT;
-
 			const topY = Game.HORIZON_Y - (wallTopOffset * raycaster.focalLength) / correctedDistance;
-			if (topY < 0) {
-				throw new Error('rendering coordinates may not be negative');
-			}
 			const bottomY = Game.HORIZON_Y - (wallBottomOffset * raycaster.focalLength) / correctedDistance;
 			const sliceHeight = bottomY - topY;
 
