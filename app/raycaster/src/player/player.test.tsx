@@ -29,4 +29,10 @@ describe('Player.rotate()', () => {
 		player.rotate(Math.PI / 2)
 		expect(player.angle).toBe(Math.PI / 2);
 	})
+	test('rotating a player by -90 degrees should change the angle from 0 to 3*Math.PI / 2', () => {
+		const player = new Player({ x: 1, y: 1 }, 0, 5);
+		player.rotate(-1 * Math.PI / 2)
+		expect(player.angle).toBe(3 * Math.PI / 2);
+	})
+
 })
