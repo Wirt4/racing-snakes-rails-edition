@@ -27,7 +27,6 @@ onmessage = (e) => {
 		const player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_TURN_RADIUS);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 
-		game = new Game(map, renderer);
 		raycaster = new Raycaster(
 			msg.settings.RESOLUTION,
 			msg.settings.FIELD_OF_VISION,
@@ -35,6 +34,7 @@ onmessage = (e) => {
 			msg.settings.CANVAS_HEIGHT,
 			msg.settings.MAX_DISTANCE
 		);
+		game = new Game(map, renderer, raycaster);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		startLoop(msg.settings.HUD_ON);
 	}
@@ -52,7 +52,7 @@ function startLoop(displayHUD: Boolean): void {
 	running = true;
 	function loop(): void {
 		renderer.reset();
-		game.draw(raycaster, brightness, displayHUD);
+		game.draw(brightness, displayHUD);
 		game.update();
 		requestAnimationFrame(loop);
 	};

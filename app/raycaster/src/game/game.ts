@@ -12,7 +12,11 @@ class Game {
 	private rays: Float32Array;
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
 
-	constructor(public map: GameMapInterface, private renderer: RendererInterface) {
+	constructor(
+		public map: GameMapInterface,
+		private renderer: RendererInterface,
+		private raycaster: RaycasterInterface,
+	) {
 		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
 	}
 
@@ -21,12 +25,11 @@ class Game {
 	}
 
 	draw(
-		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
 		HUD: Boolean = false
 	): void {
 		this.renderBackround();
-		const displaySpecBatches = this.batchRenderData(raycaster, brightness);
+		const displaySpecBatches = this.batchRenderData(brightness);
 		this.renderFrame(displaySpecBatches);
 		this.drawHUD(HUD);
 	}
@@ -62,20 +65,19 @@ class Game {
 
 	private renderHUDMap(batches: Batches): void {
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
-			this.renderHUDLines(batches, this.renderer, key, lines);
+			this.renderHUDLines(batches, key, lines);
 		}
 	}
 
 	private renderHUDLines(
 		batches: Batches,
-		renderer: RendererInterface,
 		key: string,
 		lines: LineSegment[]
 	): void {
 		const { color, intensity: weight } = batches.unpackKey(key)
-		renderer.stroke(color);
-		renderer.strokeWeight(weight);
-		lines.forEach(line => renderer.line(line));
+		this.renderer.stroke(color);
+		this.renderer.strokeWeight(weight);
+		lines.forEach(line => this.renderer.line(line));
 	}
 
 	private renderPlayer(): void {
@@ -98,22 +100,20 @@ class Game {
 	}
 
 	private batchRenderData(
-		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface
 	): Batches {
-		this.rays = raycaster.getViewRays(this.map.playerAngle);
+		this.rays = this.raycaster.getViewRays(this.map.playerAngle);
 		let batches = new Batches();
-		batches = this.appendAllSlices(batches, raycaster, brightness);
+		batches = this.appendAllSlices(batches, brightness);
 		return batches;
 	}
 
 	private appendAllSlices(
 		batches: Batches,
-		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface
 	): Batches {
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
-			batches = this.appendSlice(batches, i, raycaster, brightness);
+			batches = this.appendSlice(batches, i, brightness);
 		}
 		return batches;
 	}
@@ -121,12 +121,11 @@ class Game {
 	private appendSlice(
 		batches: Batches,
 		index: number,
-		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface
 	): Batches {
 		const angle = this.rays[index];
-		batches = this.appendWallSlice(batches, angle, index, raycaster, brightness);
-		batches = this.appendGridSlice(batches, angle, index, raycaster);
+		batches = this.appendWallSlice(batches, angle, index, brightness);
+		batches = this.appendGridSlice(batches, angle, index);
 		return batches;
 	}
 
@@ -134,19 +133,18 @@ class Game {
 		batches: Batches,
 		angle: number,
 		index: number,
-		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface
 	): Batches {
-		const { distance, color } = this.getAdjustedDistance(angle, raycaster);
-		const slice = this.sliceHeight(distance, raycaster.focalLength);
+		const { distance, color } = this.getAdjustedDistance(angle);
+		const slice = this.sliceHeight(distance, this.raycaster.focalLength);
 		const wallBrightness = brightness.calculateBrightness(distance);
 		batches.addWallSlice(color, wallBrightness, { x: index, y: slice.origin }, slice.magnitude);
 		return batches;
 	}
 
-	private getAdjustedDistance(angle: number, raycaster: RaycasterInterface): { distance: number, color: ColorName } {
+	private getAdjustedDistance(angle: number): { distance: number, color: ColorName } {
 		const { distance, color } = this.map.castRay(angle, Settings.MAX_DISTANCE);
-		const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
+		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this.map.playerAngle);
 		return { distance: correctedDistance, color };
 	}
 
@@ -154,11 +152,10 @@ class Game {
 		batches: Batches,
 		angle: number,
 		index: number,
-		raycaster: RaycasterInterface
 	): Batches {
 		const { gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 		for (let j = 0; j < gridHits.length; j++) {
-			batches = this.appendGridPoint(batches, gridHits[j], angle, index, raycaster);
+			batches = this.appendGridPoint(batches, gridHits[j], angle, index);
 		}
 		return batches;
 	}
@@ -168,10 +165,9 @@ class Game {
 		gridHit: number,
 		angle: number,
 		index: number,
-		raycaster: RaycasterInterface
 	): Batches {
-		const distance = raycaster.removeFishEye(gridHit, angle, this.map.playerAngle);
-		const y = this.floorPoint(distance, raycaster.focalLength);
+		const distance = this.raycaster.removeFishEye(gridHit, angle, this.map.playerAngle);
+		const y = this.floorPoint(distance, this.raycaster.focalLength);
 		batches.addGridPoint({ x: index, y });
 		return batches;
 	}
