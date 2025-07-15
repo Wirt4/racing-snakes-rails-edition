@@ -15,13 +15,13 @@ class Player implements PlayerInterface {
 	private heading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 
-	constructor(coordinates: Coordinates, angle: number, speed: number, turnRadius: number = 5) {
+	constructor(coordinates: Coordinates, angle: number, speed: number, turnDistance: number) {
 		this.speed = speed;
 		this.x = coordinates.x;
 		this.y = coordinates.y;
 		this.angle = angle;
 		this.heading = angle;
-		this.turnDistance = turnRadius * Math.PI / 2 //a right angle turn
+		this.turnDistance = turnDistance;
 		this.lastPosition = { x: this.x, y: this.y };
 		this._trail = [{ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }];
 	}
