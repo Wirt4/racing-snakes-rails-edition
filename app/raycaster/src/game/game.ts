@@ -25,18 +25,15 @@ class Game {
 		this.map.movePlayer();
 	}
 
-	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface, HUD: boolean = false): void {
+	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface, HUD: Boolean = false): void {
 		/**Precondition: Renderer, Raycaster, and Brightness interfaces must be implemented
 		 * Postcondition: The game will render a 3D view of the map with walls, floor, and player position
 		 * if HUD is true, then a map overlay will be drawn as well
 		 * */
 		this.renderBackround(renderer);
-		this.rays = raycaster.getViewRays(this.map.playerAngle);
 		const batches = this.batchRenderData(raycaster, brightness);
 		this.renderFrame(batches, renderer);
-		if (HUD) {
-			this.drawHUD(renderer)
-		}
+		this.drawHUD(renderer, HUD);
 	}
 
 	private renderFrame(batches: Batches, renderer: RendererInterface): void {
@@ -50,7 +47,10 @@ class Game {
 		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 	}
 
-	private drawHUD(renderer: RendererInterface): void {
+	private drawHUD(renderer: RendererInterface, visibleHUD: Boolean): void {
+		if (!visibleHUD) {
+			return;
+		}
 		const batches = new Batches();
 		this.map.walls.forEach((wall) => {
 			batches.addMapWall(wall)
@@ -81,6 +81,7 @@ class Game {
 	private batchRenderData(
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface): Batches {
+		this.rays = raycaster.getViewRays(this.map.playerAngle);
 		const batches = new Batches();
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
 			const angle = this.rays[i];
