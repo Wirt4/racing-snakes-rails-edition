@@ -54,16 +54,7 @@ class Game {
 		if (!visibleHUD) {
 			return;
 		}
-		const batches = new Batches();
-		this.map.walls.forEach((wall) => {
-			batches.addMapWall(wall)
-		});
-		for (let i = 0; i < this.map.walls.length; i++) {
-			batches.addMapWall(this.map.walls[i]);
-		}
-		for (let j = 0; j < this.map.playerTrail.length; j++) {
-			batches.addMapWall(this.map.playerTrail[j]);
-		}
+		const batches = this.getHUDBatches();
 		renderer.save();
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
 			const { color, intensity: weight } = batches.unpackKey(key)
@@ -79,6 +70,20 @@ class Game {
 		this.draw2DRays(renderer);
 
 		renderer.restore()
+	}
+
+	private getHUDBatches(): Batches {
+		const batches = new Batches();
+		this.map.walls.forEach((wall) => {
+			batches.addMapWall(wall)
+		});
+		for (let i = 0; i < this.map.walls.length; i++) {
+			batches.addMapWall(this.map.walls[i]);
+		}
+		for (let j = 0; j < this.map.playerTrail.length; j++) {
+			batches.addMapWall(this.map.playerTrail[j]);
+		}
+		return batches;
 	}
 
 	private batchRenderData(
