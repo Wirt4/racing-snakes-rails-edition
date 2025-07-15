@@ -3,33 +3,31 @@ import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { ColorName } from './color/color_name';
-import { Coordinates } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
-import { Batches } from './batches'
+import { Batches, BatchedRect } from './batches'
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
 	map: GameMapInterface;
 	private rays: Float32Array;
-
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
+
 	constructor(map: GameMapInterface) {
 		this.map = map;
 		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
 	}
 
 	update(): void {
-		/** Update game state, e.g., player position, wall states, etc.
-		* This method can be expanded based on game logic
-		**/
 		this.map.movePlayer();
 	}
 
-	draw(renderer: RendererInterface, raycaster: RaycasterInterface, brightness: BrightnessInterface, HUD: Boolean = false): void {
-		/**Precondition: Renderer, Raycaster, and Brightness interfaces must be implemented
-		 * Postcondition: The game will render a 3D view of the map with walls, floor, and player position
-		 * if HUD is true, then a map overlay will be drawn as well
-		 * */
+	draw(
+		renderer: RendererInterface,
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface,
+		HUD: Boolean = false
+	): void {
 		this.renderBackround(renderer);
 		const displaySpecbatches = this.batchRenderData(raycaster, brightness);
 		this.renderFrame(displaySpecbatches, renderer);
@@ -46,7 +44,7 @@ class Game {
 		batches.gridBatch.forEach(rectSpec => this.renderRect(rectSpec, renderer));
 	}
 
-	private renderRect(rectSpec: { x: number, y: number, width: number, height: number }, renderer: RendererInterface): void {
+	private renderRect(rectSpec: BatchedRect, renderer: RendererInterface): void {
 		renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
 	}
 
@@ -55,34 +53,50 @@ class Game {
 			return;
 		}
 		const batches = this.getHUDBatches();
+		this.renderHUD(batches, renderer);
+	}
+
+	private renderHUD(batches: Batches, renderer: RendererInterface): void {
 		renderer.save();
+		this.renderHUDMap(batches, renderer);
+		this.renderPlayer(renderer);
+		renderer.restore()
+	}
+
+	private renderHUDMap(batches: Batches, renderer: RendererInterface): void {
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
-			const { color, intensity: weight } = batches.unpackKey(key)
-			renderer.stroke(color);
-			renderer.strokeWeight(weight);
-			lines.forEach(line => renderer.line(line));
+			this.renderHUDLines(batches, renderer, key, lines);
 		}
+	}
+
+	private renderHUDLines(
+		batches: Batches,
+		renderer: RendererInterface,
+		key: string,
+		lines: LineSegment[]
+	): void {
+		const { color, intensity: weight } = batches.unpackKey(key)
+		renderer.stroke(color);
+		renderer.strokeWeight(weight);
+		lines.forEach(line => renderer.line(line));
+	}
+
+	private renderPlayer(renderer: RendererInterface): void {
+		this.setPlayerContext(renderer);
+		renderer.ellipse(this.map.playerPosition, 0.2);
+		this.draw2DRays(renderer);
+	}
+
+	private setPlayerContext(renderer: RendererInterface): void {
 		renderer.stroke(ColorName.WHITE);
 		renderer.fillColor(ColorName.RED, 100);
 		renderer.noStroke();
-		renderer.ellipse(this.map.playerPosition, 0.2);
-
-		this.draw2DRays(renderer);
-
-		renderer.restore()
 	}
 
 	private getHUDBatches(): Batches {
 		const batches = new Batches();
-		this.map.walls.forEach((wall) => {
-			batches.addMapWall(wall)
-		});
-		for (let i = 0; i < this.map.walls.length; i++) {
-			batches.addMapWall(this.map.walls[i]);
-		}
-		for (let j = 0; j < this.map.playerTrail.length; j++) {
-			batches.addMapWall(this.map.playerTrail[j]);
-		}
+		batches.addMapWalls(this.map.walls);
+		batches.addMapWalls(this.map.playerTrail);
 		return batches;
 	}
 

@@ -1,9 +1,9 @@
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ColorName } from "./color/color_name";
 
-type BatchedRect = { x: number, y: number, width: number, height: number };
+interface BatchedRect { x: number, y: number, width: number, height: number };
 
-export class Batches {
+class Batches {
 	gridBatch: BatchedRect[] = [];
 	private wallHash: HashBatch = new HashBatch();
 	private mapHash: HashBatch = new HashBatch();
@@ -20,6 +20,12 @@ export class Batches {
 
 	addGridPoint(origin: Coordinates): void {
 		this.gridBatch.push({ x: origin.x, y: origin.y, width: 1, height: 1 });
+	}
+
+	addMapWalls(walls: Array<{ color: ColorName, line: { start: Coordinates, end: Coordinates } }>): void {
+		for (const wall of walls) {
+			this.addMapWall(wall);
+		}
 	}
 
 	addMapWall(wall: { color: ColorName, line: { start: Coordinates, end: Coordinates } }): void {
@@ -39,5 +45,6 @@ class HashBatch {
 		if (!this.record[key]) this.record[key] = [];
 		this.record[key].push(value);
 	}
-
 }
+
+export { BatchedRect, Batches };
