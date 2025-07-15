@@ -31,20 +31,19 @@ class Game {
 		 * if HUD is true, then a map overlay will be drawn as well
 		 * */
 		this.renderBackround(renderer);
-		const batches = this.batchRenderData(raycaster, brightness);
-		this.renderFrame(batches, renderer);
+		const displaySpecbatches = this.batchRenderData(raycaster, brightness);
+		this.renderFrame(displaySpecbatches, renderer);
 		this.drawHUD(renderer, HUD);
 	}
 
 	private renderFrame(batches: Batches, renderer: RendererInterface): void {
 		this.renderWalls(batches, renderer)
 		this.drawGrid(batches, renderer);
-
 	}
 
 	private drawGrid(batches: Batches, renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
+		batches.gridBatch.forEach(rectSpec => renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height));
 	}
 
 	private drawHUD(renderer: RendererInterface, visibleHUD: Boolean): void {

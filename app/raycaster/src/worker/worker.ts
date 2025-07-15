@@ -36,7 +36,9 @@ onmessage = (e) => {
 			msg.settings.MAX_DISTANCE
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
-		startLoop(msg.settings.DISPLAY_HUD === 1);
+		console.log("Game initialized with HUD_ON settings:", msg.settings.HUD_ON);
+		startLoop(msg.settings.HUD_ON);
+		//startLoop(true);
 	}
 	if (msg.type === "turn") {
 		if (msg.direction === "left") {
@@ -52,7 +54,7 @@ function startLoop(displayHUD: Boolean): void {
 	running = true;
 	function loop(): void {
 		renderer.reset();
-		game.draw(renderer, raycaster, brightness, displayHUD); //pass for debugging
+		game.draw(renderer, raycaster, brightness, displayHUD);
 		game.update();
 		requestAnimationFrame(loop);
 	};
