@@ -36,9 +36,7 @@ onmessage = (e) => {
 			msg.settings.MAX_DISTANCE
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
-		console.log("Game initialized with HUD_ON settings:", msg.settings.HUD_ON);
 		startLoop(msg.settings.HUD_ON);
-		//startLoop(true);
 	}
 	if (msg.type === "turn") {
 		if (msg.direction === "left") {
