@@ -6,11 +6,13 @@ import { ColorName } from './color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { BrightnessInterface } from '../brightness/interface';
 import { Batches, BatchedRect } from './batches'
+import { BatchRenderer } from './batchRenderer';
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
 	private rays: Float32Array;
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
+	private batchRenderer: BatchRenderer;
 
 	constructor(
 		public map: GameMapInterface,
@@ -20,6 +22,7 @@ class Game {
 		private readonly displayHUD: Boolean
 	) {
 		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
+		this.batchRenderer = new BatchRenderer(renderer);
 	}
 
 	update(): void {
@@ -28,7 +31,8 @@ class Game {
 
 	draw(
 	): void {
-		this.renderBackround();
+		this.batchRenderer.batchSlices();
+		this.batchRenderer.renderSlices();
 		const displaySpecBatches = this.batchRenderData();
 		this.renderFrame(displaySpecBatches);
 		this.drawHUD();
