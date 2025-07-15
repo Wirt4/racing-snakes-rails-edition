@@ -30,7 +30,7 @@ class Game {
 		 * Postcondition: The game will render a 3D view of the map with walls, floor, and player position
 		 * if HUD is true, then a map overlay will be drawn as well
 		 * */
-		this.drawBackround(renderer);
+		this.renderBackround(renderer);
 		this.rays = raycaster.getViewRays(this.map.playerAngle);
 		const batches = this.batchRenderData(raycaster, brightness);
 		this.renderFrame(batches, renderer);
@@ -134,7 +134,7 @@ class Game {
 		}
 	}
 
-	private drawBackround(renderer: RendererInterface): void {
+	private renderBackround(renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 0.01);
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	}
