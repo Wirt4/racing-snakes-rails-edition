@@ -9,12 +9,10 @@ import { Batches, BatchedRect } from './batches'
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
-	map: GameMapInterface;
 	private rays: Float32Array;
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
 
-	constructor(map: GameMapInterface) {
-		this.map = map;
+	constructor(public map: GameMapInterface, private renderer: RendererInterface) {
 		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
 	}
 
@@ -23,15 +21,14 @@ class Game {
 	}
 
 	draw(
-		renderer: RendererInterface,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
 		HUD: Boolean = false
 	): void {
-		this.renderBackround(renderer);
+		this.renderBackround(this.renderer);
 		const displaySpecbatches = this.batchRenderData(raycaster, brightness);
-		this.renderFrame(displaySpecbatches, renderer);
-		this.drawHUD(renderer, HUD);
+		this.renderFrame(displaySpecbatches, this.renderer);
+		this.drawHUD(this.renderer, HUD);
 	}
 
 	private renderFrame(batches: Batches, renderer: RendererInterface): void {
@@ -151,7 +148,6 @@ class Game {
 		const { distance, color } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 		const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
 		return { distance: correctedDistance, color };
-
 	}
 
 	private appendGridSlice(
@@ -186,7 +182,12 @@ class Game {
 		}
 	}
 
-	private unpackAndRender(batches: Batches, rects: BatchedRect[], key: string, renderer: RendererInterface): void {
+	private unpackAndRender(
+		batches: Batches,
+		rects: BatchedRect[],
+		key: string, renderer:
+			RendererInterface
+	): void {
 		const { color, intensity: brightnessValue } = batches.unpackKey(key);
 		renderer.fillColor(color, brightnessValue);
 		this.renderRects(rects, renderer);
@@ -196,7 +197,10 @@ class Game {
 		rects.forEach(rect => this.renderRect(rect, renderer));
 	}
 
-	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
+	private sliceHeight(
+		distance: number,
+		focalLength: number
+	): { origin: number, magnitude: number } {
 		const wallTopOffset = Settings.WALL_HEIGHT - Settings.CAMERA_HEIGHT;
 		const wallBottomOffset = -Settings.CAMERA_HEIGHT;
 		const topY = Game.HORIZON_Y - (wallTopOffset * focalLength) / distance;
