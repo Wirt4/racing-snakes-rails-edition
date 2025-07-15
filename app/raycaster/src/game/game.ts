@@ -106,13 +106,22 @@ class Game {
 	): Batches {
 		this.rays = raycaster.getViewRays(this.map.playerAngle);
 		let batches = new Batches();
+		batches = this.appendAllSlices(batches, raycaster, brightness);
+		return batches;
+	}
+
+	private appendAllSlices(
+		batches: Batches,
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface
+	): Batches {
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
-			batches = this.appendSlices(batches, i, raycaster, brightness);
+			batches = this.appendSlice(batches, i, raycaster, brightness);
 		}
 		return batches;
 	}
 
-	private appendSlices(
+	private appendSlice(
 		batches: Batches,
 		index: number,
 		raycaster: RaycasterInterface,
@@ -145,7 +154,12 @@ class Game {
 
 	}
 
-	private appendGridSlice(batches: Batches, angle: number, index: number, raycaster: RaycasterInterface): Batches {
+	private appendGridSlice(
+		batches: Batches,
+		angle: number,
+		index: number,
+		raycaster: RaycasterInterface
+	): Batches {
 		const { gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 		for (let j = 0; j < gridHits.length; j++) {
 			batches = this.appendGridPoint(batches, gridHits[j], angle, index, raycaster);
