@@ -1,4 +1,4 @@
-import { RendererInterface } from '../renderer/renderer';
+import { ContextRendererInterface } from '../renderer/interface';
 import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
@@ -14,8 +14,10 @@ class Game {
 
 	constructor(
 		public map: GameMapInterface,
-		private renderer: RendererInterface,
+		private renderer: ContextRendererInterface,
 		private raycaster: RaycasterInterface,
+		private brightness: BrightnessInterface,
+		private readonly displayHUD: Boolean
 	) {
 		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
 	}
@@ -25,13 +27,11 @@ class Game {
 	}
 
 	draw(
-		brightness: BrightnessInterface,
-		HUD: Boolean = false
 	): void {
 		this.renderBackround();
-		const displaySpecBatches = this.batchRenderData(brightness);
+		const displaySpecBatches = this.batchRenderData();
 		this.renderFrame(displaySpecBatches);
-		this.drawHUD(HUD);
+		this.drawHUD();
 	}
 
 	private renderFrame(batches: Batches): void {
@@ -48,8 +48,8 @@ class Game {
 		this.renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
 	}
 
-	private drawHUD(visibleHUD: Boolean): void {
-		if (!visibleHUD) {
+	private drawHUD(): void {
+		if (!this.displayHUD) {
 			return;
 		}
 		const batches = this.getHUDBatches();
@@ -100,20 +100,18 @@ class Game {
 	}
 
 	private batchRenderData(
-		brightness: BrightnessInterface
 	): Batches {
 		this.rays = this.raycaster.getViewRays(this.map.playerAngle);
 		let batches = new Batches();
-		batches = this.appendAllSlices(batches, brightness);
+		batches = this.appendAllSlices(batches);
 		return batches;
 	}
 
 	private appendAllSlices(
 		batches: Batches,
-		brightness: BrightnessInterface
 	): Batches {
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
-			batches = this.appendSlice(batches, i, brightness);
+			batches = this.appendSlice(batches, i);
 		}
 		return batches;
 	}
@@ -121,10 +119,9 @@ class Game {
 	private appendSlice(
 		batches: Batches,
 		index: number,
-		brightness: BrightnessInterface
 	): Batches {
 		const angle = this.rays[index];
-		batches = this.appendWallSlice(batches, angle, index, brightness);
+		batches = this.appendWallSlice(batches, angle, index);
 		batches = this.appendGridSlice(batches, angle, index);
 		return batches;
 	}
@@ -133,11 +130,10 @@ class Game {
 		batches: Batches,
 		angle: number,
 		index: number,
-		brightness: BrightnessInterface
 	): Batches {
 		const { distance, color } = this.getAdjustedDistance(angle);
 		const slice = this.sliceHeight(distance, this.raycaster.focalLength);
-		const wallBrightness = brightness.calculateBrightness(distance);
+		const wallBrightness = this.brightness.calculateBrightness(distance);
 		batches.addWallSlice(color, wallBrightness, { x: index, y: slice.origin }, slice.magnitude);
 		return batches;
 	}

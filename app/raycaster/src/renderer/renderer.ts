@@ -2,10 +2,9 @@ import { ColorName } from "../game/color/color_name";
 import { hslFactory } from "./hsl/hsl_factory";
 import { HSL } from "./hsl/hsl";
 import { Coordinates, LineSegment } from "../geometry/interfaces";
-import { assertIsPositiveInteger } from "../utils";
-import { RendererInterface } from "./interface";
+import { ContextRendererInterface } from "./interface";
 
-class Renderer implements RendererInterface {
+class Renderer implements ContextRendererInterface {
 	private hslCache: Record<ColorName, HSL> = {} as Record<ColorName, HSL>;
 	private lastFillColorStyle: string = "transparent";
 	private lastStrokeColorStyle: string = "transparent";
@@ -143,4 +142,4 @@ class Renderer implements RendererInterface {
 
 }
 
-export { Renderer, RendererInterface };
+export { Renderer };

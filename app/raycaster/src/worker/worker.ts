@@ -34,9 +34,9 @@ onmessage = (e) => {
 			msg.settings.CANVAS_HEIGHT,
 			msg.settings.MAX_DISTANCE
 		);
-		game = new Game(map, renderer, raycaster);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
-		startLoop(msg.settings.HUD_ON);
+		game = new Game(map, renderer, raycaster, brightness, msg.settings.HUD_ON);
+		startLoop();
 	}
 	if (msg.type === "turn") {
 		if (msg.direction === "left") {
@@ -47,12 +47,12 @@ onmessage = (e) => {
 	}
 };
 
-function startLoop(displayHUD: Boolean): void {
+function startLoop(): void {
 	if (running) return;
 	running = true;
 	function loop(): void {
 		renderer.reset();
-		game.draw(brightness, displayHUD);
+		game.draw();
 		game.update();
 		requestAnimationFrame(loop);
 	};

@@ -1,5 +1,5 @@
 import { Point } from '../geometry/point';
-import { RendererInterface } from '../renderer/renderer';
+import { ContextRendererInterface } from '../renderer/interface';
 import { ColorName } from './color/color_name';
 class Wall {
 	start: Point;
@@ -12,7 +12,7 @@ class Wall {
 		this.color = color;
 	}
 
-	draw2D(renderer: RendererInterface): void {
+	draw2D(renderer: ContextRendererInterface): void {
 		renderer.stroke(this.color);
 		renderer.strokeWeight(0.1);
 		renderer.line({ start: this.start, end: this.end });
