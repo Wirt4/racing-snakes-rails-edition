@@ -19,6 +19,7 @@ class Game {
 		private readonly displayHUD: Boolean
 	) {
 		this.batchCorrelator = new BatchCorrelator(
+			map,
 			raycaster,
 			Settings.MAX_DISTANCE,
 			Settings.HORIZON_Y,
@@ -42,7 +43,7 @@ class Game {
 
 	draw(
 	): void {
-		this.batchCorrelator.setGameMap(this.map);
+		this.batchCorrelator.gameMap = this.map;
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
 		this.batchRenderer.renderSlices();

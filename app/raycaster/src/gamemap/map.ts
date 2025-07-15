@@ -101,7 +101,6 @@ export class GameMap implements GameMapInterface {
 		}
 
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
-		//TODO: law of demeter
 		const rayEnd = {
 			x: this.player.x + rayDirection.x * maxDistance,
 			y: this.player.y + rayDirection.y * maxDistance

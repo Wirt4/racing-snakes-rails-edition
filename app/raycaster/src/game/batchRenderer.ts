@@ -10,9 +10,10 @@ import { BrightnessInterface } from '../brightness/interface';
 class BatchCorrelator {
 	public batches: Batches;
 	private rays: Float32Array;
-	private gameMap: GameMapInterface | null = null;
+	private _gameMap: GameMapInterface;
 
 	constructor(
+		gameMap: GameMapInterface,
 		private raycaster: RaycasterInterface,
 		private maxDistance: number,
 		private horizonY: number,
@@ -23,21 +24,19 @@ class BatchCorrelator {
 	) {
 		this.rays = new Float32Array(resolution);
 		this.batches = new Batches();
+		this._gameMap = gameMap;
 	}
 
-	public setGameMap(gameMap: GameMapInterface) {
+	public set gameMap(gameMap: GameMapInterface) {
 		this.batches = new Batches();
-		this.gameMap = gameMap;
+		this._gameMap = gameMap;
 	}
 
 	public batchRenderData(): void {
-		if (!this.gameMap) {
-			throw new Error('Game map is not set.');
-		}
-		this.rays = this.raycaster.getViewRays(this.gameMap.playerAngle);
+		this.rays = this.raycaster.getViewRays(this._gameMap.playerAngle);
 		this.appendAllSlices();
-		this.batches.addMapWalls(this.gameMap.walls);
-		this.batches.addMapWalls(this.gameMap.playerTrail);
+		this.batches.addMapWalls(this._gameMap.walls);
+		this.batches.addMapWalls(this._gameMap.playerTrail);
 	}
 
 	private appendAllSlices(): void {
@@ -66,21 +65,15 @@ class BatchCorrelator {
 		angle: number,
 		index: number,
 	): void {
-		if (!this.gameMap) {
-			throw new Error('Game map is not set.');
-		}
-		const { gridHits } = this.gameMap.castRay(angle, this.maxDistance);
+		const { gridHits } = this._gameMap.castRay(angle, this.maxDistance);
 		for (let j = 0; j < gridHits.length; j++) {
 			this.appendGridPoint(gridHits[j], angle, index);
 		}
 	}
 
 	private getAdjustedDistance(angle: number): { distance: number, color: ColorName } {
-		if (!this.gameMap) {
-			throw new Error('Game map is not set.');
-		}
-		const { distance, color } = this.gameMap.castRay(angle, this.maxDistance);
-		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this.gameMap.playerAngle);
+		const { distance, color } = this._gameMap.castRay(angle, this.maxDistance);
+		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this._gameMap.playerAngle);
 		return { distance: correctedDistance, color };
 	}
 
@@ -99,10 +92,7 @@ class BatchCorrelator {
 		angle: number,
 		index: number,
 	): void {
-		if (!this.gameMap) {
-			throw new Error('Game map is not set.');
-		}
-		const distance = this.raycaster.removeFishEye(gridHit, angle, this.gameMap.playerAngle);
+		const distance = this.raycaster.removeFishEye(gridHit, angle, this._gameMap.playerAngle);
 		const y = this.floorPoint(distance);
 		this.batches.addGridPoint({ x: index, y });
 	}
