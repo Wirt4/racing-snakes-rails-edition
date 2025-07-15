@@ -43,7 +43,11 @@ class Game {
 
 	private drawGrid(batches: Batches, renderer: RendererInterface): void {
 		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(rectSpec => renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height));
+		batches.gridBatch.forEach(rectSpec => this.renderRect(rectSpec, renderer));
+	}
+
+	private renderRect(rectSpec: { x: number, y: number, width: number, height: number }, renderer: RendererInterface): void {
+		renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
 	}
 
 	private drawHUD(renderer: RendererInterface, visibleHUD: Boolean): void {
