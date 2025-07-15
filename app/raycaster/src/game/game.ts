@@ -25,44 +25,44 @@ class Game {
 		brightness: BrightnessInterface,
 		HUD: Boolean = false
 	): void {
-		this.renderBackround(this.renderer);
-		const displaySpecbatches = this.batchRenderData(raycaster, brightness);
-		this.renderFrame(displaySpecbatches, this.renderer);
-		this.drawHUD(this.renderer, HUD);
+		this.renderBackround();
+		const displaySpecBatches = this.batchRenderData(raycaster, brightness);
+		this.renderFrame(displaySpecBatches);
+		this.drawHUD(HUD);
 	}
 
-	private renderFrame(batches: Batches, renderer: RendererInterface): void {
-		this.renderWalls(batches, renderer)
-		this.drawGrid(batches, renderer);
+	private renderFrame(batches: Batches): void {
+		this.renderWalls(batches)
+		this.drawGrid(batches);
 	}
 
-	private drawGrid(batches: Batches, renderer: RendererInterface): void {
-		renderer.fillColor(ColorName.BLUE, 50);
-		batches.gridBatch.forEach(rectSpec => this.renderRect(rectSpec, renderer));
+	private drawGrid(batches: Batches): void {
+		this.renderer.fillColor(ColorName.BLUE, 50);
+		batches.gridBatch.forEach(rectSpec => this.renderRect(rectSpec));
 	}
 
-	private renderRect(rectSpec: BatchedRect, renderer: RendererInterface): void {
-		renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
+	private renderRect(rectSpec: BatchedRect): void {
+		this.renderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
 	}
 
-	private drawHUD(renderer: RendererInterface, visibleHUD: Boolean): void {
+	private drawHUD(visibleHUD: Boolean): void {
 		if (!visibleHUD) {
 			return;
 		}
 		const batches = this.getHUDBatches();
-		this.renderHUD(batches, renderer);
+		this.renderHUD(batches);
 	}
 
-	private renderHUD(batches: Batches, renderer: RendererInterface): void {
-		renderer.save();
-		this.renderHUDMap(batches, renderer);
-		this.renderPlayer(renderer);
-		renderer.restore()
+	private renderHUD(batches: Batches): void {
+		this.renderer.save();
+		this.renderHUDMap(batches);
+		this.renderPlayer();
+		this.renderer.restore()
 	}
 
-	private renderHUDMap(batches: Batches, renderer: RendererInterface): void {
+	private renderHUDMap(batches: Batches): void {
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
-			this.renderHUDLines(batches, renderer, key, lines);
+			this.renderHUDLines(batches, this.renderer, key, lines);
 		}
 	}
 
@@ -78,16 +78,16 @@ class Game {
 		lines.forEach(line => renderer.line(line));
 	}
 
-	private renderPlayer(renderer: RendererInterface): void {
-		this.setPlayerContext(renderer);
-		renderer.ellipse(this.map.playerPosition, 0.2);
-		this.draw2DRays(renderer);
+	private renderPlayer(): void {
+		this.setPlayerContext();
+		this.renderer.ellipse(this.map.playerPosition, 0.2);
+		this.draw2DRays();
 	}
 
-	private setPlayerContext(renderer: RendererInterface): void {
-		renderer.stroke(ColorName.WHITE);
-		renderer.fillColor(ColorName.RED, 100);
-		renderer.noStroke();
+	private setPlayerContext(): void {
+		this.renderer.stroke(ColorName.WHITE);
+		this.renderer.fillColor(ColorName.RED, 100);
+		this.renderer.noStroke();
 	}
 
 	private getHUDBatches(): Batches {
@@ -176,25 +176,24 @@ class Game {
 		return batches;
 	}
 
-	private renderWalls(batches: Batches, renderer: RendererInterface): void {
+	private renderWalls(batches: Batches): void {
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
-			this.unpackAndRender(batches, rects, key, renderer);
+			this.unpackAndRender(batches, rects, key);
 		}
 	}
 
 	private unpackAndRender(
 		batches: Batches,
 		rects: BatchedRect[],
-		key: string, renderer:
-			RendererInterface
+		key: string,
 	): void {
 		const { color, intensity: brightnessValue } = batches.unpackKey(key);
-		renderer.fillColor(color, brightnessValue);
-		this.renderRects(rects, renderer);
+		this.renderer.fillColor(color, brightnessValue);
+		this.renderRects(rects);
 	}
 
-	private renderRects(rects: BatchedRect[], renderer: RendererInterface): void {
-		rects.forEach(rect => this.renderRect(rect, renderer));
+	private renderRects(rects: BatchedRect[]): void {
+		rects.forEach(rect => this.renderRect(rect));
 	}
 
 	private sliceHeight(
@@ -213,20 +212,20 @@ class Game {
 		return Game.HORIZON_Y - (floorOffset * focalLength) / distance;
 	}
 
-	private draw2DRays(renderer: RendererInterface): void {
-		renderer.stroke(ColorName.GREEN);
-		renderer.strokeWeight(0.05);
+	private draw2DRays(): void {
+		this.renderer.stroke(ColorName.GREEN);
+		this.renderer.strokeWeight(0.05);
 		for (let index = 0; index < Settings.CANVAS_WIDTH; index++) {
 			const angle = this.rays[index];
 			const { distance } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const hit = this.pointOnTrajectory(this.map.playerPosition, angle, distance);
-			renderer.line({ start: this.map.playerPosition, end: hit });
+			this.renderer.line({ start: this.map.playerPosition, end: hit });
 		}
 	}
 
-	private renderBackround(renderer: RendererInterface): void {
-		renderer.fillColor(ColorName.BLUE, 0.01);
-		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
+	private renderBackround(): void {
+		this.renderer.fillColor(ColorName.BLUE, 0.01);
+		this.renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	}
 
 	private pointOnTrajectory(coordinates: Coordinates, angle: number, distance: number): Coordinates {
