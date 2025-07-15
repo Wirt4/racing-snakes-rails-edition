@@ -93,7 +93,7 @@ export class GameMap implements GameMapInterface {
 
 		for (const wall of this.player.trail) {
 			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
-			if (hit.isValid && hit.distance > 0 && hit.distance < closest.distance) {
+			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = this.player.color;
 			}

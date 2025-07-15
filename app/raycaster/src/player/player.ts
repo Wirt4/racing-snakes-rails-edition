@@ -13,6 +13,8 @@ class Player implements PlayerInterface {
 	private inbetweens: Array<number> = [];
 	private _trail: LineSegment[] = [];
 	private heading: number;
+	private lastPosition: Coordinates = { x: 0, y: 0 };
+
 	constructor(coordinates: Coordinates, angle: number, speed: number, turnRadius: number = 5) {
 		this.speed = speed;
 		this.x = coordinates.x;
@@ -20,6 +22,7 @@ class Player implements PlayerInterface {
 		this.angle = angle;
 		this.heading = angle;
 		this.turnDistance = turnRadius * Math.PI / 2 //a right angle turn
+		this.lastPosition = { x: this.x, y: this.y };
 		this._trail = [{ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }];
 	}
 
@@ -44,14 +47,16 @@ class Player implements PlayerInterface {
 		if (this.inbetweens.length > 0) {
 			this.angle += this.inbetweens.shift()!;
 			this.angle = normalizeAngle(this.angle);
-			this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
+			this._trail[this._trail.length - 1].end = this.lastPosition; //stitch walls together
+			this._trail.push({ start: this.lastPosition, end: this.lastPosition });
 		} else {
 			this.isTurning = false;
 			this.angle = this.heading;
 		}
 		this.x += Math.round(Math.cos(this.heading)) * this.speed;
 		this.y += Math.sin(this.heading) * this.speed;
-		this._trail[this._trail.length - 1].end = { x: this.x, y: this.y };
+		this._trail[this._trail.length - 1].end = this.lastPosition;
+		this.lastPosition = { x: this.x, y: this.y };
 	}
 
 	private fillInbetweens(angle: number): void {
