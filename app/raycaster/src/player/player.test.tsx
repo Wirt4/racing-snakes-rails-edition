@@ -24,15 +24,24 @@ describe('Player.move())', () => {
 })
 
 describe('Player.rotate()', () => {
-	test('rotating a player by 90 degrees should change the angle from 0 to Math.PI / 2', () => {
-		const player = new Player({ x: 1, y: 1 }, 0, 5);
+	test('given a player has a 0 degree heading, when the player.rotate is called with 90 degress is moved <turn interval> time, then the players angle is reset to 90 degress.', () => {
+		const turnInterval = 30
+		const player = new Player({ x: 1, y: 1 }, 0, turnInterval)
+
 		player.rotate(Math.PI / 2)
-		expect(player.angle).toBe(Math.PI / 2);
+
+		for (let i = 0; i < turnInterval; i++) {
+			player.move()
+		}
+		expect(player.angle).toBe(Math.PI / 2)
 	})
 	test('rotating a player by -90 degrees should change the angle from 0 to 3*Math.PI / 2', () => {
-		const player = new Player({ x: 1, y: 1 }, 0, 5);
+		const turnInterval = 5
+		const player = new Player({ x: 1, y: 1 }, 0, turnInterval);
 		player.rotate(-1 * Math.PI / 2)
+		for (let i = 0; i < turnInterval; i++) {
+			player.move()
+		}
 		expect(player.angle).toBe(3 * Math.PI / 2);
 	})
-
 })
