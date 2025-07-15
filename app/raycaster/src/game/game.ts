@@ -10,10 +10,12 @@ import { Batches } from './batches'
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
 	map: GameMapInterface;
+	private rays: Float32Array;
 
 	private static readonly HORIZON_Y = Settings.HORIZON_LINE_RATIO * Settings.CANVAS_HEIGHT;
 	constructor(map: GameMapInterface) {
 		this.map = map;
+		this.rays = new Float32Array(Settings.CANVAS_WIDTH);
 	}
 
 	update(): void {
@@ -29,13 +31,13 @@ class Game {
 		 * if HUD is true, then a map overlay will be drawn as well
 		 * */
 		this.drawBackround(renderer);
-		const rays = raycaster.getViewRays(this.map.playerAngle);
-		const batches = this.batchRenderData(rays, raycaster, brightness);
+		this.rays = raycaster.getViewRays(this.map.playerAngle);
+		const batches = this.batchRenderData(raycaster, brightness);
 		this.renderWalls(batches, renderer)
 		this.drawGrid(batches, renderer);
 
 		if (HUD) {
-			this.drawHUD(rays, renderer)
+			this.drawHUD(renderer)
 		}
 	}
 
@@ -44,11 +46,17 @@ class Game {
 		batches.gridBatch.forEach(r => renderer.rect({ x: r.x, y: r.y }, r.width, r.height));
 	}
 
-	private drawHUD(rays: Array<number>, renderer: RendererInterface): void {
+	private drawHUD(renderer: RendererInterface): void {
 		const batches = new Batches();
 		this.map.walls.forEach((wall) => {
 			batches.addMapWall(wall)
 		});
+		for (let i = 0; i < this.map.walls.length; i++) {
+			batches.addMapWall(this.map.walls[i]);
+		}
+		for (let j = 0; j < this.map.playerTrail.length; j++) {
+			batches.addMapWall(this.map.playerTrail[j]);
+		}
 		renderer.save();
 		for (const [key, lines] of Object.entries(batches.mapBatches)) {
 			const { color, intensity: weight } = batches.unpackKey(key)
@@ -61,29 +69,30 @@ class Game {
 		renderer.noStroke();
 		renderer.ellipse(this.map.playerPosition, 0.2);
 
-		this.draw2DRays(renderer, rays);
+		this.draw2DRays(renderer);
 
 		renderer.restore()
 	}
 
 	private batchRenderData(
-		rays: Array<number>,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface): Batches {
 		const batches = new Batches();
-		rays.forEach((angle, i) => {
+		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
+			const angle = this.rays[i];
 			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
 			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
 			const slice = this.sliceHeight(correctedDistance, raycaster.focalLength);
 			const wallBrightness = brightness.calculateBrightness(correctedDistance);
 			batches.addWallSlice(color, wallBrightness, { x: i, y: slice.origin }, slice.magnitude);
 
-			for (const hit of gridHits) {
+			for (let j = 0; j < gridHits.length; j++) {
+				const hit = gridHits[j];
 				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
 				const y = this.floorPoint(correctedGridDistance, raycaster.focalLength);
 				batches.addGridPoint({ x: i, y });
 			}
-		});
+		}
 		return batches;
 	}
 
@@ -110,14 +119,15 @@ class Game {
 		return Game.HORIZON_Y - (floorOffset * focalLength) / distance;
 	}
 
-	private draw2DRays(renderer: RendererInterface, rays: Array<number>): void {
+	private draw2DRays(renderer: RendererInterface): void {
 		renderer.stroke(ColorName.GREEN);
 		renderer.strokeWeight(0.05);
-		rays.forEach((angle) => {
+		for (let index = 0; index < Settings.CANVAS_WIDTH; index++) {
+			const angle = this.rays[index];
 			const { distance } = this.map.castRay(angle, Settings.MAX_DISTANCE);
-			const hit = this.nextLocation(this.map.playerPosition, angle, distance);
+			const hit = this.pointOnTrajectory(this.map.playerPosition, angle, distance);
 			renderer.line({ start: this.map.playerPosition, end: hit });
-		})
+		}
 	}
 
 	private drawBackround(renderer: RendererInterface): void {
@@ -125,7 +135,7 @@ class Game {
 		renderer.rect({ x: 0, y: 0 }, Settings.CANVAS_WIDTH, Settings.CANVAS_HEIGHT);
 	}
 
-	private nextLocation(coordinates: Coordinates, angle: number, distance: number): Coordinates {
+	private pointOnTrajectory(coordinates: Coordinates, angle: number, distance: number): Coordinates {
 		return {
 			x: coordinates.x + Math.cos(angle) * distance,
 			y: coordinates.y + Math.sin(angle) * distance

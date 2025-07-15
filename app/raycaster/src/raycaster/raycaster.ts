@@ -16,6 +16,7 @@ class Raycaster implements RaycasterInterface {
 		private screenHeight: number,
 		private maxDistance: number = 1000,
 		private horizonY: number = Settings.HORIZON_Y,
+		private rays: Float32Array = new Float32Array(resolution),
 	) {
 		/**
 		 *invariants: fieldOfView is between 0 and 2*Math.PI
@@ -39,7 +40,7 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
-	getViewRays(viewerAngle: number): Array<number> {
+	getViewRays(viewerAngle: number): Float32Array {
 		/*Precondition: 0<=viewerAngle<=2*Math.PI
 		 * Postconditions: 
 		 * returns an array of rays
@@ -49,17 +50,16 @@ class Raycaster implements RaycasterInterface {
 		 */
 
 		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
-		const rays: Array<number> = new Array<number>();
-		this.offsets.forEach((offset) => {
-			rays.push(this.normalizeAngle(offset + viewerAngle - (this.fovOffset)));
-		})
-		return rays;
+		for (let i = 0; i < this.resolution; i++) {
+			this.rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
+		}
+		return this.rays;
 	}
 
 	removeFishEye(distance: number, centerAngle: number, relativeAngle: number): number {
 		/**
 		 * Precondition: distance is a positive number, angle is between 0 and 2*Math.PI
-		 * Postcondition: returns the corrected distance, the greater the ditstance between the center and relative angle, the greater the correction
+		 * Postcondition: returns the corrected distance, the greater the distance between the center and relative angle, the greater the correction
 		 * This is to account for the fish-eye effect in a raycaster
 		 */
 		if (this.fieldOfView >= NINETY_DEGREES) {

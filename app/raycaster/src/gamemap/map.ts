@@ -41,6 +41,12 @@ export class GameMap implements GameMapInterface {
 		];
 	}
 
+	get playerTrail(): WallInterface[] {
+		return this.player.trail.map((wall) => ({
+			line: wall,
+			color: this.player.color
+		}));
+	}
 	get playerPosition(): Coordinates {
 		const { x, y } = this.player;
 		return { x, y };
