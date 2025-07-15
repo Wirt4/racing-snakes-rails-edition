@@ -102,35 +102,84 @@ class Game {
 
 	private batchRenderData(
 		raycaster: RaycasterInterface,
-		brightness: BrightnessInterface): Batches {
+		brightness: BrightnessInterface
+	): Batches {
 		this.rays = raycaster.getViewRays(this.map.playerAngle);
-		const batches = new Batches();
+		let batches = new Batches();
 		for (let i = 0; i < Settings.CANVAS_WIDTH; i++) {
-			const angle = this.rays[i];
-			const { distance, color, gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
-			const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
-			const slice = this.sliceHeight(correctedDistance, raycaster.focalLength);
-			const wallBrightness = brightness.calculateBrightness(correctedDistance);
-			batches.addWallSlice(color, wallBrightness, { x: i, y: slice.origin }, slice.magnitude);
-
-			for (let j = 0; j < gridHits.length; j++) {
-				const hit = gridHits[j];
-				const correctedGridDistance = raycaster.removeFishEye(hit, angle, this.map.playerAngle);
-				const y = this.floorPoint(correctedGridDistance, raycaster.focalLength);
-				batches.addGridPoint({ x: i, y });
-			}
+			batches = this.appendSlices(batches, i, raycaster, brightness);
 		}
+		return batches;
+	}
+
+	private appendSlices(
+		batches: Batches,
+		index: number,
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface
+	): Batches {
+		const angle = this.rays[index];
+		batches = this.appendWallSlice(batches, angle, index, raycaster, brightness);
+		batches = this.appendGridSlice(batches, angle, index, raycaster);
+		return batches;
+	}
+
+	private appendWallSlice(
+		batches: Batches,
+		angle: number,
+		index: number,
+		raycaster: RaycasterInterface,
+		brightness: BrightnessInterface
+	): Batches {
+		const { distance, color } = this.getAdjustedDistance(angle, raycaster);
+		const slice = this.sliceHeight(distance, raycaster.focalLength);
+		const wallBrightness = brightness.calculateBrightness(distance);
+		batches.addWallSlice(color, wallBrightness, { x: index, y: slice.origin }, slice.magnitude);
+		return batches;
+	}
+
+	private getAdjustedDistance(angle: number, raycaster: RaycasterInterface): { distance: number, color: ColorName } {
+		const { distance, color } = this.map.castRay(angle, Settings.MAX_DISTANCE);
+		const correctedDistance = raycaster.removeFishEye(distance, angle, this.map.playerAngle);
+		return { distance: correctedDistance, color };
+
+	}
+
+	private appendGridSlice(batches: Batches, angle: number, index: number, raycaster: RaycasterInterface): Batches {
+		const { gridHits } = this.map.castRay(angle, Settings.MAX_DISTANCE);
+		for (let j = 0; j < gridHits.length; j++) {
+			batches = this.appendGridPoint(batches, gridHits[j], angle, index, raycaster);
+		}
+		return batches;
+	}
+
+	private appendGridPoint(
+		batches: Batches,
+		gridHit: number,
+		angle: number,
+		index: number,
+		raycaster: RaycasterInterface
+	): Batches {
+		const distance = raycaster.removeFishEye(gridHit, angle, this.map.playerAngle);
+		const y = this.floorPoint(distance, raycaster.focalLength);
+		batches.addGridPoint({ x: index, y });
 		return batches;
 	}
 
 	private renderWalls(batches: Batches, renderer: RendererInterface): void {
 		for (const [key, rects] of Object.entries(batches.wallBatches)) {
-			const { color, intensity: brightnessValue } = batches.unpackKey(key);
-			renderer.fillColor(color, brightnessValue);
-			rects.forEach(r => {
-				renderer.rect({ x: r.x, y: r.y }, r.width, r.height)
-			});
+			this.unpackAndRender(batches, rects, key, renderer);
 		}
+	}
+
+	private unpackAndRender(batches: Batches, rects: BatchedRect[], key: string, renderer: RendererInterface): void {
+		const { color, intensity: brightnessValue } = batches.unpackKey(key);
+		renderer.fillColor(color, brightnessValue);
+		this.renderRects(rects, renderer);
+	}
+
+	private renderRects(rects: BatchedRect[], renderer: RendererInterface): void {
+		rects.forEach(rect => this.renderRect(rect, renderer));
 	}
 
 	private sliceHeight(distance: number, focalLength: number): { origin: number, magnitude: number } {
