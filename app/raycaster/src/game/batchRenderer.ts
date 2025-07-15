@@ -6,55 +6,6 @@ import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
 
-class BatchRenderer {
-	private batcher: BatchCorrelator;
-	private batches: Batches = new Batches();
-	private helpRenderer: Temp
-
-	constructor(
-		contextRenderer: ContextRendererInterface,
-		raycaster: RaycasterInterface,
-		brightness: BrightnessInterface,
-		horizonY: number,
-		resolution: number,
-		maxDistance: number,
-		cameraHeight: number,
-		wallHeight: number,
-		canvasWidth: number,
-		canvasHeight: number,
-	) {
-		this.batcher = new BatchCorrelator(
-			raycaster,
-			maxDistance,
-			horizonY,
-			cameraHeight,
-			wallHeight,
-			brightness,
-			resolution
-		);
-		this.helpRenderer = new Temp(
-			contextRenderer,
-			canvasWidth,
-			canvasHeight,
-			ColorName.BLUE
-		);
-	}
-
-	public batchSlices(gameMap: GameMapInterface): void {
-		this.batcher.setGameMap(gameMap);
-		this.batcher.batchRenderData();
-		this.batches = this.batcher.batches;
-	}
-
-	public renderSlices(): void {
-		this.helpRenderer.batches = this.batches;
-		this.helpRenderer.renderSlices()
-	}
-
-	public renderHUD(): void {
-		this.helpRenderer.renderHUD();
-	}
-}
 
 class BatchCorrelator {
 	public batches: Batches;
@@ -162,7 +113,7 @@ class BatchCorrelator {
 	}
 }
 
-class Temp {
+class BatchRenderer {
 	private _batches: Batches = new Batches();
 	constructor(
 		private contextRenderer: ContextRendererInterface,
@@ -236,4 +187,4 @@ class Temp {
 		lines.forEach(line => this.contextRenderer.line(line));
 	}
 }
-export { BatchRenderer, BatchCorrelator, Temp };
+export { BatchCorrelator, BatchRenderer };

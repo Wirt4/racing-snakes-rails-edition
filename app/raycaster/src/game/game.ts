@@ -3,12 +3,12 @@ import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { BrightnessInterface } from '../brightness/interface';
-import { Temp, BatchCorrelator } from './batchRenderer';
+import { BatchRenderer, BatchCorrelator } from './batchRenderer';
 import { ColorName } from './color/color_name';
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
-	private batchRenderer: Temp;
+	private batchRenderer: BatchRenderer;
 	private batchCorrelator: BatchCorrelator;
 
 	constructor(
@@ -18,12 +18,6 @@ class Game {
 		brightness: BrightnessInterface,
 		private readonly displayHUD: Boolean
 	) {
-		this.batchRenderer = new Temp(
-			renderer,
-			Settings.CANVAS_WIDTH,
-			Settings.CANVAS_HEIGHT,
-			ColorName.BLUE
-		);
 		this.batchCorrelator = new BatchCorrelator(
 			raycaster,
 			Settings.MAX_DISTANCE,
@@ -33,6 +27,13 @@ class Game {
 			brightness,
 			Settings.RESOLUTION
 		)
+		this.batchRenderer = new BatchRenderer(
+			renderer,
+			Settings.CANVAS_WIDTH,
+			Settings.CANVAS_HEIGHT,
+			ColorName.BLUE
+		);
+
 	}
 
 	update(): void {
