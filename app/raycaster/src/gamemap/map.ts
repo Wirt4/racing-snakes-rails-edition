@@ -47,6 +47,7 @@ export class GameMap implements GameMapInterface {
 			color: this.player.color
 		}));
 	}
+
 	get playerPosition(): Coordinates {
 		const { x, y } = this.player;
 		return { x, y };
@@ -123,6 +124,7 @@ export class GameMap implements GameMapInterface {
 			intersection: rayEnd
 		};
 	}
+
 	private rayIntersection(wallStart: Coordinates, wallEnd: Coordinates, rayOrigin: Coordinates, determinant: number): number {
 		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
 		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
