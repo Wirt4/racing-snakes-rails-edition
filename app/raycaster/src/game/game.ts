@@ -33,12 +33,16 @@ class Game {
 		this.drawBackround(renderer);
 		this.rays = raycaster.getViewRays(this.map.playerAngle);
 		const batches = this.batchRenderData(raycaster, brightness);
-		this.renderWalls(batches, renderer)
-		this.drawGrid(batches, renderer);
-
+		this.renderFrame(batches, renderer);
 		if (HUD) {
 			this.drawHUD(renderer)
 		}
+	}
+
+	private renderFrame(batches: Batches, renderer: RendererInterface): void {
+		this.renderWalls(batches, renderer)
+		this.drawGrid(batches, renderer);
+
 	}
 
 	private drawGrid(batches: Batches, renderer: RendererInterface): void {
