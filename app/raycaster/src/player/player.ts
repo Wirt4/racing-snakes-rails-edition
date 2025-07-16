@@ -43,56 +43,55 @@ class Player implements PlayerInterface {
 	}
 
 	move(): void {
-		// Turn camera (angle) if needed
-		if (this.inbetweens.length > 0) {
-			this.angle += this.inbetweens.shift()!;
-			this.angle = normalizeAngle(this.angle);
+		this.adjustCamera();
+		this.moveAlongHeading();
+		this.redirectIfTurned();
+	}
+
+	private redirectIfTurned(): void {
+		if (this.cameraTurnHasCompleted()) {
+			this.redirect();
 		}
 
-		// Move forward along heading (which is fixed until turn completes)
-		this.x += Math.round(Math.cos(this.heading)) * this.speed;
-		this.y += Math.sin(this.heading) * this.speed;
+	}
 
-		// Update the current segment endpoint to the new position
+	private redirect(): void {
+		this.isTurning = false;
+		this.heading = this.angle;
+		this.addTrailSegment();
+	}
+
+	private adjustCamera(): void {
+		if (this.cameraIsRotating()) {
+			this.incrementCamera();
+		}
+	}
+
+	private addTrailSegment(): void {
+		this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
+	}
+
+	private cameraTurnHasCompleted(): boolean {
+		return this.inbetweens.length === 0 && this.isTurning;
+	}
+
+	private growTrail(): void {
 		this._trail[this._trail.length - 1].end = { x: this.x, y: this.y };
-
-		// Check if the turn just completed
-		if (this.inbetweens.length === 0 && this.isTurning) {
-			this.isTurning = false;
-			this.heading = this.angle;
-
-			// Start new segment from *new* position (not old lastPosition)
-			this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
-		}
 	}
 
-	temp(): void {
-		// if turning, add the appropriate angle increment here
-		if (this.inbetweens.length > 0) {
-			this.angle += this.inbetweens.shift()!;
-			this.angle = normalizeAngle(this.angle);
-		} else {
-			this.isTurning = false;
-			this.angle = this.heading;
-			this._trail[this._trail.length - 1].end = this.lastPosition;
-			this._trail.push({ start: this.lastPosition, end: this.lastPosition });
-		}
+	private moveAlongHeading(): void {
 		this.x += Math.round(Math.cos(this.heading)) * this.speed;
 		this.y += Math.sin(this.heading) * this.speed;
-
-		// Update the current segment endpoint
-		this._trail[this._trail.length - 1].end = this.lastPosition;
-
-		// Record this position for future trail segments
-		this.lastPosition = { x: this.x, y: this.y };
+		this.growTrail();
 	}
 
-	private adjustAngleFromInbetweens(): void {
+	private cameraIsRotating(): boolean {
+		return this.inbetweens.length > 0
+	}
+
+	private incrementCamera(): void {
 		this.angle += this.inbetweens.shift()!;
 		this.angle = normalizeAngle(this.angle);
-		this._trail[this._trail.length - 1].end = this.lastPosition; //stitch walls together
-		this._trail.push({ start: this.lastPosition, end: this.lastPosition });
-
 	}
 
 	private rotate(angle: number): void {
