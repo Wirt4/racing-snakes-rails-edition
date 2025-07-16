@@ -1,10 +1,10 @@
 const globalHSLHexCache = new Map<number, string>();
 
-function hashHSL(h: number, s: number, l: number): number {
-	const qH = Math.round(h); // 0–360
-	const qS = Math.round(s * 100); // 0–100
-	const qL = Math.round(l * 100); // 0–100
-	return (qH << 16) | (qS << 8) | qL;
+function hashHSL(h: number, l: number): number {
+	const qH = Math.round(h / 20) * 20;
+	const qS = 0.5;
+	const qL = Math.round(l * 16) / 16;
+	return ((qH & 0xFF) << 16) | (Math.round(qS * 100) << 8) | Math.round(qL * 100);
 }
 
 class HSL {
@@ -23,12 +23,14 @@ class HSL {
 		 * * Postconditions:
 		 * The HSL object is created with the specified hue, saturation, and lightness values.
 		 * **/
-		this.assertInRange(hue, 0, 360, "Hue");
-		this.hue = hue;
-		this.assertSatOrLight(saturation, "Saturation");
-		this.saturation = saturation;
 		this.assertSatOrLight(lightness, "Lightness");
-		this.lightness = lightness;
+		this.assertInRange(hue, 0, 360, "Hue");
+		this.assertSatOrLight(saturation, "Saturation");
+
+		this.hue = Math.round(hue / 20) * 20; //Limit hues to 16 -- 256 colors
+		this.lightness = Math.round(lightness * 16) / 16; //Limit lightness to steps of 16 increments
+		this.saturation = 0.5//Math.round(saturation * 4) / 4; // 4 levels of saturation
+
 	}
 
 	toHex(): string {
@@ -38,11 +40,8 @@ class HSL {
 		 * Postconditions:
 		 * Returns a string representing the color in hexadecimal format.
 		 */
-		const h = this.hue;
-		const s = this.saturation;
-		const l = this.lightness;
 
-		const key = hashHSL(h, s, l);
+		const key = hashHSL(this.hue, this.lightness);
 		const cached = globalHSLHexCache.get(key);
 		if (cached) return cached;
 
@@ -50,7 +49,8 @@ class HSL {
 		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
 		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
 		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
-		return `#${redHex}${greenHex}${blueHex}`;
+		globalHSLHexCache.set(key, `#${redHex}${greenHex}${blueHex}`);
+		return globalHSLHexCache.get(key) as string || "#000000"; // Fallback in case of unexpected error
 	}
 
 
