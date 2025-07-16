@@ -52,7 +52,6 @@ class Player implements PlayerInterface {
 		if (this.cameraTurnHasCompleted()) {
 			this.redirect();
 		}
-
 	}
 
 	private redirect(): void {
@@ -109,7 +108,6 @@ class Player implements PlayerInterface {
 		for (let i = 0; i < frames; i++) {
 			this.inbetweens.push(sign * ((Math.PI) / 2) / frames);
 		}
-		//might be stuck at constant speed here
 	}
 }
 export { Player };
