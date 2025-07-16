@@ -45,9 +45,9 @@ describe('object is mutable', () => {
 
 		expect(result.x).toEqual(5);
 		expect(result.y).toEqual(3);
-		// const result2 = batches.gridBatch.pop();
-		// expect(result2.x).toEqual(2);
-		// expect(result2.y).toEqual(6);
+		const result2 = batches.gridBatch.pop();
+		expect(result2.x).toEqual(2);
+		expect(result2.y).toEqual(6);
 	})
 
 

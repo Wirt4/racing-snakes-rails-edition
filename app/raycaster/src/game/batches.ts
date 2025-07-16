@@ -10,7 +10,10 @@ class GridStack {
 
 	constructor(private size: number = 1500) {
 		this.top = 0;
-		this.stck = new Array(this.size).fill({ x: -1, y: -1 });
+		this.stck = new Array(size);
+		for (let i = 0; i < this.size; i++) {
+			this.stck[i] = { x: -1, y: -1 };
+		}
 	}
 
 	get isEmpty(): boolean {
