@@ -79,10 +79,11 @@ export class GameMap implements GameMapInterface {
 		const rayDirection = this.rayDirecton(angle);
 		let closest = this.deafaultIntersection(maximumAllowableDistance);
 		let color = ColorName.NONE;
-
 		const { x, y } = this.player;
+		const rayOrigin: Coordinates = { x, y };
+
 		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall.line);
+			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall.line);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = wall.color;
@@ -91,7 +92,7 @@ export class GameMap implements GameMapInterface {
 
 		for (let i = 0; i < this.playerTrail.length - 1; i++) {
 			const wall = this.playerTrail[i].line;
-			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
+			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
 				color = this.player.color;
@@ -99,7 +100,7 @@ export class GameMap implements GameMapInterface {
 		}
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
-		const gridHits = this.getGridHits({ x, y }, rayDirection, closest.distance);
+		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
 
 		return {
 			distance: closest.distance,
@@ -111,7 +112,6 @@ export class GameMap implements GameMapInterface {
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
 		const gridHits: number[] = [];
-
 		for (const grid of this.gridLines) {
 			const hit = this.rayIntersectsWall(origin, rayDirection, grid);
 			if (hit.isValid && hit.distance < maxDistance) {
