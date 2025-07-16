@@ -56,7 +56,6 @@ function startLoop(): void {
 	function loop(): void {
 		renderer.reset();
 		game.draw();
-		debugger;
 		game.update();
 		requestAnimationFrame(loop);
 	};

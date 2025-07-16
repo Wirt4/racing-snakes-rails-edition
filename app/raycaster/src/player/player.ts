@@ -26,7 +26,6 @@ class Player implements PlayerInterface {
 		this.nextHeading = angle;
 		this.lastPosition = { x: this.x, y: this.y };
 		this._trail = [{ start: this.lastPosition, end: this.lastPosition }];
-		console.log(`Player initialized at (${this.x}, ${this.y}) with angle ${this.angle} and speed ${this.speed}`);
 	}
 
 	get color(): ColorName {
