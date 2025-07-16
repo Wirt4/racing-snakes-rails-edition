@@ -22,6 +22,7 @@ class GridStack {
 	}
 
 	pop(): Coordinates {
+		throw new Error('Stack is empty');
 		this.top--;
 		return { x: 0, y: 0 };
 	}
