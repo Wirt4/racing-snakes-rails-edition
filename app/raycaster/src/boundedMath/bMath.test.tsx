@@ -58,3 +58,26 @@ describe('bMath.sin', () => {
 		expect(result1).not.toEqual(result2);
 	});
 })
+
+describe('BMath sqrt', () => {
+	afterEach(() => {
+		BMath._reset();
+	});
+	test('answer may not be longer than digits return the sine of a number', () => {
+		const bMath = BMath.getInstance(10)
+		const result = bMath.sqrt(2);
+		expect(isRoundedToPlaces(result, 10)).toBe(true);
+	})
+	test('answer may not be longer than digits return the sine of a number', () => {
+		const bMath = BMath.getInstance(7)
+		const result = bMath.sqrt(2);
+		const unbounded = Math.sqrt(2);
+		expect(Math.abs(result - unbounded)).toBeLessThan(1e-7);
+	})
+	test('returns the same value for the same input', () => {
+		const bMath = BMath.getInstance(10);
+		const result1 = bMath.sqrt(2);
+		const result2 = bMath.sqrt(2);
+		expect(result1).toEqual(result2);
+	});
+});

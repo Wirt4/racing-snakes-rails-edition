@@ -1,5 +1,6 @@
 const cosCache: Map<number, number> = new Map();
 const sinCache: Map<number, number> = new Map();
+const rootCache: Map<number, number> = new Map();
 
 class BMath {
 	private static instance: BMath | null = null;
@@ -17,11 +18,16 @@ class BMath {
 	sin(x: number): number {
 		return this.getCachedValue(sinCache, x, Math.sin);
 	}
+
+	sqrt(x: number): number {
+		return this.getCachedValue(rootCache, x, Math.sqrt);
+	}
 	//only for testing, don't use this in production code
 	static _reset(): void {
 		this.instance = null;
 		cosCache.clear();
 		sinCache.clear();
+		rootCache.clear();
 	}
 
 	private getCachedValue(cache: Map<number, number>, key: number, f: Function): number {
