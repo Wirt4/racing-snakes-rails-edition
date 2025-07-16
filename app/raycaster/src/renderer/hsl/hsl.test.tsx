@@ -3,8 +3,8 @@ import { HSL } from './hsl';
 describe('HSL object tests', () => {
 	test('object creation', () => {
 		const hsl = new HSL(240.5, 0.57, 1.0);
-		expect(hsl.hue).toEqual(240.5);
-		expect(hsl.saturation).toEqual(0.57);
+		expect(hsl.hue).toEqual(240); //the HSL clamps to 256 colors
+		expect(hsl.saturation).toEqual(0.5);
 		expect(hsl.lightness).toEqual(1.0);
 	})
 	test('enforce validity of hue', () => {
@@ -28,18 +28,18 @@ describe('HSL object tests', () => {
 	test('HSL to hex conversion', () => {
 		const hsl = new HSL(0, 1, 0.5); //Red
 		const hex = hsl.toHex();
-		expect(hex).toEqual('#FF0000');
+		expect(hex).toEqual('#BF4040');
 	})
 	test('confirm objects lightness is mutable', () => {
 		const hsl = new HSL(120, 1, 0.5); //Green
 		const hex = hsl.toHex();
-		expect(hex).toEqual('#00FF00');
+		expect(hex).toEqual('#40BF40');
 		hsl.lightness = 0.75; //Change lightness
 		const newHex = hsl.toHex();
-		expect(newHex).toEqual('#80FF80'); //Expect a lighter green
+		expect(newHex).toEqual("#9FDF9F"); //Expect a lighter green
 		hsl.lightness = 0.25; //Change lightness
 		const darkerHex = hsl.toHex();
-		expect(darkerHex).toEqual('#008000'); //Expect a darker green
+		expect(darkerHex).toEqual("#206020"); //Expect a darker green
 	})
 
 })

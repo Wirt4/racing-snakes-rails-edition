@@ -1,9 +1,9 @@
 const globalHSLHexCache = new Map<number, string>();
 
 function hashHSL(h: number, l: number): number {
-	const qH = Math.round(h / 20) * 20;
-	const qS = 0.5;
-	const qL = Math.round(l * 16) / 16;
+	const qH = Math.round(h / 40) * 40;
+	const qS = 1; // see what this does
+	const qL = Math.round(l * 32) / 32;
 	return ((qH & 0xFF) << 16) | (Math.round(qS * 100) << 8) | Math.round(qL * 100);
 }
 
