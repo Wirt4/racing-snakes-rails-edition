@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, } from '@jest/globals';
 import { Player } from './player'
 
 describe('Player.move())', () => {
@@ -23,25 +23,29 @@ describe('Player.move())', () => {
 
 })
 
-describe('Player.rotate()', () => {
+describe('Player. turns', () => {
 	test('given a player has a 0 degree heading, when the player.rotate is called with 90 degress is moved <turn interval> time, then the players angle is reset to 90 degress.', () => {
-		const turnInterval = 30
-		const player = new Player({ x: 1, y: 1 }, 0, turnInterval, 1)
+		const angle = 0
+		const speed = 2
+		const turnDistance = 11
+		const player = new Player({ x: 1, y: 1 }, angle, speed, turnDistance);
 
-		player.rotate(Math.PI / 2)
+		player.turnLeft()
 
-		for (let i = 0; i < turnInterval; i++) {
+		for (let i = 0; i < turnDistance; i += speed) {
 			player.move()
 		}
 		expect(player.angle).toBe(Math.PI / 2)
 	})
 	test('rotating a player by -90 degrees should change the angle from 0 to 3*Math.PI / 2', () => {
-		const turnInterval = 5
-		const player = new Player({ x: 1, y: 1 }, 0, turnInterval, 1);
-		player.rotate(-1 * Math.PI / 2)
-		for (let i = 0; i < turnInterval; i++) {
+		const angle = 0
+		const speed = 2
+		const turnDistance = 40
+		const player = new Player({ x: 1, y: 1 }, angle, speed, turnDistance);
+		player.turnRight()
+		for (let i = 0; i < turnDistance; i += speed) {
 			player.move()
 		}
-		expect(player.angle).toBe(3 * Math.PI / 2);
+		expect(Math.abs(player.angle - (3 * Math.PI / 2))).toBeLessThan(0.0001);
 	})
 })

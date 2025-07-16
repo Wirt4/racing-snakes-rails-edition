@@ -32,7 +32,10 @@ onmessage = (e) => {
 			msg.settings.FIELD_OF_VISION,
 			msg.settings.CANVAS_WIDTH,
 			msg.settings.CANVAS_HEIGHT,
-			msg.settings.MAX_DISTANCE
+			msg.settings.MAX_DISTANCE,
+			msg.settings.HORIZON_Y,
+			msg.settings.WALL_HEIGHT,
+			msg.settings.CAMERA_HEIGHT,
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		game = new Game(map, renderer, raycaster, brightness, msg.settings.HUD_ON);

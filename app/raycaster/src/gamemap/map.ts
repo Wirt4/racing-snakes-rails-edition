@@ -66,7 +66,11 @@ export class GameMap implements GameMapInterface {
 	}
 
 	turnPlayer(angle: number): void {
-		this.player.rotate(angle)
+		if (angle < 0) {
+			this.player.turnRight()
+		} else if (angle > 0) {
+			this.player.turnLeft()
+		}
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {

@@ -6,24 +6,23 @@ import { normalizeAngle } from '../utils';
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
-	angle: number;
-	private speed: number;
-	private turnDistance: number;
 	private isTurning: boolean = false;
 	private inbetweens: Array<number> = [];
 	private _trail: LineSegment[] = [];
 	private heading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 
-	constructor(coordinates: Coordinates, angle: number, speed: number, turnDistance: number) {
-		this.speed = speed;
+	constructor(
+		coordinates: Coordinates,
+		public angle: number,
+		private speed: number,
+		private turnDistance: number
+	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
-		this.angle = angle;
 		this.heading = angle;
-		this.turnDistance = turnDistance;
 		this.lastPosition = { x: this.x, y: this.y };
-		this._trail = [{ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }];
+		this._trail = [{ start: this.lastPosition, end: this.lastPosition }];
 	}
 
 	get color(): ColorName {
@@ -33,7 +32,15 @@ class Player implements PlayerInterface {
 	get trail(): LineSegment[] {
 		return this._trail;
 	}
-	rotate(angle: number): void {
+
+	turnLeft(): void {
+		this.rotate((Math.PI / 2));
+	}
+
+	turnRight(): void {
+		this.rotate(-(Math.PI / 2));
+	}
+	private rotate(angle: number): void {
 		if (this.isTurning) {
 			return
 		}
