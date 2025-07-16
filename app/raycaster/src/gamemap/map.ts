@@ -105,7 +105,6 @@ export class GameMap implements GameMapInterface {
 		const gridHits: number[] = [];
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
-			const { x, y } = this.player;
 			const hit = this.rayIntersectsWall({ x, y }, rayDirection, grid);
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
