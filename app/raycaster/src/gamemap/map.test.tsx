@@ -2,7 +2,7 @@ import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
 import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../game/color/color_name';
-import { LineSegment } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
 
 describe('GameMap basic map setup', () => {
@@ -209,3 +209,42 @@ describe('intialization tests', () => {
 		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
 	})
 })
+
+
+class MockPlayer implements PlayerInterface {
+	x: number;
+	y: number;
+	angle: number;
+	trail: LineSegment[];
+	color = ColorName.RED;
+	constructor(pos: Coordinates, angle: number, trail: LineSegment[]) {
+		this.x = pos.x;
+		this.y = pos.y;
+		this.angle = angle;
+		this.trail = trail;
+	}
+	move(): void { }
+	turnLeft(): void { }
+	turnRight(): void { }
+}
+
+describe('GameMap.castRay()', () => {
+	test("should not return a hit for the trail segment currently being drawn (trail head)", () => {
+		const position = { x: 5, y: 5 };
+		const directionAngle = 0; // right
+
+		const mockTrailHead: LineSegment = {
+			start: { x: 0, y: 5 },
+			end: { x: 5, y: 5 } // same as player's current position
+		};
+
+		const player = new MockPlayer(position, directionAngle, [mockTrailHead]);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const slice = map.castRay(directionAngle, 50);
+
+		// This is the key check: distance should be full range (i.e., no early hit)
+		expect(slice.distance).toBeCloseTo(50, 1);
+		expect(slice.color).not.toBe(player.color);
+	});
+});

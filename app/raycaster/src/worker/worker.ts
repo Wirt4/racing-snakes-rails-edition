@@ -33,7 +33,7 @@ onmessage = (e) => {
 			msg.settings.CANVAS_WIDTH,
 			msg.settings.CANVAS_HEIGHT,
 			msg.settings.MAX_DISTANCE,
-			msg.settings.HORIZON_Y,
+			msg.settings.HORIZON_LINE_RATIO * msg.settings.CANVAS_HEIGHT,
 			msg.settings.WALL_HEIGHT,
 			msg.settings.CAMERA_HEIGHT,
 		);
@@ -56,6 +56,7 @@ function startLoop(): void {
 	function loop(): void {
 		renderer.reset();
 		game.draw();
+		debugger;
 		game.update();
 		requestAnimationFrame(loop);
 	};

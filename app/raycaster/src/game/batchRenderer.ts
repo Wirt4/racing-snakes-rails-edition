@@ -73,6 +73,7 @@ class BatchCorrelator {
 
 	private getAdjustedDistance(angle: number): { distance: number, color: ColorName } {
 		const { distance, color } = this._gameMap.castRay(angle, this.maxDistance);
+		debugger
 		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this._gameMap.playerAngle);
 		return { distance: correctedDistance, color };
 	}
