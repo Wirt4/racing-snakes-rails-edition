@@ -36,4 +36,19 @@ describe('object is mutable', () => {
 		expect(result.y).toEqual(2);
 	})
 
+	test('gridBatch.pop should return last added item', () => {
+		const batches = new Batches();
+		batches.gridBatch.push(2, 6);
+		batches.gridBatch.push(5, 3);
+
+		const result = batches.gridBatch.pop();
+
+		expect(result.x).toEqual(5);
+		expect(result.y).toEqual(3);
+		// const result2 = batches.gridBatch.pop();
+		// expect(result2.x).toEqual(2);
+		// expect(result2.y).toEqual(6);
+	})
+
+
 })

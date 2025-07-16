@@ -5,15 +5,21 @@ import { getColorKey, ColorKey } from "./color_key_cache";
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class GridStack {
-	private top: number = 0;
+	private top: number;
+	private stck: Array<Coordinates>;
 
-	constructor() { }
+	constructor(private size: number = 1500) {
+		this.top = 0;
+		this.stck = new Array(this.size).fill({ x: -1, y: -1 });
+	}
 
 	get isEmpty(): boolean {
-		return this.top <= 0;
+		return this.top === 0;
 	}
 
 	push(x: number, y: number): void {
+		this.stck[this.top].x = x;
+		this.stck[this.top].y = y;
 		this.top++;
 	}
 
@@ -25,7 +31,8 @@ class GridStack {
 		if (this.isEmpty) {
 			throw new Error('Stack is empty');
 		}
-		return { x: 4, y: 2 };
+		this.top--;
+		return this.stck[this.top];
 	}
 }
 
