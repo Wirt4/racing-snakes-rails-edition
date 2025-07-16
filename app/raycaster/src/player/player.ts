@@ -10,7 +10,8 @@ class Player implements PlayerInterface {
 	private isTurning: boolean = false;
 	private inbetweens: Array<number> = [];
 	private _trail: LineSegment[] = [];
-	private heading: number;
+	private currentHeading: number;
+	private nextHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 
 	constructor(
@@ -21,9 +22,11 @@ class Player implements PlayerInterface {
 	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
-		this.heading = angle;
+		this.currentHeading = angle;
+		this.nextHeading = angle;
 		this.lastPosition = { x: this.x, y: this.y };
 		this._trail = [{ start: this.lastPosition, end: this.lastPosition }];
+		console.log(`Player initialized at (${this.x}, ${this.y}) with angle ${this.angle} and speed ${this.speed}`);
 	}
 
 	get color(): ColorName {
@@ -56,7 +59,7 @@ class Player implements PlayerInterface {
 
 	private redirect(): void {
 		this.isTurning = false;
-		this.heading = this.angle;
+		this.currentHeading = this.nextHeading;
 		this.addTrailSegment();
 	}
 
@@ -79,8 +82,8 @@ class Player implements PlayerInterface {
 	}
 
 	private moveAlongHeading(): void {
-		this.x += Math.round(Math.cos(this.heading)) * this.speed;
-		this.y += Math.sin(this.heading) * this.speed;
+		this.x += Math.round(Math.cos(this.currentHeading)) * this.speed;
+		this.y += Math.sin(this.currentHeading) * this.speed;
 		this.growTrail();
 	}
 
@@ -98,7 +101,7 @@ class Player implements PlayerInterface {
 			return
 		}
 		this.isTurning = true;
-		this.heading = normalizeAngle(this.heading + angle);
+		this.nextHeading = normalizeAngle(this.currentHeading + angle);
 		this.fillInbetweens(angle);
 	}
 

@@ -118,12 +118,12 @@ describe('Player.move - turn angles', () => {
 		const speed = 1;
 		const turnDistance = 4;
 		const player = new Player({ x: 0, y: 0 }, angle, speed, turnDistance);
-		expect(player.x).toBe(0);
-		expect(player.y).toBe(0);
+		expect(player.x).toEqual(0);
+		expect(player.y).toEqual(0);
 		player.turnLeft();
 		player.move();
-		expect(player.x).toBe(1);
-		expect(player.y).toBe(0);
+		expect(player.x).toEqual(1);
+		expect(player.y).toEqual(0);
 
 	})
 })
