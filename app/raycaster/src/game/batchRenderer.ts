@@ -150,7 +150,14 @@ class BatchRenderer {
 		this.contextRenderer.fillColor(this.gridColor, 50);
 		// use a preallocated array and a basic Knuth style stack with a pointer to track i
 		// // use a preallocated array and a basic Knuth style stack with a pointer to track it
-		this._batches.gridBatch.forEach(rectSpec => this.renderRect(rectSpec));
+		if (this._batches.gridBatch.isEmpty) return;
+		const path = new Path2D();
+		while (!this._batches.gridBatch.isEmpty) {
+			const rectSpec = this._batches.gridBatch.pop();
+			path.rect(rectSpec.x, rectSpec.y, 1, 1);
+		}
+		this.contextRenderer.fillColor(this.gridColor, 50);
+		this.contextRenderer.fillPath(path);
 	}
 
 	private renderRects(rects: BatchedRect[]): void {

@@ -4,13 +4,26 @@ import { getColorKey, ColorKey } from "./color_key_cache";
 
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
+class GridStack {
+	constructor(size: number = 200000) { }
+	get isEmpty(): boolean {
+		return false
+	}
+
+	push(rect: BatchedRect): void { }
+	clear(): void { }
+	pop(): Coordinates {
+		return { x: 0, y: 0 };
+	}
+}
+
 class Batches {
-	gridBatch: BatchedRect[] = [];
+	gridBatch: GridStack = new GridStack();
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
 
 	clear(): void {
-		this.gridBatch = [];
+		this.gridBatch.clear();
 		this.mapBatches.clear();
 		this.wallBatches.clear();
 	}

@@ -12,13 +12,13 @@ describe('object is mutable', () => {
 		batches.addMapWall({ color: ColorName.BLUE, line: { start: { x: 1, y: 1 }, end: { x: 2, y: 2 } } });
 		batches.addGridPoint({ x: 3, y: 3 });
 
-		expect(batches.gridBatch.length).toBe(1);
+		expect(batches.gridBatch.isEmpty).toBe(false);
 		expect(batches.wallBatches.size).toBe(1);
 		expect(batches.mapBatches.size).toBe(1);
 
 		batches.clear();
 
-		expect(batches.gridBatch.length).toBe(0);
+		expect(batches.gridBatch.isEmpty).toBe(true);
 		expect(batches.wallBatches.size).toBe(0);
 		expect(batches.mapBatches.size).toBe(0);
 	})
