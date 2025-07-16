@@ -20,7 +20,7 @@ class BatchCorrelator {
 		private cameraHeight: number,
 		private wallHeight: number,
 		private brightness: BrightnessInterface,
-		resolution: number
+		private resolution: number
 	) {
 		this.rays = new Float32Array(resolution);
 		this.batches = new Batches();
@@ -33,7 +33,9 @@ class BatchCorrelator {
 	}
 
 	public batchRenderData(): void {
-		this.rays = this.raycaster.getViewRays(this._gameMap.playerAngle);
+		if (!this.rays) this.rays = new Float32Array(this.resolution);
+		this.raycaster.fillViewRaysInto(this.rays, this._gameMap.playerAngle);
+
 		this.appendAllSlices();
 		this.batches.addMapWalls(this._gameMap.walls);
 		this.batches.addMapWalls(this._gameMap.playerTrail);

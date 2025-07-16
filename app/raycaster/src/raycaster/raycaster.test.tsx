@@ -169,3 +169,22 @@ describe('wallHeightToSliceHeight', () => {
 		expect(Math.abs(result - expected)).toBeLessThan(1e-5);
 	});
 });
+describe('FillRaysInto', () => {
+	test('should fill rays into the array', () => {
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES * 2,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+		);
+		const shell = new Float32Array(TEST_RESOLUTION);
+		const expected = raycaster.getViewRays(0);
+		expect(expected).not.toEqual(shell);
+		raycaster.fillViewRaysInto(shell, 0);
+		expect(shell).toEqual(expected);
+	})
+})
