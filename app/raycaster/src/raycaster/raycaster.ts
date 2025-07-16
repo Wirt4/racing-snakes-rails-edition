@@ -56,11 +56,7 @@ class Raycaster implements RaycasterInterface {
 		 * The length of the array is equal to the resolution
 		 * the array is arranged from 
 		 */
-
-		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
-		for (let i = 0; i < this.resolution; i++) {
-			this.rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
-		}
+		this.fillRaysInto(this.rays, viewerAngle);
 		return this.rays;
 	}
 
