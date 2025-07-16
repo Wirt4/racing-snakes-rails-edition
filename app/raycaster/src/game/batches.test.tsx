@@ -1,11 +1,12 @@
 import { describe, test, expect, } from '@jest/globals';
 import { Batches } from './batches';
+import { ColorName } from './color/color_name';
 describe('object is mutable', () => {
 	test('batches.clear() should clear the batches', () => {
 		const batches = new Batches();
 		batches.addWallSlice('red', 0.5, { x: 0, y: 0 }, 10);
 		expect(batches.wallBatches['red_0.5'].length).toBe(1);
-		batches.addMapWall({ color: 'blue', line: { start: { x: 1, y: 1 }, end: { x: 2, y: 2 } } });
+		batches.addMapWall({ color: ColorName.BLUE, line: { start: { x: 1, y: 1 }, end: { x: 2, y: 2 } } });
 		batches.addGridPoint({ x: 3, y: 3 });
 
 		expect(batches.gridBatch.length).toBe(1);

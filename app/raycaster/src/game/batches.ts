@@ -17,8 +17,8 @@ class Batches {
 
 	clear(): void {
 		this.gridBatch = [];
-		this.wallHash = new HashBatch();
-		this.mapHash = new HashBatch();
+		this.wallHash.clear();
+		this.mapHash.clear();
 	}
 
 	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void {
@@ -51,6 +51,10 @@ class HashBatch {
 	add(key: string, value: any): void {
 		if (!this.record[key]) this.record[key] = [];
 		this.record[key].push(value);
+	}
+
+	clear(): void {
+		this.record = {};
 	}
 }
 
