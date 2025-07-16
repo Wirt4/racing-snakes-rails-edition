@@ -52,4 +52,47 @@ describe('CoordStack tests', () => {
 		expect(result2.x).toEqual(2);
 		expect(result2.y).toEqual(6);
 	});
+	test('gridBatch.pop should return last added item', () => {
+		const coordStack = new CoordinatesStack();
+		coordStack.push(2, 6);
+		coordStack.push(5, 3);
+
+		const result = coordStack.pop();
+
+		expect(result.x).toEqual(5);
+		expect(result.y).toEqual(3);
+		const result2 = coordStack.pop();
+		expect(result2.x).toEqual(2);
+		expect(result2.y).toEqual(6);
+	});
+	test('gridBatch.pop should return last added item', () => {
+		const coordStack = new CoordinatesStack();
+		coordStack.push(2, 6);
+		coordStack.push(5, 3);
+
+		const result = coordStack.pop();
+
+		expect(result.x).toEqual(5);
+		expect(result.y).toEqual(3);
+		const result2 = coordStack.pop();
+		expect(result2.x).toEqual(2);
+		expect(result2.y).toEqual(6);
+	});
+
+
+	test('gridBatch.pop should adjust is goes beyond size', () => {
+		const coordStack = new CoordinatesStack(1);
+		coordStack.push(2, 6);
+		coordStack.push(5, 3);
+
+		const result = coordStack.pop();
+
+		expect(result.x).toEqual(5);
+		expect(result.y).toEqual(3);
+		const result2 = coordStack.pop();
+		expect(result2.x).toEqual(2);
+		expect(result2.y).toEqual(6);
+	});
+
+
 })
