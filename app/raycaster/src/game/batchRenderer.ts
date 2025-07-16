@@ -179,6 +179,7 @@ class BatchRenderer {
 		lines: LineSegment[]
 	): void {
 		const { color, intensity: weight } = key;
+		if (color === ColorName.NONE) return;
 		this.contextRenderer.stroke(color);
 		this.contextRenderer.strokeWeight(weight);
 		lines.forEach(line => this.contextRenderer.line(line));

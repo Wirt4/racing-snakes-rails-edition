@@ -84,7 +84,7 @@ class Renderer implements ContextRendererInterface {
 
 		const brightnessPercent = brightness / 100;
 		let hsl: HSL;
-		if (color == ColorName.NONE) {
+		if (color === ColorName.NONE) {
 			hsl = this.getCachedHSL(ColorName.WHITE)
 		} else {
 			hsl = this.getCachedHSL(color)
@@ -143,6 +143,7 @@ class Renderer implements ContextRendererInterface {
 
 	private getCachedHSL(color: ColorName): HSL {
 		if (!this.hslCache[color]) {
+			console.log('calling hslFactory for color:', color);
 			this.hslCache[color] = hslFactory(color);
 		}
 		return this.hslCache[color];

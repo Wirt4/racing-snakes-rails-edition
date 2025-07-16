@@ -1,10 +1,7 @@
 const globalHSLHexCache = new Map<number, string>();
 
 function hashHSL(h: number, s: number, l: number): number {
-	const qH = Math.round(h); // 0–360
-	const qS = Math.round(s * 100); // 0–100
-	const qL = Math.round(l * 100); // 0–100
-	return (qH << 16) | (qS << 8) | qL;
+	return (h << 16) | (s << 8) | l;
 }
 
 class HSL {
@@ -38,26 +35,25 @@ class HSL {
 		 * Postconditions:
 		 * Returns a string representing the color in hexadecimal format.
 		 */
-		const h = this.hue;
-		const s = this.saturation;
-		const l = this.lightness;
 
-		const key = hashHSL(h, s, l);
+		const key = hashHSL(this.hue, this.saturation, this.lightness);
 		const cached = globalHSLHexCache.get(key);
 		if (cached) return cached;
+		const s = this.saturation / 100;
+		const l = this.lightness / 100;
 
-		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
-		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
-		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
-		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
+		const chomaticAdjustmentFactor = s * Math.min(l, 1 - l);
+		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor, l);
+		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor, l);
+		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor, l);
 		return `#${redHex}${greenHex}${blueHex}`;
 	}
 
 
-	private colorChannelToHex(channel: number, adjustmentFactor: number): string {
+	private colorChannelToHex(channel: number, adjustmentFactor: number, lightness): string {
 
 		const wheelColor = (channel + this.hue / 30) % 12;
-		const color = this.lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);
+		const color = lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);
 
 		return Math.round(255 * color)
 			.toString(16)
@@ -67,7 +63,7 @@ class HSL {
 
 
 	private assertSatOrLight(value: number, name: string): void {
-		this.assertInRange(value, 0, 1, name);
+		this.assertInRange(value, 0, 100, name);
 	}
 
 	private assertInRange(value: number, min: number, max: number, name: string): void {
