@@ -1,24 +1,36 @@
 const cosCache: Map<number, number> = new Map();
 const sinCache: Map<number, number> = new Map();
-class BMath {
-	constructor(private decimalPlaces: number) { }
 
-	cos(x: number): number {
-		const in_x = this.roundToPlaces(x);
-		if (cosCache.has(in_x)) {
-			return cosCache.get(in_x)!;
+class BMath {
+	private static instance: BMath | null = null;
+	private constructor(private decimalPlaces: number) { }
+	static getInstance(decimalPlaces: number = 10): BMath {
+		if (!BMath.instance) {
+			BMath.instance = new BMath(decimalPlaces);
 		}
-		cosCache.set(in_x, this.roundToPlaces(Math.cos(x)));
-		return cosCache.get(in_x)!;
+		return BMath.instance;
+	}
+	cos(x: number): number {
+		return this.getCachedValue(cosCache, x, Math.cos);
 	}
 
 	sin(x: number): number {
-		const in_x = this.roundToPlaces(x);
-		if (sinCache.has(in_x)) {
-			return sinCache.get(in_x)!;
+		return this.getCachedValue(sinCache, x, Math.sin);
+	}
+	//only for testing, don't use this in production code
+	static _reset(): void {
+		this.instance = null;
+		cosCache.clear();
+		sinCache.clear();
+	}
+
+	private getCachedValue(cache: Map<number, number>, key: number, f: Function): number {
+		const in_key = this.roundToPlaces(key);
+		if (cache.has(in_key)) {
+			return cache.get(in_key)!;
 		}
-		sinCache.set(in_x, this.roundToPlaces(Math.sin(x)));
-		return sinCache.get(in_x)!;
+		cache.set(in_key, this.roundToPlaces(f(key)));
+		return cache.get(in_key)!;
 	}
 
 	private roundToPlaces(num: number): number {
