@@ -96,17 +96,16 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
 		const rayEnd = {
-			x: this.player.x + rayDirection.x * maxDistance,
-			y: this.player.y + rayDirection.y * maxDistance
+			x: this.player.x + rayDirection.x * closest.distance,
+			y: this.player.y + rayDirection.y * closest.distance
 		};
 
 		const gridHits: number[] = [];
 
 		for (const grid of [...this.gridLinesX, ...this.gridLinesY]) {
 			const hit = this.rayIntersectsWall({ x, y }, rayDirection, grid);
-			if (hit.isValid && hit.distance < maxDistance) {
+			if (hit.isValid && hit.distance < closest.distance) {
 				gridHits.push(hit.distance);
 			}
 		}
