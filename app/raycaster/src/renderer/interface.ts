@@ -12,5 +12,6 @@ interface ContextRendererInterface {
 	line(line: LineSegment): void;
 	ellipse(origin: Coordinates, stroke: number): void;
 	noStroke(): void;
+	fillPath(path: Path2D): void;
 }
 export { ContextRendererInterface };

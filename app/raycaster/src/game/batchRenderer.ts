@@ -5,7 +5,7 @@ import { Batches, BatchedRect } from './batches';
 import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
-import { getColorKey, ColorKey } from "./color_key_cache";
+import { ColorKey } from './color_key_cache';
 
 class BatchCorrelator {
 	public batches: Batches;
@@ -156,7 +156,11 @@ class BatchRenderer {
 	}
 
 	private renderRects(rects: BatchedRect[]): void {
-		rects.forEach(rect => this.renderRect(rect));
+		const path = new Path2D();
+		for (const { x, y, width, height } of rects) {
+			path.rect(x, y, width, height);
+		}
+		this.contextRenderer.fillPath(path);
 	}
 
 	private renderRect(rectSpec: BatchedRect): void {
