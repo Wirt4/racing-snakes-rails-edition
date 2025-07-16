@@ -5,12 +5,19 @@ export interface ColorKey {
 	intensity: number;
 }
 
-const keyCache = new Map<string, ColorKey>();
 
+const keyCache = new Map<ColorName, Map<number, ColorKey>>();
 export function getColorKey(color: ColorName, intensity: number): ColorKey {
-	const key = `${color}:${intensity}`;
-	if (!keyCache.has(key)) {
-		keyCache.set(key, { color, intensity });
+
+	const rounded = Math.round(intensity * 100) / 100;
+
+	if (!keyCache.has(color)) {
+		keyCache.set(color, new Map());
 	}
-	return keyCache.get(key)!;
+	const innerMap = keyCache.get(color)!;
+
+	if (!innerMap.has(rounded)) {
+		innerMap.set(rounded, { color, intensity: rounded });
+	}
+	return innerMap.get(rounded)!;
 }

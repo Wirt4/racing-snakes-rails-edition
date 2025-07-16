@@ -123,7 +123,6 @@ export class GameMap implements GameMapInterface {
 		if (this.intersectionIndex >= this.intersectionPool.length) {
 			const length = this.intersectionPool.length;
 			for (let i = 0; i < length; i++) {
-				//just double it
 				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 
 			}
@@ -170,7 +169,6 @@ export class GameMap implements GameMapInterface {
 		const numerator1 = (wallStart.x - wallEnd.x) * (wallStart.y - rayOrigin.y)
 		const numerator2 = (wallStart.y - wallEnd.y) * (wallStart.x - rayOrigin.x)
 		const diff = -(numerator1 - numerator2);
-		//should the result be clamped here?
 		return diff / determinant;
 	}
 
