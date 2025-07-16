@@ -1,7 +1,9 @@
 
+import { BMath } from "../boundedMath/bmath";
 class Point {
 	x: number;
 	y: number;
+	private bmath = BMath.getInstance();
 	constructor(x: number, y: number) {
 		this.x = x;
 		this.y = y;
@@ -12,8 +14,8 @@ class Point {
 			throw new Error("Distance must be non-negative");
 		}
 		return new Point(
-			this.x + Math.cos(angle) * distance,
-			this.y + Math.sin(angle) * distance
+			this.x + this.bmath.cos(angle) * distance,
+			this.y + this.bmath.sin(angle) * distance
 		);
 	}
 }
