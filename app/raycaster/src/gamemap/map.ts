@@ -87,7 +87,6 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		//for (const wall of this.player.trail) {
 		for (let i = 0; i < this.playerTrail.length - 1; i++) {
 			const wall = this.playerTrail[i].line;
 			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
