@@ -13,7 +13,7 @@ class GridStack {
 		return this.top <= 0;
 	}
 
-	push(rect: BatchedRect): void {
+	push(x: number, y: number): void {
 		this.top++;
 	}
 
@@ -46,7 +46,7 @@ class Batches {
 	}
 
 	addGridPoint(origin: Coordinates): void {
-		this.gridBatch.push({ x: origin.x, y: origin.y, width: 1, height: 1 });
+		this.gridBatch.push(origin.x, origin.y);
 	}
 
 	addMapWalls(walls: Array<{ color: ColorName, line: { start: Coordinates, end: Coordinates } }>): void {

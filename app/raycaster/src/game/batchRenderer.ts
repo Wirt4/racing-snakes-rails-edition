@@ -168,10 +168,6 @@ class BatchRenderer {
 		this.contextRenderer.fillPath(path);
 	}
 
-	private renderRect(rectSpec: BatchedRect): void {
-		this.contextRenderer.rect({ x: rectSpec.x, y: rectSpec.y }, rectSpec.width, rectSpec.height);
-	}
-
 	private renderHUDMap(): void {
 		for (const [key, rects] of this._batches.mapBatches.entries()) {
 			this.renderHUDLines(key, rects);
