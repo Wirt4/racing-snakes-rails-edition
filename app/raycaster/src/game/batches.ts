@@ -14,6 +14,13 @@ class Batches {
 	get mapBatches(): Record<string, LineSegment[]> {
 		return this.mapHash.record;
 	}
+
+	clear(): void {
+		this.gridBatch = [];
+		this.wallHash = new HashBatch();
+		this.mapHash = new HashBatch();
+	}
+
 	addWallSlice(color: string, brightness: number, origin: Coordinates, height: number): void {
 		this.wallHash.add(`${color}_${brightness}`, { x: origin.x, y: origin.y, width: 1, height });
 	}
