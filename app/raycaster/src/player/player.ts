@@ -1,6 +1,7 @@
 import { PlayerInterface } from './interface';
 import { ColorName } from '../game/color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils';
 
 class Player implements PlayerInterface {
@@ -34,19 +35,11 @@ class Player implements PlayerInterface {
 	}
 
 	turnLeft(): void {
-		this.rotate((Math.PI / 2));
+		this.rotate(NINETY_DEGREES);
 	}
 
 	turnRight(): void {
-		this.rotate(-(Math.PI / 2));
-	}
-	private rotate(angle: number): void {
-		if (this.isTurning) {
-			return
-		}
-		this.isTurning = true;
-		this.heading = normalizeAngle(this.heading + angle);
-		this.fillInbetweens(angle);
+		this.rotate(-NINETY_DEGREES);
 	}
 
 	move(): void {
@@ -59,11 +52,29 @@ class Player implements PlayerInterface {
 		} else {
 			this.isTurning = false;
 			this.angle = this.heading;
+			//	this._trail.push({ start: this.lastPosition, end: this.lastPosition });
 		}
 		this.x += Math.round(Math.cos(this.heading)) * this.speed;
 		this.y += Math.sin(this.heading) * this.speed;
 		this._trail[this._trail.length - 1].end = this.lastPosition;
 		this.lastPosition = { x: this.x, y: this.y };
+	}
+
+	private adjustAngleFromInbetweens(): void {
+		this.angle += this.inbetweens.shift()!;
+		this.angle = normalizeAngle(this.angle);
+		this._trail[this._trail.length - 1].end = this.lastPosition; //stitch walls together
+		this._trail.push({ start: this.lastPosition, end: this.lastPosition });
+
+	}
+
+	private rotate(angle: number): void {
+		if (this.isTurning) {
+			return
+		}
+		this.isTurning = true;
+		this.heading = normalizeAngle(this.heading + angle);
+		this.fillInbetweens(angle);
 	}
 
 	private fillInbetweens(angle: number): void {

@@ -1,6 +1,18 @@
 import { describe, test, expect, } from '@jest/globals';
 import { Player } from './player'
+import { Coordinates, LineSegment } from '../geometry/interfaces';
+function areCoordsEqual(a: Coordinates, b: Coordinates): boolean {
+	return a.x === b.x && a.y === b.y;
+}
 
+function isTrailContinuous(trail: LineSegment[]): boolean {
+	for (let i = 0; i < trail.length - 1; i++) {
+		if (!areCoordsEqual(trail[i].end, trail[i + 1].start)) {
+			return false;
+		}
+	}
+	return true;
+}
 describe('Player.move())', () => {
 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
 		const player = new Player({ x: 5, y: 5 }, 0, 5, 1);
@@ -49,3 +61,54 @@ describe('Player. turns', () => {
 		expect(Math.abs(player.angle - (3 * Math.PI / 2))).toBeLessThan(0.0001);
 	})
 })
+
+describe('Player.move - trail continuity', () => {
+	test('creates a continuous trail when moving straight', () => {
+		const player = new Player({ x: 0, y: 0 }, 0, 1, 10);
+
+		for (let i = 0; i < 10; i++) {
+			player.move();
+		}
+
+		const trail = player.trail;
+		expect(trail.length).toBe(1);
+		expect(trail[0].start).toEqual({ x: 0, y: 0 });
+		//note the trail lag in order to keep it from interfering with POV
+		expect(trail[0].end).toEqual({ x: 9, y: 0 });
+	});
+
+	test('creates a continuous trail when turning right', () => {
+		const player = new Player({ x: 0, y: 0 }, 0, 1, 4); // 4 frames to turn
+
+		player.move(); // start forward
+		player.turnRight();
+
+		for (let i = 0; i < 4; i++) {
+			player.move(); // during turn
+		}
+
+		for (let i = 0; i < 5; i++) {
+			player.move(); // after turn
+		}
+
+		const trail = player.trail;
+		expect(trail.length).toBeGreaterThan(1);
+		expect(isTrailContinuous(trail)).toBe(true);
+	});
+
+	test('creates a continuous trail with multiple turns', () => {
+		const player = new Player({ x: 0, y: 0 }, 0, 1, 4);
+
+		player.move();
+		player.turnRight();
+		for (let i = 0; i < 4; i++) player.move();
+		for (let i = 0; i < 3; i++) player.move();
+		player.turnLeft();
+		for (let i = 0; i < 4; i++) player.move();
+		for (let i = 0; i < 3; i++) player.move();
+
+		const trail = player.trail;
+		expect(trail.length).toBeGreaterThan(2);
+		expect(isTrailContinuous(trail)).toBe(true);
+	});
+});
