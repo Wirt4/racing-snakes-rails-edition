@@ -64,9 +64,6 @@ class Player implements PlayerInterface {
 			// Start new segment from *new* position (not old lastPosition)
 			this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
 		}
-
-		// Update lastPosition for use in the next move
-		this.lastPosition = { x: this.x, y: this.y };
 	}
 
 	temp(): void {
