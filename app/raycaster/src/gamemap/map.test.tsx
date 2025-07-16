@@ -1,5 +1,6 @@
 import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
+import { WallInterface } from '../gamemap/interface';
 import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../game/color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
@@ -215,9 +216,9 @@ class MockPlayer implements PlayerInterface {
 	x: number;
 	y: number;
 	angle: number;
-	trail: LineSegment[];
+	trail: WallInterface[];
 	color = ColorName.RED;
-	constructor(pos: Coordinates, angle: number, trail: LineSegment[]) {
+	constructor(pos: Coordinates, angle: number, trail: WallInterface[]) {
 		this.x = pos.x;
 		this.y = pos.y;
 		this.angle = angle;
@@ -233,9 +234,12 @@ describe('GameMap.castRay()', () => {
 		const position = { x: 5, y: 5 };
 		const directionAngle = Math.PI / 4; // right
 
-		const mockTrailHead: LineSegment = {
-			start: { x: 1, y: 5 },
-			end: { x: 5, y: 5 } // same as player's current position
+		const mockTrailHead: WallInterface = {
+			line: {
+				start: { x: 1, y: 5 },
+				end: { x: 5, y: 5 }
+			},
+			color: ColorName.RED// same as player's current position
 		};
 
 		const player = new MockPlayer(position, directionAngle, [mockTrailHead]);
@@ -249,20 +253,31 @@ describe('GameMap.castRay()', () => {
 		const position = { x: 5, y: 4 };
 		const directionAngle = 0
 
-		const mockTrail: LineSegment[] = [
+		const mockTrail: WallInterface[] = [
 			{
-				start: { x: 7, y: 2 },
-				end: { x: 7, y: 8 }
+				line: {
+					start: { x: 7, y: 2 },
+					end: { x: 7, y: 8 }
+				}, color: ColorName.RED
 			}, {
-				start: { x: 7, y: 8 },
-				end: { x: 3, y: 8 }
+				line: {
+					start: { x: 7, y: 8 },
+					end: { x: 3, y: 8 }
+				}, color: ColorName.RED
+
 			}, {
-				start: { x: 3, y: 8 },
-				end: { x: 3, y: 4 }
+				line: {
+					start: { x: 3, y: 8 },
+					end: { x: 3, y: 4 }
+				}, color: ColorName.RED
+
 			},
 			{
-				start: { x: 3, y: 4 },
-				end: { x: 5, y: 4 }
+				line: {
+					start: { x: 3, y: 4 },
+					end: { x: 5, y: 4 }
+				}, color: ColorName.RED
+
 			}
 		];
 
