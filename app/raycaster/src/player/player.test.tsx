@@ -73,8 +73,8 @@ describe('Player.move - trail continuity', () => {
 		const trail = player.trail;
 		expect(trail.length).toBe(1);
 		expect(trail[0].start).toEqual({ x: 0, y: 0 });
-		//note the trail lag in order to keep it from interfering with POV
-		expect(trail[0].end).toEqual({ x: 9, y: 0 });
+		//TODO:  keep it from interfering with POV
+		expect(trail[0].end).toEqual({ x: 10, y: 0 });
 	});
 
 	test('creates a continuous trail when turning right', () => {
