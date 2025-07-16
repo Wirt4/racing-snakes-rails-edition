@@ -74,11 +74,7 @@ export class GameMap implements GameMapInterface {
 	}
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {
-		const rayDirection = {
-			x: Math.cos(angle),
-			y: Math.sin(angle)
-		};
-
+		const rayDirection = this.rayDirecton(angle);
 		let closest: Intersection = {
 			isValid: false,
 			x: -1,
@@ -127,6 +123,13 @@ export class GameMap implements GameMapInterface {
 			color,
 			gridHits,
 			intersection: rayEnd
+		};
+	}
+
+	private rayDirecton(angle: number): Coordinates {
+		return {
+			x: Math.cos(angle),
+			y: Math.sin(angle)
 		};
 	}
 
