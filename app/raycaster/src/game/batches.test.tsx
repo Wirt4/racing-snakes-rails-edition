@@ -21,5 +21,10 @@ describe('object is mutable', () => {
 		expect(batches.gridBatch.isEmpty).toBe(true);
 		expect(batches.wallBatches.size).toBe(0);
 		expect(batches.mapBatches.size).toBe(0);
+	});
+	test('gridBatch.pop should throw if strucutre is empty', () => {
+		const batches = new Batches();
+		expect(() => batches.gridBatch.pop()).toThrow('Stack is empty');
 	})
+
 })
