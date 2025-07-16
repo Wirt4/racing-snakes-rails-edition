@@ -1,10 +1,10 @@
 import { PlayerInterface } from './interface';
 import { ColorName } from '../game/color/color_name';
-import { Coordinates, LineSegment } from '../geometry/interfaces';
+import { Coordinates } from '../geometry/interfaces';
 import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils';
 import { WallInterface } from '../gamemap/interface';
-
+import { BMath } from '../boundedMath/bmath';
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
@@ -15,6 +15,7 @@ class Player implements PlayerInterface {
 	private nextHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
+	private bMath: BMath = BMath.getInstance();
 
 	constructor(
 		coordinates: Coordinates,
@@ -82,8 +83,8 @@ class Player implements PlayerInterface {
 	}
 
 	private moveAlongHeading(): void {
-		this.x += Math.round(Math.cos(this.currentHeading)) * this.speed;
-		this.y += Math.sin(this.currentHeading) * this.speed;
+		this.x += Math.round(this.bMath.cos(this.currentHeading)) * this.speed;
+		this.y += this.bMath.sin(this.currentHeading) * this.speed;
 		this.growTrail();
 	}
 
