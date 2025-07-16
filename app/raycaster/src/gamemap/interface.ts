@@ -21,6 +21,7 @@ interface GameMapInterface {
 	playerAngle: number;
 	playerTrail: WallInterface[];
 	movePlayer(): void;
+	prepareFrame(): void;
 	turnPlayer(angle: number): void;
 	castRay(angle: number, maximumAllowableDistance: number): Slice;
 	appendWall(wall: WallInterface): void;

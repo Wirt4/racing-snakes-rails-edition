@@ -27,12 +27,8 @@ class BatchCorrelator {
 		this._gameMap = gameMap;
 	}
 
-	public set gameMap(gameMap: GameMapInterface) {
-		this.batches = new Batches();
-		this._gameMap = gameMap;
-	}
-
 	public batchRenderData(): void {
+		this.batches.clear();
 		if (!this.rays) this.rays = new Float32Array(this.resolution);
 		this.raycaster.fillRaysInto(this.rays, this._gameMap.playerAngle);
 

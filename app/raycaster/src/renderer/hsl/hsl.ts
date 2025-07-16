@@ -1,8 +1,20 @@
+const globalHSLHexCache = new Map<number, string>();
+
+function hashHSL(h: number, s: number, l: number): number {
+	const qH = Math.round(h); // 0–360
+	const qS = Math.round(s * 100); // 0–100
+	const qL = Math.round(l * 100); // 0–100
+	return (qH << 16) | (qS << 8) | qL;
+}
+
 class HSL {
 	hue: number;
 	saturation: number;
 	lightness: number;
-	constructor(hue: number, saturation: number, lightness: number) {
+	constructor(
+		hue: number,
+		saturation: number,
+		lightness: number) {
 		/**
 		 * Preconditions: 
 		 * hue is a float representing the hue in degrees  between 0 and 360 (inclusive).
@@ -26,12 +38,21 @@ class HSL {
 		 * Postconditions:
 		 * Returns a string representing the color in hexadecimal format.
 		 */
+		const h = this.hue;
+		const s = this.saturation;
+		const l = this.lightness;
+
+		const key = hashHSL(h, s, l);
+		const cached = globalHSLHexCache.get(key);
+		if (cached) return cached;
+
 		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
 		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
 		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
 		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
 		return `#${redHex}${greenHex}${blueHex}`;
 	}
+
 
 	private colorChannelToHex(channel: number, adjustmentFactor: number): string {
 

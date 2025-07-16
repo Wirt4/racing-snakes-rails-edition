@@ -3,36 +3,37 @@ import { ColorName } from '../game/color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils';
+import { WallInterface } from '../gamemap/interface';
 
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
 	private isTurning: boolean = false;
 	private inbetweens: Array<number> = [];
-	private _trail: LineSegment[] = [];
+	private _trail: WallInterface[] = [];
 	private currentHeading: number;
 	private nextHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
+	public color: ColorName;
 
 	constructor(
 		coordinates: Coordinates,
 		public angle: number,
 		private speed: number,
-		private turnDistance: number
+		private turnDistance: number,
+		color: ColorName = ColorName.RED
 	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
 		this.currentHeading = angle;
 		this.nextHeading = angle;
 		this.lastPosition = { x: this.x, y: this.y };
-		this._trail = [{ start: this.lastPosition, end: this.lastPosition }];
+		this._trail = [{ line: { start: this.lastPosition, end: this.lastPosition }, color: color }];
+		this.color = color;
 	}
 
-	get color(): ColorName {
-		return ColorName.RED;
-	}
 
-	get trail(): LineSegment[] {
+	get trail(): WallInterface[] {
 		return this._trail;
 	}
 
@@ -69,7 +70,7 @@ class Player implements PlayerInterface {
 	}
 
 	private addTrailSegment(): void {
-		this._trail.push({ start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } });
+		this._trail.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
 	}
 
 	private cameraTurnHasCompleted(): boolean {
@@ -77,7 +78,7 @@ class Player implements PlayerInterface {
 	}
 
 	private growTrail(): void {
-		this._trail[this._trail.length - 1].end = { x: this.x, y: this.y };
+		this._trail[this._trail.length - 1].line.end = { x: this.x, y: this.y };
 	}
 
 	private moveAlongHeading(): void {

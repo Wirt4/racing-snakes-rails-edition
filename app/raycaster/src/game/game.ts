@@ -43,7 +43,7 @@ class Game {
 
 	draw(
 	): void {
-		this.batchCorrelator.gameMap = this.map;
+		this.map.prepareFrame()
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
 		this.batchRenderer.renderSlices();
