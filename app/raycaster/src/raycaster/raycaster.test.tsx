@@ -184,7 +184,7 @@ describe('FillRaysInto', () => {
 		const shell = new Float32Array(TEST_RESOLUTION);
 		const expected = raycaster.getViewRays(0);
 		expect(expected).not.toEqual(shell);
-		raycaster.fillViewRaysInto(shell, 0);
+		raycaster.fillRaysInto(shell, 0);
 		expect(shell).toEqual(expected);
 	})
 })

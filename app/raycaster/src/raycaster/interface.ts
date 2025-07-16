@@ -3,5 +3,6 @@ interface RaycasterInterface {
 	removeFishEye(distance: number, centerAngle: number, relativeAngle: number): number;
 	calculateBrightness(distance: number): number;
 	focalLength: number;
+	fillRaysInto(rays: Float32Array, viewerAngle: number): void;
 }
 export { RaycasterInterface }

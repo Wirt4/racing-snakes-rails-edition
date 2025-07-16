@@ -34,7 +34,7 @@ class BatchCorrelator {
 
 	public batchRenderData(): void {
 		if (!this.rays) this.rays = new Float32Array(this.resolution);
-		this.raycaster.fillViewRaysInto(this.rays, this._gameMap.playerAngle);
+		this.raycaster.fillRaysInto(this.rays, this._gameMap.playerAngle);
 
 		this.appendAllSlices();
 		this.batches.addMapWalls(this._gameMap.walls);
