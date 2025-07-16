@@ -8,7 +8,7 @@ class CoordinatesStack {
 	private top: number;
 	private stck: Array<Coordinates>;
 
-	constructor(private size: number = 1500) {
+	constructor(size: number = 1500) {
 		this.top = 0;
 		this.stck = new Array(size);
 		this.fillStack(this.stck, 0, size);
@@ -38,24 +38,23 @@ class CoordinatesStack {
 	}
 
 	private reallocateIfNecessary(): void {
-		if (this.top >= this.size) {
+		if (this.top >= this.stck.length) {
 			this.reallocate();
 		}
 	}
 
 	private reallocate(): void {
-		const newSize = this.size * 2;
+		const newSize = this.stck.length * 2;
 		const newStack = new Array(newSize);
-		this.fillStack(newStack, this.size, newSize);
-		this.copyInto(newStack, this.stck);
+		this.fillStack(newStack, this.stck.length, newSize);
+		this.copyInto(newStack, this.stck, this.stck.length);
 		this.stck = newStack;
-		this.size = newSize;
 	}
-	private copyInto(target: Array<Coordinates>, source: Array<Coordinates>) {
-		for (let i = 0; i < this.size; i++) {
+
+	private copyInto(target: Array<Coordinates>, source: Array<Coordinates>, size: number): void {
+		for (let i = 0; i < size; i++) {
 			target[i] = source[i];
 		}
-
 	}
 
 	private fillStack(stack: Array<Coordinates>, start: number, length: number): void {
