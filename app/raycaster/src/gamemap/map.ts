@@ -96,10 +96,7 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		const rayEnd = {
-			x: this.player.x + rayDirection.x * closest.distance,
-			y: this.player.y + rayDirection.y * closest.distance
-		};
+		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
 
 		const gridHits: number[] = [];
 
@@ -116,6 +113,14 @@ export class GameMap implements GameMapInterface {
 			gridHits,
 			intersection: rayEnd
 		};
+	}
+
+	private getRayEnd(rayDirection: Coordinates, distance: number): Coordinates {
+		return {
+			x: this.player.x + rayDirection.x * distance,
+			y: this.player.y + rayDirection.y * distance
+		};
+
 	}
 
 	private deafaultIntersection(distance: number): Intersection {
