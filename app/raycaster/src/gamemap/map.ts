@@ -75,12 +75,7 @@ export class GameMap implements GameMapInterface {
 
 	castRay(angle: number, maximumAllowableDistance: number): Slice {
 		const rayDirection = this.rayDirecton(angle);
-		let closest: Intersection = {
-			isValid: false,
-			x: -1,
-			y: -1,
-			distance: maximumAllowableDistance
-		};
+		let closest = this.deafaultIntersection(maximumAllowableDistance);
 		let color = ColorName.NONE;
 
 		const { x, y } = this.player;
@@ -126,6 +121,15 @@ export class GameMap implements GameMapInterface {
 		};
 	}
 
+	private deafaultIntersection(distance: number): Intersection {
+		return {
+			isValid: false,
+			x: -1,
+			y: -1,
+			distance
+		};
+
+	}
 	private rayDirecton(angle: number): Coordinates {
 		return {
 			x: Math.cos(angle),
