@@ -19,7 +19,7 @@ export class GameMap implements GameMapInterface {
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
-		gridCell: number = 2,
+		gridCell: number,
 		player: PlayerInterface
 	) {
 		if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {

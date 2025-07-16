@@ -16,6 +16,7 @@ export enum Settings {
 	FADE_DISTANCE = 2,
 	CANVAS_WIDTH = 400,
 	HORIZON_Y = 200,
+	GRID_CELL_SIZE = 2,
 	CANVAS_HEIGHT = 640,
 	RESOLUTION = 400, //TODO: fix game implementation so that display isn't squashed when this is smaller than CANVAS_WIDTH
 }
