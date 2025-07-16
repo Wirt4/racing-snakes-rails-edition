@@ -1,12 +1,13 @@
 import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
-
+import { BMath } from '../boundedMath/bmath';
 class Raycaster implements RaycasterInterface {
 
 	public focalLength: number;
 	private offsets: Array<number>;
 	private fovOffset: number;
+	private bMath: BMath = BMath.getInstance();
 
 	constructor(
 		private resolution: number,
@@ -69,7 +70,7 @@ class Raycaster implements RaycasterInterface {
 		if (this.fieldOfView >= NINETY_DEGREES) {
 			return distance; //no correction needed for wide FOV
 		}
-		return distance * Math.cos(relativeAngle - centerAngle);
+		return distance * this.bMath.cos(relativeAngle - centerAngle);
 	}
 
 	wallHeightToSliceHeight(distance: number, height: number): number {
