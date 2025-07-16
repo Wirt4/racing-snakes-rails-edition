@@ -6,7 +6,9 @@ interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class GridStack {
 	private top: number = 0;
-	constructor(size: number = 200000) { }
+
+	constructor() { }
+
 	get isEmpty(): boolean {
 		return this.top <= 0;
 	}
@@ -14,6 +16,7 @@ class GridStack {
 	push(rect: BatchedRect): void {
 		this.top++;
 	}
+
 	clear(): void {
 		this.top = 0;
 	}
