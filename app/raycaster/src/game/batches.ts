@@ -11,9 +11,7 @@ class CoordinatesStack {
 	constructor(private size: number = 1500) {
 		this.top = 0;
 		this.stck = new Array(size);
-		for (let i = 0; i < this.size; i++) {
-			this.stck[i] = { x: -1, y: -1 };
-		}
+		this.fillStack(this.stck, 0, size);
 	}
 
 	get isEmpty(): boolean {
@@ -21,9 +19,7 @@ class CoordinatesStack {
 	}
 
 	push(x: number, y: number): void {
-		if (this.top >= this.size) {
-			this.reallocate();
-		}
+		this.reallocateIfNecessary();
 		this.stck[this.top].x = x;
 		this.stck[this.top].y = y;
 		this.top++;
@@ -41,17 +37,31 @@ class CoordinatesStack {
 		return this.stck[this.top];
 	}
 
+	private reallocateIfNecessary(): void {
+		if (this.top >= this.size) {
+			this.reallocate();
+		}
+	}
+
 	private reallocate(): void {
 		const newSize = this.size * 2;
 		const newStack = new Array(newSize);
-		for (let i = this.size; i < newSize; i++) {
-			newStack[i] = { x: -1, y: -1 };
-		}
-		for (let i = 0; i < this.size; i++) {
-			newStack[i] = this.stck[i];
-		}
+		this.fillStack(newStack, this.size, newSize);
+		this.copyInto(newStack, this.stck);
 		this.stck = newStack;
 		this.size = newSize;
+	}
+	private copyInto(target: Array<Coordinates>, source: Array<Coordinates>) {
+		for (let i = 0; i < this.size; i++) {
+			target[i] = source[i];
+		}
+
+	}
+
+	private fillStack(stack: Array<Coordinates>, start: number, length: number): void {
+		for (let i = start; i < length; i++) {
+			stack[i] = { x: -1, y: -1 };
+		}
 	}
 }
 
