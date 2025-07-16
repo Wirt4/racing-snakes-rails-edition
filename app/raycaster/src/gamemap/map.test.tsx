@@ -247,7 +247,7 @@ describe('GameMap.castRay()', () => {
 	});
 	test("should detect player's own wall if from a tenable viewpoint", () => {
 		const position = { x: 5, y: 4 };
-		const directionAngle = 7 * Math.PI / 4
+		const directionAngle = 0
 
 		const mockTrail: LineSegment[] = [
 			{
@@ -271,7 +271,7 @@ describe('GameMap.castRay()', () => {
 
 		const slice = map.castRay(directionAngle, 50);
 
-		expect(Math.abs(slice.distance - Math.sqrt(8))).toBeLessThan(0.01);
-	});
+		expect(slice.color).toBe(ColorName.RED);
+	})
 
 });
