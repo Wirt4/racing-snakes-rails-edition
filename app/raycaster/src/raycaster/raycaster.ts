@@ -42,7 +42,11 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
-	fillRaysInto(rays: Float32Array, viewerAngle: number): void { }
+	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
+		for (let i = 0; i < this.resolution; i++) {
+			rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
+		}
+	}
 
 	getViewRays(viewerAngle: number): Float32Array {
 		/*Precondition: 0<=viewerAngle<=2*Math.PI
