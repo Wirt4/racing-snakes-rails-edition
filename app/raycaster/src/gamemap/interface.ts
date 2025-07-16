@@ -19,6 +19,7 @@ interface GameMapInterface {
 	gridLinesY: LineSegment[];
 	playerPosition: Coordinates;
 	playerAngle: number;
+	playerTrail: WallInterface[];
 	movePlayer(): void;
 	turnPlayer(angle: number): void;
 	castRay(angle: number, maximumAllowableDistance: number): Slice;

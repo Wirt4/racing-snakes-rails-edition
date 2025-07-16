@@ -2,14 +2,28 @@ import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
 import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../game/color/color_name';
-import { LineSegment } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
 
 describe('GameMap basic map setup', () => {
 	let gameMap: GameMap;
 
 	beforeEach(() => {
-		gameMap = new GameMap({ height: 10, width: 10 }, ColorName.BLACK, 1, { rotate: jest.fn(), move: jest.fn(), x: 1, y: 1, angle: 0 });
+		gameMap = new GameMap(
+			{ height: 10, width: 10 },
+			ColorName.BLACK,
+			1,
+			{
+				turnLeft: jest.fn(),
+				turnRight: jest.fn(),
+				move: jest.fn(),
+				x: 1,
+				y: 1,
+				angle: 0,
+				color: ColorName.GREEN,
+				trail: []
+			}
+		);
 	});
 
 	test('should initialize with 4 boundary walls', () => {
@@ -33,7 +47,13 @@ describe('GameMap basic map setup', () => {
 
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
-		const gameMap = new GameMap({ width: 10, height: 10 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), x: 1, y: 1, angle: 0 });
+		const gameMap = new GameMap({ width: 10, height: 10 }, ColorName.RED, 1, {
+			turnLeft: jest.fn(),
+			turnRight: jest.fn(),
+			move: jest.fn(), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
+			trail: []
+		}
+		);
 		gameMap.walls.forEach(wall => {
 			expect(wall.color).toBe(ColorName.RED);
 		});
@@ -43,7 +63,14 @@ describe('GameMap configuration options', () => {
 		let gameMap: GameMap;
 
 		beforeEach(() => {
-			gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, { rotate: jest.fn(), move: jest.fn(), x: 1, y: 1, angle: 0 });
+			gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, {
+				turnLeft: jest.fn(),
+				turnRight: jest.fn(),
+				trail: [],
+				color: ColorName.WHITE,
+				move: jest.fn(), x: 1, y: 1,
+				angle: 0
+			});
 		});
 
 		test('should initialize correct number of X gridlines', () => {
@@ -60,7 +87,10 @@ describe('castRay method', () => {
 	let gameMap: GameMap;
 
 	beforeEach(() => {
-		gameMap = new GameMap({ width: 10, height: 11 }, ColorName.GREEN, 1, { rotate: jest.fn(), move: jest.fn(), x: 1, y: 1, angle: 0 });
+		gameMap = new GameMap({ width: 10, height: 11 }, ColorName.GREEN, 1, {
+			color: ColorName.GREEN,
+			trail: [], turnLeft: jest.fn(), turnRight: jest.fn(), move: jest.fn(), x: 1, y: 1, angle: 0
+		});
 	});
 
 	test('should return correct distance when ray hits boundary wall directly (0°)', () => {
@@ -76,7 +106,13 @@ describe('castRay method', () => {
 	});
 
 	test('should return max distance if ray hits nothing (looking away from all walls)', () => {
-		gameMap = new GameMap({ width: 32, height: 11 }, ColorName.GREEN, 1, { rotate: jest.fn(), move: jest.fn(), x: 16, y: 5, angle: 0 });
+		gameMap = new GameMap({ width: 32, height: 11 }, ColorName.GREEN, 1, {
+			trail: [],
+			color: ColorName.RED,
+			turnLeft: jest.fn(),
+			turnRight: jest.fn(),
+			move: jest.fn(), x: 16, y: 5, angle: 0
+		});
 		const slice = gameMap.castRay(Math.PI, 15); // Facing negative x direction
 		expect(slice.distance).toEqual(15);
 		expect(slice.color).toEqual(ColorName.NONE);
@@ -101,7 +137,11 @@ describe('castRay method', () => {
 			width: 32,
 			height: 11
 		},
-			ColorName.GREEN, 1, { rotate: jest.fn(), move: jest.fn(), x: 0.001, y: 0.001, angle: 0 });
+			ColorName.GREEN, 1, {
+			turnLeft: jest.fn(), turnRight: jest.fn(),
+			move: jest.fn(), x: 0.001, y: 0.001, angle: 0,
+			color: ColorName.GREEN, trail: []
+		});
 
 		const slice = gameMap.castRay(Math.PI, 11); // Facing left
 		expect(slice.distance).toBeGreaterThan(0);
@@ -116,13 +156,15 @@ describe('castRay method', () => {
 describe("Player tests", () => {
 	let player: PlayerInterface;
 	beforeEach(() => {
-		player = { rotate: jest.fn((angle: number) => { }), move: jest.fn(() => { }), x: 1, y: 1, angle: 0 };
+		player = {
+			turnLeft: jest.fn(() => { }), turnRight: jest.fn(), move: jest.fn(() => { }), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
+			trail: []
+		};
 	})
 	test("angle should be passed to player class", () => {
-		const payload = Math.PI / 4
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
-		gameMap.turnPlayer(Math.PI / 4)
-		expect(player.rotate).toHaveBeenLastCalledWith(payload)
+		gameMap.turnPlayer(Math.PI / 2)
+		expect(player.turnLeft).toHaveBeenLastCalledWith()
 	})
 	test("movePlayer should call player.move", () => {
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
@@ -140,7 +182,10 @@ describe('intialization tests', () => {
 		color = ColorName.RED
 		grid_size = 5
 		player = {
-			rotate: () => { }, move: () => { }, x: -1, y: -1, angle: 0
+			turnLeft: () => { }, turnRight: () => { }, move: () => { },
+			x: -1, y: -1, angle: 0, color: ColorName.GREEN,
+			trail: []
+
 		}
 	})
 	test('game map may not intialize with player position touching walls: left', () => {
@@ -164,3 +209,69 @@ describe('intialization tests', () => {
 		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
 	})
 })
+
+
+class MockPlayer implements PlayerInterface {
+	x: number;
+	y: number;
+	angle: number;
+	trail: LineSegment[];
+	color = ColorName.RED;
+	constructor(pos: Coordinates, angle: number, trail: LineSegment[]) {
+		this.x = pos.x;
+		this.y = pos.y;
+		this.angle = angle;
+		this.trail = trail;
+	}
+	move(): void { }
+	turnLeft(): void { }
+	turnRight(): void { }
+}
+
+describe('GameMap.castRay()', () => {
+	test("should not return a hit for the trail segment currently being drawn (trail head)", () => {
+		const position = { x: 5, y: 5 };
+		const directionAngle = Math.PI / 4; // right
+
+		const mockTrailHead: LineSegment = {
+			start: { x: 1, y: 5 },
+			end: { x: 5, y: 5 } // same as player's current position
+		};
+
+		const player = new MockPlayer(position, directionAngle, [mockTrailHead]);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const slice = map.castRay(directionAngle, 50);
+
+		expect(slice.distance).not.toBe(0);
+	});
+	test("should detect player's own wall if from a tenable viewpoint", () => {
+		const position = { x: 5, y: 4 };
+		const directionAngle = 0
+
+		const mockTrail: LineSegment[] = [
+			{
+				start: { x: 7, y: 2 },
+				end: { x: 7, y: 8 }
+			}, {
+				start: { x: 7, y: 8 },
+				end: { x: 3, y: 8 }
+			}, {
+				start: { x: 3, y: 8 },
+				end: { x: 3, y: 4 }
+			},
+			{
+				start: { x: 3, y: 4 },
+				end: { x: 5, y: 4 }
+			}
+		];
+
+		const player = new MockPlayer(position, directionAngle, mockTrail);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const slice = map.castRay(directionAngle, 50);
+
+		expect(slice.color).toBe(ColorName.RED);
+	})
+
+});
