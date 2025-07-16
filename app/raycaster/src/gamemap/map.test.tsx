@@ -243,7 +243,35 @@ describe('GameMap.castRay()', () => {
 
 		const slice = map.castRay(directionAngle, 50);
 
-		// This is the key check: distance should be full range (i.e., no early hit)
 		expect(slice.distance).not.toBe(0);
 	});
+	test("should detect player's own wall if from a tenable viewpoint", () => {
+		const position = { x: 5, y: 4 };
+		const directionAngle = 7 * Math.PI / 4
+
+		const mockTrail: LineSegment[] = [
+			{
+				start: { x: 7, y: 2 },
+				end: { x: 7, y: 8 }
+			}, {
+				start: { x: 7, y: 8 },
+				end: { x: 3, y: 8 }
+			}, {
+				start: { x: 3, y: 8 },
+				end: { x: 3, y: 4 }
+			},
+			{
+				start: { x: 3, y: 4 },
+				end: { x: 5, y: 4 }
+			}
+		];
+
+		const player = new MockPlayer(position, directionAngle, mockTrail);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const slice = map.castRay(directionAngle, 50);
+
+		expect(Math.abs(slice.distance - Math.sqrt(8))).toBeLessThan(0.01);
+	});
+
 });

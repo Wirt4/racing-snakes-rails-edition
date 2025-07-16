@@ -96,13 +96,13 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		for (const wall of this.player.trail) {
-			const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
-			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = this.player.color;
-			}
-		}
+		// for (const wall of this.player.trail) {
+		// 	const hit = this.rayIntersectsWall({ x, y }, rayDirection, wall);
+		// 	if (hit.isValid && hit.distance < closest.distance) {
+		// 		closest = hit;
+		// 		color = this.player.color;
+		// 	}
+		// }
 
 		const maxDistance = closest.isValid ? closest.distance : maximumAllowableDistance;
 		const rayEnd = {
