@@ -4,6 +4,7 @@ import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
 import { Player } from '../player/player';
+import { Directions } from '../controls/directions';
 
 let game: Game;
 let renderer: Renderer;
@@ -11,6 +12,8 @@ let raycaster: Raycaster;
 let brightness: Brightness;
 
 let running = false;
+
+
 
 onmessage = (e) => {
 	const msg = e.data;
@@ -42,10 +45,10 @@ onmessage = (e) => {
 		startLoop();
 	}
 	if (msg.type === "turn") {
-		if (msg.direction === "left") {
-			game.map.turnPlayer(Math.PI / 2) //reverse the direction because the y axis is inverted in the canvas
-		} else if (msg.direction === "right") {
-			game.map.turnPlayer(-Math.PI / 2); //reverse the direction because the y axis is inverted in the canvas
+		if (msg.direction === Directions.LEFT) {
+			game.map.turnPlayer(Math.PI / 2)
+		} else if (msg.direction === Directions.RIGHT) {
+			game.map.turnPlayer(-Math.PI / 2);
 		}
 	}
 };
