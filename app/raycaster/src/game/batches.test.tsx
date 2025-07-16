@@ -1,5 +1,5 @@
 import { describe, test, expect, } from '@jest/globals';
-import { Batches } from './batches';
+import { Batches, CoordinatesStack } from './batches';
 import { ColorName } from './color/color_name';
 
 describe('object is mutable', () => {
@@ -22,33 +22,34 @@ describe('object is mutable', () => {
 		expect(batches.wallBatches.size).toBe(0);
 		expect(batches.mapBatches.size).toBe(0);
 	});
+})
+
+describe('CoordStack tests', () => {
 	test('gridBatch.pop should throw if structure is empty', () => {
-		const batches = new Batches();
-		expect(() => batches.gridBatch.pop()).toThrow('Stack is empty');
+		const coordStack = new CoordinatesStack();
+		expect(() => coordStack.pop()).toThrow('Stack is empty');
 	})
 	test('gridBatch.pop should return last added item', () => {
-		const batches = new Batches();
-		batches.gridBatch.push(4, 2);
+		const coordStack = new CoordinatesStack();
+		coordStack.push(4, 2);
 
-		const result = batches.gridBatch.pop();
+		const result = coordStack.pop();
 
 		expect(result.x).toEqual(4);
 		expect(result.y).toEqual(2);
 	})
 
 	test('gridBatch.pop should return last added item', () => {
-		const batches = new Batches();
-		batches.gridBatch.push(2, 6);
-		batches.gridBatch.push(5, 3);
+		const coordStack = new CoordinatesStack();
+		coordStack.push(2, 6);
+		coordStack.push(5, 3);
 
-		const result = batches.gridBatch.pop();
+		const result = coordStack.pop();
 
 		expect(result.x).toEqual(5);
 		expect(result.y).toEqual(3);
-		const result2 = batches.gridBatch.pop();
+		const result2 = coordStack.pop();
 		expect(result2.x).toEqual(2);
 		expect(result2.y).toEqual(6);
-	})
-
-
+	});
 })

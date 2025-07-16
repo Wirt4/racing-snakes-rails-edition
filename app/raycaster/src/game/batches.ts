@@ -4,7 +4,7 @@ import { getColorKey, ColorKey } from "./color_key_cache";
 
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
-class GridStack {
+class CoordinatesStack {
 	private top: number;
 	private stck: Array<Coordinates>;
 
@@ -40,7 +40,7 @@ class GridStack {
 }
 
 class Batches {
-	gridBatch: GridStack = new GridStack();
+	gridBatch: CoordinatesStack = new CoordinatesStack();
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
 
@@ -77,4 +77,4 @@ class Batches {
 	}
 
 }
-export { BatchedRect, Batches };
+export { BatchedRect, Batches, CoordinatesStack };
