@@ -5,7 +5,7 @@ import { Batches, BatchedRect } from './batches';
 import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
-
+import { getColorKey, ColorKey } from "./color_key_cache";
 
 class BatchCorrelator {
 	public batches: Batches;
@@ -136,17 +136,17 @@ class BatchRenderer {
 	}
 
 	private renderWalls(): void {
-		for (const [key, rects] of Object.entries(this._batches.wallBatches)) {
-			this.unpackAndRender(key, rects);
+		//??
+		for (const [key, rects] of this._batches.wallBatches.entries()) {
+			this.unpackAndRender(key, rects); // key is now a structured object
 		}
 	}
 
 	private unpackAndRender(
-		key: string,
+		key: ColorKey,
 		rects: BatchedRect[],
 	): void {
-		const { color, intensity: brightnessValue } = this._batches.unpackKey(key);
-		this.contextRenderer.fillColor(color, brightnessValue);
+		this.contextRenderer.fillColor(key.color, key.intensity);
 		this.renderRects(rects);
 	}
 
@@ -164,16 +164,16 @@ class BatchRenderer {
 	}
 
 	private renderHUDMap(): void {
-		for (const [key, lines] of Object.entries(this._batches.mapBatches)) {
-			this.renderHUDLines(key, lines);
+		for (const [key, rects] of this._batches.mapBatches.entries()) {
+			this.renderHUDLines(key, rects);
 		}
 	}
 
 	private renderHUDLines(
-		key: string,
+		key: ColorKey,
 		lines: LineSegment[]
 	): void {
-		const { color, intensity: weight } = this._batches.unpackKey(key)
+		const { color, intensity: weight } = key;
 		this.contextRenderer.stroke(color);
 		this.contextRenderer.strokeWeight(weight);
 		lines.forEach(line => this.contextRenderer.line(line));
