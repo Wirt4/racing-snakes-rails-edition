@@ -4,7 +4,7 @@ const sinCache: Map<number, number> = new Map();
 class BMath {
 	private static instance: BMath | null = null;
 	private constructor(private decimalPlaces: number) { }
-	static getInstance(decimalPlaces: number = 10): BMath {
+	static getInstance(decimalPlaces: number = 6): BMath {
 		if (!BMath.instance) {
 			BMath.instance = new BMath(decimalPlaces);
 		}
