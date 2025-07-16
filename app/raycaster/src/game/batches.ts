@@ -69,9 +69,11 @@ class Batches {
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
 
+	private rectPool: RectPool = new RectPool();
 	clear(): void {
 		this.gridBatch.clear();
 		this.mapBatches.clear();
+		this.rectPool.reset();
 		this.wallBatches.clear();
 	}
 
@@ -80,7 +82,8 @@ class Batches {
 		if (!this.wallBatches.has(colorKey)) {
 			this.wallBatches.set(colorKey, []);
 		}
-		this.wallBatches.get(colorKey)?.push({ x: origin.x, y: origin.y, width: 1, height });
+		const rect = this.rectPool.get(origin.x, origin.y, height);
+		this.wallBatches.get(colorKey)?.push(rect);
 	}
 
 	addGridPoint(origin: Coordinates): void {
@@ -102,4 +105,36 @@ class Batches {
 	}
 
 }
+
+class RectPool {
+	private pool: BatchedRect[] = new Array(1500);
+	private index = 0;
+
+	constructor() {
+		for (let i = 0; i < this.pool.length; i++) {
+			this.pool[i] = { x: -1, y: -1, width: -1, height: -1 };
+		}
+	}
+
+	reset() {
+		this.index = 0;
+	}
+
+	get(x: number, y: number, height: number): BatchedRect {
+		//if reach capacity, double it
+		if (this.index >= this.pool.length) {
+			const l = this.pool.length;
+			for (let i = l; i < l; i++) {
+				this.pool.push({ x: -1, y: -1, width: -1, height: -1 });
+			}
+		}
+		const rect = this.pool[this.index++];
+		rect.x = x;
+		rect.y = y;
+		rect.width = 1;
+		rect.height = height;
+		return rect;
+	}
+}
+
 export { BatchedRect, Batches, CoordinatesStack };
