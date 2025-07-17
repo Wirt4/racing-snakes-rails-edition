@@ -1,5 +1,5 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 
 interface WallInterface {
 	line: LineSegment;

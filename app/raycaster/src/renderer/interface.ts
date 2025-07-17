@@ -1,4 +1,4 @@
-import { ColorName } from "../game/color/color_name";
+import { ColorName } from "../color/color_name";
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 
 interface ContextRendererInterface {

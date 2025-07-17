@@ -2,7 +2,7 @@ import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
 import { WallInterface } from '../gamemap/interface';
 import { Dimensions } from '../geometry/interfaces'
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
 

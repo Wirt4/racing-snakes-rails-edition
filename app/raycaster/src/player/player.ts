@@ -1,5 +1,5 @@
 import { PlayerInterface } from './interface';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
 import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils';

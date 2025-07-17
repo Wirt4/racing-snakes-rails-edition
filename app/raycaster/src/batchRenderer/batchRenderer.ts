@@ -1,11 +1,11 @@
 import { ContextRendererInterface } from '../renderer/interface';
-import { ColorName } from './color/color_name';
+import { ColorName } from '../color/color_name';
 import { GameMapInterface } from '../gamemap/interface';
-import { Batches, BatchedRect } from './batches';
+import { Batches, BatchedRect } from '../batches/batches';
 import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
-import { ColorKey } from './color_key_cache';
+import { ColorKey } from '../game/color_key_cache';
 
 class BatchCorrelator {
 	public batches: Batches;

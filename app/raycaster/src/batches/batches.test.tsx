@@ -1,6 +1,6 @@
 import { describe, test, expect, } from '@jest/globals';
 import { Batches, CoordinatesStack } from './batches';
-import { ColorName } from './color/color_name';
+import { ColorName } from '../color/color_name';
 
 describe('object is mutable', () => {
 	test('batches.clear() should clear the batches', () => {

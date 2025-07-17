@@ -3,8 +3,8 @@ import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings';
 import { BrightnessInterface } from '../brightness/interface';
-import { BatchRenderer, BatchCorrelator } from './batchRenderer';
-import { ColorName } from './color/color_name';
+import { BatchRenderer, BatchCorrelator } from '../batchRenderer/batchRenderer';
+import { ColorName } from '../color/color_name';
 import { logColorKeyCacheStats } from './color_key_cache';
 
 class Game {

@@ -1,6 +1,6 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
