@@ -1,5 +1,6 @@
 import { Settings } from '../settings';
-import { BatchRenderer, BatchCorrelator } from '../batchRenderer/batchRenderer';
+import { BatchRenderer } from '../batchRenderer/batchRenderer';
+import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
 import { ColorName } from '../color/color_name';
 class Game {
     constructor(map, renderer, raycaster, brightness, displayHUD) {

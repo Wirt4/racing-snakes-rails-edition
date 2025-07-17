@@ -1,6 +1,9 @@
 const cosCache = new Map();
 const sinCache = new Map();
 const rootCache = new Map();
+//TODO: change from using JS built-in numbers to int32.
+// you can do this with some pooling logic, like using a an int32 array for the cache and a module for fixed-point math as opposed to internal operators.
+//out of scope for current branch (performance), so make it it's own branch
 class BMath {
     constructor(decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
