@@ -1,6 +1,6 @@
 import { ColorName } from "../color/color_name";
-import { hslFactory } from "./hsl/hsl_factory";
-import { HSL } from "./hsl/hsl";
+import { hslFactory } from "../hsl/hsl_factory";
+import { HSL } from "../hsl/hsl";
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ContextRendererInterface } from "./interface";
 

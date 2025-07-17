@@ -1,5 +1,5 @@
 import { RaycasterInterface } from './interface';
-import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
+import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils/utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 class Raycaster implements RaycasterInterface {

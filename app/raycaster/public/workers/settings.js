@@ -1,0 +1,22 @@
+export var Settings;
+(function (Settings) {
+    Settings[Settings["HORIZON_LINE_RATIO"] = 0.65] = "HORIZON_LINE_RATIO";
+    Settings[Settings["FRAME_HEIGHT"] = -200] = "FRAME_HEIGHT";
+    Settings[Settings["MAX_BRIGHTNESS"] = 60] = "MAX_BRIGHTNESS";
+    Settings[Settings["PLAYER_TURN_DISTANCE"] = 2] = "PLAYER_TURN_DISTANCE";
+    Settings[Settings["HUD_ON"] = 1] = "HUD_ON";
+    Settings[Settings["WALL_HEIGHT"] = 3] = "WALL_HEIGHT";
+    Settings[Settings["PLAYER_SPEED"] = 0.25] = "PLAYER_SPEED";
+    Settings[Settings["CAMERA_HEIGHT"] = 2] = "CAMERA_HEIGHT";
+    Settings[Settings["FRAMES_PER_SECOND"] = 60] = "FRAMES_PER_SECOND";
+    Settings[Settings["FIELD_OF_VISION"] = 5 * Math.PI / 12] = "FIELD_OF_VISION";
+    Settings[Settings["MAX_DISTANCE"] = 100] = "MAX_DISTANCE";
+    Settings[Settings["MAX_PERCENT_BRIGHTNESS"] = 60] = "MAX_PERCENT_BRIGHTNESS";
+    Settings[Settings["MIN_PERCENT_BRIGHTNESS"] = 30] = "MIN_PERCENT_BRIGHTNESS";
+    Settings[Settings["FADE_DISTANCE"] = 2] = "FADE_DISTANCE";
+    Settings[Settings["CANVAS_WIDTH"] = 400] = "CANVAS_WIDTH";
+    Settings[Settings["HORIZON_Y"] = 200] = "HORIZON_Y";
+    Settings[Settings["GRID_CELL_SIZE"] = 2] = "GRID_CELL_SIZE";
+    Settings[Settings["CANVAS_HEIGHT"] = 640] = "CANVAS_HEIGHT";
+    Settings[Settings["RESOLUTION"] = 400] = "RESOLUTION";
+})(Settings || (Settings = {}));

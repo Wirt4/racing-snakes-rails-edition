@@ -2,7 +2,7 @@ import { PlayerInterface } from './interface';
 import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
 import { NINETY_DEGREES } from '../geometry/constants';
-import { normalizeAngle } from '../utils';
+import { normalizeAngle } from '../utils/utils';
 import { WallInterface } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
 class Player implements PlayerInterface {

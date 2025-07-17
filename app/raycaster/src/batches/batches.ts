@@ -1,7 +1,7 @@
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ColorName } from "../color/color_name";
-import { getColorKey, ColorKey } from "../game/color_key_cache";
-import { ObjectPool } from "../game/objectPool";
+import { getColorKey, ColorKey } from "../color_key/color_key_cache";
+import { ObjectPool } from "../objectPool/objectPool";
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class CoordinatesStack {

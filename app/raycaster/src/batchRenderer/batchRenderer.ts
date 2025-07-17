@@ -5,7 +5,7 @@ import { Batches, BatchedRect } from '../batches/batches';
 import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
-import { ColorKey } from '../game/color_key_cache';
+import { ColorKey } from '../color_key/color_key_cache';
 
 class BatchCorrelator {
 	public batches: Batches;
