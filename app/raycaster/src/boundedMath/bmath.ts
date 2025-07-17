@@ -1,7 +1,9 @@
 const cosCache: Map<number, number> = new Map();
 const sinCache: Map<number, number> = new Map();
 const rootCache: Map<number, number> = new Map();
-
+//TODO: change from using JS built-in numbers to int32.
+// you can do this with some pooling logic, like using a an int32 array for the cache and a module for fixed-point math as opposed to internal operators.
+//out of scope for current branch (performance), so make it it's own branch
 class BMath {
 	private static instance: BMath | null = null;
 	private constructor(private decimalPlaces: number) { }
