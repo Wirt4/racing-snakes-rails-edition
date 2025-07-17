@@ -5,7 +5,7 @@ import { ColorName } from './color/color_name';
 describe('object is mutable', () => {
 	test('batches.clear() should clear the batches', () => {
 		const batches = new Batches();
-		batches.addWallSlice(ColorName.RED, 0.5, { x: 0, y: 0 }, 10);
+		batches.addWallSlice(ColorName.RED, 0.5, 0, 0, 10);
 
 
 		expect(batches.wallBatches.size).toBe(1);

@@ -1,7 +1,7 @@
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ColorName } from "./color/color_name";
 import { getColorKey, ColorKey } from "./color_key_cache";
-
+import { ObjectPool } from "./objectPool";
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class CoordinatesStack {
@@ -69,21 +69,29 @@ class Batches {
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
 
-	private rectPool: RectPool = new RectPool();
+	private rectPool: ObjectPool<BatchedRect> = new ObjectPool<BatchedRect>(1500, () => ({ x: -1, y: -1, width: -1, height: -1 }));
 	clear(): void {
 		this.gridBatch.clear();
 		this.mapBatches.clear();
-		this.rectPool.reset();
 		this.wallBatches.clear();
 	}
 
-	addWallSlice(color: ColorName, brightness: number, origin: Coordinates, height: number): void {
-		const colorKey = getColorKey(color, brightness);
+	addWallSlice(color: ColorName, brightness: number, x: number, y: number, height: number): void {
+		const quantized = Math.round(brightness * 100) / 100;
+		const colorKey = getColorKey(color, quantized);
 		if (!this.wallBatches.has(colorKey)) {
 			this.wallBatches.set(colorKey, []);
 		}
-		const rect = this.rectPool.get(origin.x, origin.y, height);
+		const rect = this.rectPool.acquire()
+		rect.x = x;
+		rect.y = y;
+		rect.width = 1; // Assuming a width of 1 for each wall slice
+		rect.height = height;
 		this.wallBatches.get(colorKey)?.push(rect);
+	}
+
+	releaseSlice(rect: BatchedRect): void {
+		this.rectPool.release(rect);
 	}
 
 	addGridPoint(origin: Coordinates): void {
@@ -106,35 +114,5 @@ class Batches {
 
 }
 
-class RectPool {
-	private pool: BatchedRect[] = new Array(1500);
-	private index = 0;
-
-	constructor() {
-		for (let i = 0; i < this.pool.length; i++) {
-			this.pool[i] = { x: -1, y: -1, width: -1, height: -1 };
-		}
-	}
-
-	reset() {
-		this.index = 0;
-	}
-
-	get(x: number, y: number, height: number): BatchedRect {
-		//if reach capacity, double it
-		if (this.index >= this.pool.length) {
-			const l = this.pool.length;
-			for (let i = l; i < l; i++) {
-				this.pool.push({ x: -1, y: -1, width: -1, height: -1 });
-			}
-		}
-		const rect = this.pool[this.index++];
-		rect.x = x;
-		rect.y = y;
-		rect.width = 1;
-		rect.height = height;
-		return rect;
-	}
-}
 
 export { BatchedRect, Batches, CoordinatesStack };

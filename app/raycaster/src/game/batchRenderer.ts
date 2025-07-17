@@ -56,7 +56,7 @@ class BatchCorrelator {
 		const { distance, color } = this.getAdjustedDistance(angle);
 		const slice = this.sliceHeight(distance);
 		const wallBrightness = this.brightness.calculateBrightness(distance);
-		this.batches.addWallSlice(color, wallBrightness, { x: index, y: slice.origin }, slice.magnitude);
+		this.batches.addWallSlice(color, wallBrightness, index, slice.origin, slice.magnitude);
 	}
 
 	private appendGridSlice(
@@ -162,8 +162,10 @@ class BatchRenderer {
 
 	private renderRects(rects: BatchedRect[]): void {
 		const path = new Path2D();
-		for (const { x, y, width, height } of rects) {
-			path.rect(x, y, width, height);
+		for (let i = 0; i < rects.length; i++) {
+			const rect = rects[i];
+			path.rect(rect.x, rect.y, rect.width, rect.height);
+			this._batches.releaseSlice(rect);
 		}
 		this.contextRenderer.fillPath(path);
 	}
@@ -184,4 +186,7 @@ class BatchRenderer {
 		lines.forEach(line => this.contextRenderer.line(line));
 	}
 }
+
+class Path2DPool { }
+
 export { BatchCorrelator, BatchRenderer };
