@@ -7,94 +7,105 @@ import { GameMapInterface } from '../gamemap/interface';
 class BatchCorrelator {
 	public batches: Batches;
 	private rays: Float32Array;
-	private _gameMap: GameMapInterface;
+	private wallTopOffset: number;
+	private wallBottomOffset: number;
+	private currentAngle: number = 0;
+	private index: number = 0;
 
 	constructor(
-		gameMap: GameMapInterface,
+		private gameMap: GameMapInterface,
 		private raycaster: RaycasterInterface,
 		private maxDistance: number,
 		private horizonY: number,
 		private cameraHeight: number,
 		private wallHeight: number,
 		private brightness: BrightnessInterface,
-		private resolution: number
+		private resolution: number,
+
 	) {
 		this.rays = new Float32Array(resolution);
 		this.batches = new Batches();
-		this._gameMap = gameMap;
+		this.wallTopOffset = this.wallHeight - this.cameraHeight;
+		this.wallBottomOffset = -this.cameraHeight;
+
 	}
 
 	public batchRenderData(): void {
 		this.batches.clear();
-		if (!this.rays) this.rays = new Float32Array(this.resolution);
-		this.raycaster.fillRaysInto(this.rays, this._gameMap.playerAngle);
-
+		this.setRays();
 		this.appendAllSlices();
-		this.batches.addMapWalls(this._gameMap.walls);
-		this.batches.addMapWalls(this._gameMap.playerTrail);
+		this.appendAllMapWalls();
+	}
+
+	private appendAllMapWalls(): void {
+		this.batches.addMapWalls(this.gameMap.walls);
+		this.batches.addMapWalls(this.gameMap.playerTrail);
+	}
+
+	private setRays(): void {
+		if (!this.rays) {
+			this.rays = new Float32Array(this.resolution);
+		}
+		this.raycaster.fillRaysInto(this.rays, this.gameMap.playerAngle);
 	}
 
 	private appendAllSlices(): void {
-		for (let i = 0; i < this.rays.length; i++) {
-			this.appendSlice(i);
+		this.index = 0;
+		while (this.index < this.rays.length) {
+			this.appendSlice();
+			this.index += 1;
 		}
 	}
 
-	private appendSlice(index: number): void {
-		const angle = this.rays[index];
-		this.appendWallSlice(angle, index);
-		this.appendGridSlice(angle, index);
+	private appendSlice(): void {
+		this.currentAngle = this.rays[this.index];
+		this.appendWallSlice();
+		this.appendGridSlice();
 	}
 
-	private appendWallSlice(
-		angle: number,
-		index: number,
-	): void {
-		const { distance, color } = this.getAdjustedDistance(angle);
+	private appendWallSlice(): void {
+		const { distance, color } = this.getAdjustedDistance();
 		const slice = this.sliceHeight(distance);
 		const wallBrightness = this.brightness.calculateBrightness(distance);
-		this.batches.addWallSlice(color, wallBrightness, index, slice.origin, slice.magnitude);
+		this.batches.addWallSlice(color, wallBrightness, this.index, slice.origin, slice.magnitude);
 	}
 
-	private appendGridSlice(
-		angle: number,
-		index: number,
-	): void {
-		const { gridHits } = this._gameMap.castRay(angle, this.maxDistance);
+	private appendGridSlice(): void {
+		const { gridHits } = this.gameMap.castRay(this.currentAngle, this.maxDistance);
 		for (let j = 0; j < gridHits.length; j++) {
-			this.appendGridPoint(gridHits[j], angle, index);
+			this.appendGridPoint(gridHits[j]);
 		}
 	}
 
-	private getAdjustedDistance(angle: number): { distance: number, color: ColorName } {
-		const { distance, color } = this._gameMap.castRay(angle, this.maxDistance);
-		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this._gameMap.playerAngle);
+	private getAdjustedDistance(): { distance: number, color: ColorName } {
+		const { distance, color } = this.gameMap.castRay(this.currentAngle, this.maxDistance);
+		const correctedDistance = this.removeFishEye(distance);
 		return { distance: correctedDistance, color };
+	}
+
+	private removeFishEye(distance: number): number {
+		return this.raycaster.removeFishEye(distance, this.currentAngle, this.gameMap.playerAngle);
 	}
 
 	private sliceHeight(
 		distance: number,
 	): { origin: number, magnitude: number } {
-		const wallTopOffset = this.wallHeight - this.cameraHeight;
-		const wallBottomOffset = -this.cameraHeight;
-		const topY = this.horizonY - (wallTopOffset * this.raycaster.focalLength) / distance;
-		const bottomY = this.horizonY - (wallBottomOffset * this.raycaster.focalLength) / distance;
+		const topY = this.getY(this.wallTopOffset, distance);
+		const bottomY = this.getY(this.wallBottomOffset, distance);
 		return { origin: topY, magnitude: bottomY - topY }
 	}
 
-	private appendGridPoint(
-		gridHit: number,
-		angle: number,
-		index: number,
-	): void {
-		const distance = this.raycaster.removeFishEye(gridHit, angle, this._gameMap.playerAngle);
-		const y = this.floorPoint(distance);
-		this.batches.addGridPoint({ x: index, y });
+	private getY(offset: number, distance: number): number {
+		return this.horizonY - (offset * this.raycaster.focalLength) / distance;
+	}
+
+	private appendGridPoint(gridHit: number): void {
+		const distance = this.removeFishEye(gridHit);
+		this.batches.addGridPoint({ x: this.index, y: this.floorPoint(distance) });
 	}
 
 	private floorPoint(distance: number): number {
-		const floorOffset = -this.cameraHeight;
-		return this.horizonY - (floorOffset * this.raycaster.focalLength) / distance;
+		return this.getY(-this.cameraHeight, distance);
 	}
 }
 

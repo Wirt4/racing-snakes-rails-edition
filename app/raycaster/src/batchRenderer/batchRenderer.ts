@@ -35,9 +35,8 @@ class BatchRenderer {
 	}
 
 	private renderWalls(): void {
-		//??
 		for (const [key, rects] of this._batches.wallBatches.entries()) {
-			this.unpackAndRender(key, rects); // key is now a structured object
+			this.unpackAndRender(key, rects);
 		}
 	}
 
@@ -50,27 +49,40 @@ class BatchRenderer {
 	}
 
 	private renderGrid(): void {
-		this.contextRenderer.fillColor(this.gridColor, 50);
-		// use a preallocated array and a basic Knuth style stack with a pointer to track i
-		// // use a preallocated array and a basic Knuth style stack with a pointer to track it
-		if (this._batches.gridBatch.isEmpty) return;
-		const path = new Path2D();
-		while (!this._batches.gridBatch.isEmpty) {
-			const rectSpec = this._batches.gridBatch.pop();
-			path.rect(rectSpec.x, rectSpec.y, 1, 1);
+		if (this._batches.gridBatch.isEmpty) {
+			return;
 		}
 		this.contextRenderer.fillColor(this.gridColor, 50);
-		this.contextRenderer.fillPath(path);
+		this.contextRenderer.fillPath(this.populatePath());
+	}
+
+	private populatePath(): Path2D {
+		const pixSize = 1
+		const path = new Path2D();
+		this.fillPathWithPoints(path, pixSize);
+		return path;
+	}
+
+	private fillPathWithPoints(path: Path2D, pixSize: number): void {
+		while (!this._batches.gridBatch.isEmpty) {
+			const rectSpec = this._batches.gridBatch.pop();
+			path.rect(rectSpec.x, rectSpec.y, pixSize, pixSize);
+		}
 	}
 
 	private renderRects(rects: BatchedRect[]): void {
 		const path = new Path2D();
+		this.fillPathWithRects(path, rects);
+		this.contextRenderer.fillPath(path);
+	}
+
+	private fillPathWithRects(path: Path2D, rects: BatchedRect[]): void {
 		for (let i = 0; i < rects.length; i++) {
 			const rect = rects[i];
 			path.rect(rect.x, rect.y, rect.width, rect.height);
 			this._batches.releaseSlice(rect);
 		}
-		this.contextRenderer.fillPath(path);
+
 	}
 
 	private renderHUDMap(): void {
@@ -86,7 +98,13 @@ class BatchRenderer {
 		const { color, intensity: weight } = key;
 		this.contextRenderer.stroke(color);
 		this.contextRenderer.strokeWeight(weight);
-		lines.forEach(line => this.contextRenderer.line(line));
+		this.drawLines(lines);
+	}
+
+	private drawLines(lines: LineSegment[]): void {
+		for (let i = 0; i < lines.length; i++) {
+			this.contextRenderer.line(lines[i]);
+		}
 	}
 }
 
