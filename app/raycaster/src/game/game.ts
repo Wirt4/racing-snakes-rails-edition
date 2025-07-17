@@ -5,6 +5,7 @@ import { Settings } from '../settings';
 import { BrightnessInterface } from '../brightness/interface';
 import { BatchRenderer, BatchCorrelator } from './batchRenderer';
 import { ColorName } from './color/color_name';
+import { logColorKeyCacheStats } from './color_key_cache';
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
@@ -51,6 +52,7 @@ class Game {
 		if (this.displayHUD) {
 			this.batchRenderer.renderHUD();
 		}
+		//logColorKeyCacheStats();//for debugging
 	}
 }
 export { Game };

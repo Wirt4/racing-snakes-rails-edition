@@ -1,9 +1,9 @@
 const globalHSLHexCache = new Map<number, string>();
 
 function hashHSL(h: number, l: number): number {
-	const qH = Math.round(h / 40) * 40;
-	const qS = 1; // see what this does
-	const qL = Math.round(l * 32) / 32;
+	const qH = Math.round(h / 20) * 20;
+	const qS = 100; // see what this does
+	const qL = Math.round(l * 16) / 16;
 	return ((qH & 0xFF) << 16) | (Math.round(qS * 100) << 8) | Math.round(qL * 100);
 }
 
@@ -29,7 +29,7 @@ class HSL {
 
 		this.hue = Math.round(hue / 20) * 20; //Limit hues to 16 -- 256 colors
 		this.lightness = Math.round(lightness * 16) / 16; //Limit lightness to steps of 16 increments
-		this.saturation = 0.5//Math.round(saturation * 4) / 4; // 4 levels of saturation
+		this.saturation = 1//Math.round(saturation * 4) / 4; // 4 levels of saturation
 
 	}
 

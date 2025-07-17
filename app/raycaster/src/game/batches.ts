@@ -7,8 +7,9 @@ interface BatchedRect { x: number, y: number, width: number, height: number };
 class CoordinatesStack {
 	private top: number;
 	private stck: Array<Coordinates>;
-
+	private pool: ObjectPool<Coordinates>;
 	constructor(size: number = 1500) {
+		this.pool = new ObjectPool<Coordinates>(size, () => ({ x: -1, y: -1 }));
 		this.top = 0;
 		this.stck = new Array(size);
 		this.fillStack(this.stck, 0, size);
@@ -26,6 +27,9 @@ class CoordinatesStack {
 	}
 
 	clear(): void {
+		for (let i = 0; i < this.top; i++) {
+			this.pool.release(this.stck[i]);
+		}
 		this.top = 0;
 	}
 
@@ -59,7 +63,7 @@ class CoordinatesStack {
 
 	private fillStack(stack: Array<Coordinates>, start: number, length: number): void {
 		for (let i = start; i < length; i++) {
-			stack[i] = { x: -1, y: -1 };
+			stack[i] = this.pool.acquire();
 		}
 	}
 }
@@ -77,7 +81,7 @@ class Batches {
 	}
 
 	addWallSlice(color: ColorName, brightness: number, x: number, y: number, height: number): void {
-		const quantized = Math.round(brightness * 100) / 100;
+		const quantized = Math.round(brightness * 16) / 16; // Quantize brightness to 16 levels
 		const colorKey = getColorKey(color, quantized);
 		if (!this.wallBatches.has(colorKey)) {
 			this.wallBatches.set(colorKey, []);
@@ -113,6 +117,5 @@ class Batches {
 	}
 
 }
-
 
 export { BatchedRect, Batches, CoordinatesStack };

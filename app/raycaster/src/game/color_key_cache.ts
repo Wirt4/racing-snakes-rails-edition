@@ -5,7 +5,6 @@ export interface ColorKey {
 	intensity: number;
 }
 
-
 const keyCache = new Map<ColorName, Map<number, ColorKey>>();
 /**
  * Returns a ColorKey object for the given color and intensity.
@@ -18,7 +17,7 @@ const keyCache = new Map<ColorName, Map<number, ColorKey>>();
  */
 export function getColorKey(color: ColorName, intensity: number): ColorKey {
 
-	const rounded_key = Math.round(intensity * 100);
+	const rounded_key = Math.round(intensity * 16);
 
 	if (!keyCache.has(color)) {
 		keyCache.set(color, new Map());
@@ -26,7 +25,18 @@ export function getColorKey(color: ColorName, intensity: number): ColorKey {
 	const innerMap = keyCache.get(color)!;
 
 	if (!innerMap.has(rounded_key)) {
-		innerMap.set(rounded_key, { color, intensity: rounded_key / 100 });
+		innerMap.set(rounded_key, { color, intensity: rounded_key / 16 });
 	}
 	return innerMap.get(rounded_key)!;
+}
+
+export function logColorKeyCacheStats(): void {
+	console.log('🧠 ColorKey Cache Stats');
+	let total = 0;
+	for (const [color, innerMap] of keyCache.entries()) {
+		const count = innerMap.size;
+		total += count;
+		console.log(`  ${color}: ${count} entries`);
+	}
+	console.log(`  Total unique ColorKeys: ${total}`);
 }
