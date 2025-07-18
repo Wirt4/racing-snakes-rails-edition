@@ -5,6 +5,7 @@ import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils/utils';
 import { WallInterface } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
+
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
@@ -35,6 +36,7 @@ class Player implements PlayerInterface {
 
 
 	get trail(): WallInterface[] {
+		throw new Error('Todo: cleaning pass with player class');
 		return this._trail;
 	}
 
