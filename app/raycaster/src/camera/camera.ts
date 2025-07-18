@@ -1,4 +1,8 @@
+import { Directions } from '../controls/directions';
 class Camera {
-	isRotating: boolean = true
+	isRotating: boolean = false
+	beginTurnExecution(turnDirection: Directions): void {
+		this.isRotating = true;
+	}
 }
 export { Camera }
