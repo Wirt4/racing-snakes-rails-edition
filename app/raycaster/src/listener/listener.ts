@@ -18,20 +18,23 @@ class Listener {
 		if (!this.isValidKey(keystroke)) {
 			return;
 		}
-		this.postIfDirectionChanged(keystroke);
+		this.handleValidKey(keystroke);
 	}
 
 	private isValidKey(keystroke: string): boolean {
 		return keystroke === this.leftKey || keystroke === this.rightKey;
 	}
 
-	private postIfDirectionChanged(keystroke: string): void {
+	private handleValidKey(keystroke: string): void {
 		const direction = keystroke === this.leftKey ? LastDirection.LEFT : LastDirection.RIGHT;
+		this.postIfDirectionChanged(direction);
+		this.lastDirection = direction;
+	}
+
+	private postIfDirectionChanged(direction: LastDirection): void {
 		if (direction !== this.lastDirection) {
 			this.worker.postMessage({ type, direction });
 		}
-		this.lastDirection = direction;
-
 	}
 }
 
