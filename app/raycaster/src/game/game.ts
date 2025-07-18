@@ -6,6 +6,7 @@ import { BrightnessInterface } from '../brightness/interface';
 import { BatchRenderer } from '../batchRenderer/batchRenderer';
 import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
 import { ColorName } from '../color/color_name';
+import { PlayerInterface } from '../player/interface';
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
@@ -17,7 +18,8 @@ class Game {
 		renderer: ContextRendererInterface,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
-		private readonly displayHUD: Boolean
+		private readonly displayHUD: Boolean,
+		private player: PlayerInterface,
 	) {
 		this.batchCorrelator = new BatchCorrelator(
 			map,
@@ -35,16 +37,15 @@ class Game {
 			Settings.CANVAS_HEIGHT,
 			ColorName.BLUE
 		);
-
 	}
 
 	update(): void {
-		this.map.movePlayer();
+		this.player.move();
 	}
 
 	draw(
 	): void {
-		this.map.prepareFrame()
+		this.map.resetIntersections()
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
 		this.batchRenderer.renderSlices();

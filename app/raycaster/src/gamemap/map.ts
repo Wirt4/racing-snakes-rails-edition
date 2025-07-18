@@ -65,7 +65,7 @@ export class GameMap implements GameMapInterface {
 		return this.player.angle;
 	}
 
-	public prepareFrame(): void {
+	public resetIntersections(): void {
 		this.intersectionIndex = 0;
 	}
 
@@ -119,6 +119,7 @@ export class GameMap implements GameMapInterface {
 			intersection: rayEnd
 		};
 	}
+
 	private getIntersection(): Intersection {
 		if (this.intersectionIndex >= this.intersectionPool.length) {
 			const length = this.intersectionPool.length;
