@@ -4,7 +4,7 @@ import { Directions } from '../controls/directions';
 import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES, FULL_CIRCLE } from '../geometry/constants';
 
 describe('isRotating tests', () => {
-	const turnFrames = 15;
+	const turnFrames = 10;
 	let camera: Camera;
 	beforeEach(() => {
 		camera = new Camera(turnFrames, 0);
@@ -41,13 +41,12 @@ describe('isRotating tests', () => {
 
 	test('the sweep of the move should inbetween', () => {
 		camera.beginTurnExecution(Directions.RIGHT);
-		for (let i = 0; i < turnFrames; i++) {
+		for (let i = 0; i < turnFrames - 1; i++) {
 			camera.adjust();
 			expect(camera.angle).toBeGreaterThan(TWO_HUNDRED_SEVENTY_DEGREES);
 			expect(camera.angle).toBeLessThan(FULL_CIRCLE);
 		}
+		camera.adjust();
 		expect(camera.angle).toBe(TWO_HUNDRED_SEVENTY_DEGREES);
 	});
-
-
 });
