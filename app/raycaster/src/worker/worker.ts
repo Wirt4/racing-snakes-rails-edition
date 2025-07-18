@@ -54,6 +54,13 @@ onmessage = (e) => {
 };
 
 function startLoop(): void {
+	/**
+	 * Preconditions:
+	 * The loop is not already running
+	 * Postconditions:
+	 * loop does not terminate on its own
+	 * calls requestAnimationFrame to continue the loop
+		* */
 	if (running) return;
 	running = true;
 	function loop(): void {

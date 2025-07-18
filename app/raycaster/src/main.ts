@@ -18,15 +18,6 @@ worker.postMessage({
 	settings: Settings
 }, [offscreen]);
 
-// onkeydown = (e: KeyboardEvent) => {
-// 	if (e.key === "ArrowLeft") {
-// 		worker.postMessage({ type: "turn", direction: Directions.LEFT });
-// 	}
-// 	if (e.key === "ArrowRight") {
-// 		worker.postMessage({ type: "turn", direction: Directions.RIGHT });
-// 	}
-// }
-
 let lastDirection: Directions | null = null;
 
 window.addEventListener("keydown", (e: KeyboardEvent) => {
