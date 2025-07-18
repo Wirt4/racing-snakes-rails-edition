@@ -68,7 +68,6 @@ class BatchRenderer {
 			const x = this._batches.gridBatch.peek().x;
 			const y = this._batches.gridBatch.peek().y;
 			this._batches.gridBatch.freetop();
-			//	const rectSpec = this._batches.gridBatch.pop();
 			path.rect(x, y, pixSize, pixSize);
 		}
 	}

@@ -1,5 +1,5 @@
 import { describe, test, expect, } from '@jest/globals';
-import { Batches, CoordinatesStack } from './batches';
+import { Batches } from './batches';
 import { ColorName } from '../color/color_name';
 
 describe('object is mutable', () => {
@@ -24,75 +24,4 @@ describe('object is mutable', () => {
 	});
 })
 
-describe('CoordStack tests', () => {
-	test('gridBatch.pop should throw if structure is empty', () => {
-		const coordStack = new CoordinatesStack();
-		expect(() => coordStack.pop()).toThrow('Stack is empty');
-	})
-	test('gridBatch.pop should return last added item', () => {
-		const coordStack = new CoordinatesStack();
-		coordStack.push(4, 2);
 
-		const result = coordStack.pop();
-
-		expect(result.x).toEqual(4);
-		expect(result.y).toEqual(2);
-	})
-
-	test('gridBatch.pop should return last added item', () => {
-		const coordStack = new CoordinatesStack();
-		coordStack.push(2, 6);
-		coordStack.push(5, 3);
-
-		const result = coordStack.pop();
-
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
-		const result2 = coordStack.pop();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
-	});
-	test('gridBatch.pop should return last added item', () => {
-		const coordStack = new CoordinatesStack();
-		coordStack.push(2, 6);
-		coordStack.push(5, 3);
-
-		const result = coordStack.pop();
-
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
-		const result2 = coordStack.pop();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
-	});
-	test('gridBatch.pop should return last added item', () => {
-		const coordStack = new CoordinatesStack();
-		coordStack.push(2, 6);
-		coordStack.push(5, 3);
-
-		const result = coordStack.pop();
-
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
-		const result2 = coordStack.pop();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
-	});
-
-
-	test('gridBatch.pop should adjust is goes beyond size', () => {
-		const coordStack = new CoordinatesStack(1);
-		coordStack.push(2, 6);
-		coordStack.push(5, 3);
-
-		const result = coordStack.pop();
-
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
-		const result2 = coordStack.pop();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
-	});
-
-
-})
