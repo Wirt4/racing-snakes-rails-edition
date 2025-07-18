@@ -9,6 +9,7 @@ class Camera {
 	private startAngle: number = 0;
 	private targetAngle: number = 0;
 	private rotating: boolean = false;
+	private currentTurnDirection: Directions | null = null;
 
 	constructor(private readonly turnTime: number, public angle: number) {
 		this.step = NINETY_DEGREES / turnTime;
@@ -19,32 +20,41 @@ class Camera {
 	}
 
 	beginTurnExecution(turnDirection: Directions): void {
+		this.currentTurnDirection = turnDirection;
 		this.startAngle = this.angle;
-
-		if (turnDirection === Directions.LEFT) {
-			this.targetAngle = normalizeAngle(this.startAngle + NINETY_DEGREES);
-			this.step = Math.abs(this.step);
-		} else if (turnDirection === Directions.RIGHT) {
-			this.targetAngle = normalizeAngle(this.startAngle - NINETY_DEGREES);
-			this.step = -Math.abs(this.step);
-		} else {
-			throw new Error("Unknown turn direction");
-		}
-
+		this.setTargetAngleAndStep();
 		this.frameCount = 0;
 		this.rotating = true;
 	}
 
 	adjust(): void {
-		if (!this.rotating) return;
+		if (!this.rotating) {
+			return;
+		}
+		this.incrementAngle();
+		this.snapToPrecision();
+	}
 
+	private incrementAngle() {
 		this.frameCount++;
 		this.angle = normalizeAngle(this.angle + this.step);
+	}
 
+	private snapToPrecision() {
 		if (this.frameCount >= this.turnTime) {
-			this.angle = this.targetAngle; // snap to precise final angle
+			this.angle = this.targetAngle;
 			this.rotating = false;
 		}
+	}
+
+	private setTargetAngleAndStep(): void {
+		const sign = this.currentTurnDirection === Directions.LEFT ? 1 : -1;
+		this.initializeTargetAngleAndStep(sign);
+	}
+
+	private initializeTargetAngleAndStep(sign: number): void {
+		this.targetAngle = normalizeAngle(this.startAngle + (sign * NINETY_DEGREES));
+		this.step = sign * (this.step);
 	}
 }
 export { Camera };
