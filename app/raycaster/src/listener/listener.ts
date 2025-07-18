@@ -22,7 +22,12 @@ class Listener {
 	}
 
 	keyup(keystroke: string): void {
-		this.lastDirection = DirectionRecord.NONE;
+		if (!this.isValidKey(keystroke)) {
+			return;
+		}
+
+		const direction = keystroke === this.leftKey ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
+		this.lastDirection = this.lastDirection === direction ? DirectionRecord.NONE : this.lastDirection;
 	}
 
 	private isValidKey(keystroke: string): boolean {
