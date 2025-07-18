@@ -1,15 +1,20 @@
 import { Directions } from '../controls/directions';
 class Camera {
-	private _isRotating: boolean = false;
-
-	constructor(private readonly turnTime: number) { }
+	private frameCount: number;
+	constructor(private readonly turnTime: number) {
+		this.frameCount = this.turnTime;
+	}
 
 	get isRotating(): boolean {
-		return this._isRotating;
+		return this.frameCount < this.turnTime;
 	}
+
 	beginTurnExecution(turnDirection: Directions): void {
-		this._isRotating = true;
+		this.frameCount = 0;
 	}
-	adjust(): void { }
+
+	adjust(): void {
+		this.frameCount++;
+	}
 }
 export { Camera }

@@ -17,8 +17,8 @@ describe('isRotating tests', () => {
 	test('given the camera is instantiated with a turn time of 15 frames, after 15 adjustments, then rotating is false again', () => {
 		camera.beginTurnExecution(Directions.RIGHT);
 		for (let i = 0; i < 15; i++) {
-			camera.adjust();
 			expect(camera.isRotating).toBe(true);
+			camera.adjust();
 		}
 		expect(camera.isRotating).toBe(false);
 	});
