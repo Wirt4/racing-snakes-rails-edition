@@ -32,13 +32,6 @@ class CoordinatesStack {
 		this.index = 0;
 	}
 
-	peek(): Coordinates {
-		if (this.isEmpty) {
-			throw new Error('Stack is empty');
-		}
-		return this.stck[this.index - 1];
-	}
-
 	freetop(): void {
 		if (this.isEmpty) {
 			throw new Error('Stack is empty');
