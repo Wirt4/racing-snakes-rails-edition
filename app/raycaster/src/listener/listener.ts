@@ -22,12 +22,18 @@ class Listener {
 	}
 
 	keyup(keystroke: string): void {
-		if (!this.isValidKey(keystroke)) {
+		if (!(this.isValidKey(keystroke) && this.isLastDirection(keystroke))) {
 			return;
 		}
+		this.lastDirection = DirectionRecord.NONE;
+	}
 
-		const direction = keystroke === this.leftKey ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
-		this.lastDirection = this.lastDirection === direction ? DirectionRecord.NONE : this.lastDirection;
+	private isLastDirection(keystroke: string): boolean {
+		return this.lastDirection === this.keystrokeToDirection(keystroke);
+	}
+
+	private keystrokeToDirection(keystroke: string): DirectionRecord {
+		return this.leftKey === keystroke ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
 	}
 
 	private isValidKey(keystroke: string): boolean {
@@ -35,7 +41,7 @@ class Listener {
 	}
 
 	private handleValidKey(keystroke: string): void {
-		const direction = keystroke === this.leftKey ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
+		const direction = this.keystrokeToDirection(keystroke);
 		this.postIfDirectionChanged(direction);
 		this.lastDirection = direction;
 	}
