@@ -23,7 +23,7 @@ describe('Keydown Tests', () => {
 		listener.keydown(keyStroke);
 		listener.keydown(keyStroke);
 		expect(mockWorker.postMessage.mock.calls).toEqual([
-			{ type: 'turn', direction: Directions.LEFT }
+			[{ type: 'turn', direction: Directions.LEFT }]
 		]);
 
 	})
