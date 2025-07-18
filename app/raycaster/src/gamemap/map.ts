@@ -209,7 +209,6 @@ export class GameMap implements GameMapInterface {
 		const numerator1 = (wallStart.x - rayOrigin.x) * (rayOrigin.y - rayPoint.y)
 		const numerator2 = (wallStart.y - rayOrigin.y) * (rayOrigin.x - rayPoint.x)
 		const diff = numerator1 - numerator2;
-		//should the determinant be clamped here?
 		return diff / determinant;
 	}
 
