@@ -72,6 +72,12 @@ describe('Keydown Tests', () => {
 
 		expect(mockWorker.postMessage).not.toHaveBeenCalled();
 	})
-
-
+	test('can turn left again after releasing arrow left key', () => {
+		const mockWorker = { postMessage: jest.fn() };
+		const listener = new Listener(mockWorker as unknown as Worker);
+		const keyStroke = 'ArrowLeft';
+		listener.keydown(keyStroke);
+		listener.keyup(keyStroke);
+		expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
+	})
 })

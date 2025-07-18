@@ -21,6 +21,9 @@ class Listener {
 		this.handleValidKey(keystroke);
 	}
 
+	keyup(keystroke: string): void {
+	}
+
 	private isValidKey(keystroke: string): boolean {
 		return keystroke === this.leftKey || keystroke === this.rightKey;
 	}
