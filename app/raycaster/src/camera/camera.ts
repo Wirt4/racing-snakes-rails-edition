@@ -1,8 +1,10 @@
 import { Directions } from '../controls/directions';
+import { NINETY_DEGREES } from '../geometry/constants';
+
 class Camera {
 	private frameCount: number;
 
-	constructor(private readonly turnTime: number) {
+	constructor(private readonly turnTime: number, public angle: number) {
 		this.frameCount = this.turnTime;
 	}
 
@@ -12,6 +14,7 @@ class Camera {
 
 	beginTurnExecution(turnDirection: Directions): void {
 		this.frameCount = 0;
+		this.angle = NINETY_DEGREES
 	}
 
 	adjust(): void {

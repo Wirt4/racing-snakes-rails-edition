@@ -1,11 +1,12 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { Camera } from './camera';
 import { Directions } from '../controls/directions';
+import { NINETY_DEGREES } from '../geometry/constants';
 
 describe('isRotating tests', () => {
 	let camera: Camera;
 	beforeEach(() => {
-		camera = new Camera(15);
+		camera = new Camera(15, 0);
 	});
 	test('camera is not rotating  when created', () => {
 		expect(camera.isRotating).toBe(false);
@@ -21,5 +22,12 @@ describe('isRotating tests', () => {
 			camera.adjust();
 		}
 		expect(camera.isRotating).toBe(false);
+	});
+	test('after rotation has completed, the camera angle is now facing in the new direction', () => {
+		camera.beginTurnExecution(Directions.LEFT);
+		for (let i = 0; i < 15; i++) {
+			camera.adjust();
+		}
+		expect(camera.angle).toBe(NINETY_DEGREES);
 	});
 });
