@@ -16,6 +16,9 @@ class CoordinatesStack {
 	}
 
 	get top(): Coordinates {
+		if (this.isEmpty) {
+			throw new Error('Stack is empty');
+		}
 		return this.stck[this.index - 1];
 	}
 	push(x: number, y: number): void {

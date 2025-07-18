@@ -65,8 +65,8 @@ class BatchRenderer {
 
 	private fillPathWithPoints(path: Path2D, pixSize: number): void {
 		while (!this._batches.gridBatch.isEmpty) {
-			const x = this._batches.gridBatch.peek().x;
-			const y = this._batches.gridBatch.peek().y;
+			const x = this._batches.gridBatch.top.x;
+			const y = this._batches.gridBatch.top.y;
 			this._batches.gridBatch.freetop();
 			path.rect(x, y, pixSize, pixSize);
 		}

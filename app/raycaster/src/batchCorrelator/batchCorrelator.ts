@@ -25,9 +25,8 @@ class BatchCorrelator {
 	) {
 		this.rays = new Float32Array(resolution);
 		this.batches = new Batches();
-		this.wallTopOffset = this.wallHeight - this.cameraHeight;
 		this.wallBottomOffset = -this.cameraHeight;
-
+		this.wallTopOffset = this.wallHeight + this.wallBottomOffset;
 	}
 
 	public batchRenderData(): void {

@@ -3,7 +3,7 @@ import { CoordinatesStack } from './coordinatesStack';
 describe('CoordStack tests', () => {
 	test('gridBatch.peek should throw if structure is empty', () => {
 		const coordStack = new CoordinatesStack();
-		expect(() => coordStack.peek()).toThrow('Stack is empty');
+		expect(() => coordStack.top).toThrow('Stack is empty');
 	})
 	test('gridBatch.pop should return last added item', () => {
 		const coordStack = new CoordinatesStack();
@@ -18,44 +18,37 @@ describe('CoordStack tests', () => {
 		coordStack.push(2, 6);
 		coordStack.push(5, 3);
 
-		const result = coordStack.peek();
-
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
+		expect(coordStack.top.x).toEqual(5);
+		expect(coordStack.top.y).toEqual(3);
 
 		coordStack.freetop();
-		const result2 = coordStack.peek();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
-	});
+		expect(coordStack.top.x).toEqual(2);
+		expect(coordStack.top.y).toEqual(6);
+	})
 	test('gridBatch.pop should return last added item', () => {
 		const coordStack = new CoordinatesStack();
 		coordStack.push(2, 6);
 		coordStack.push(5, 3);
 
-		const result = coordStack.peek();
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
+		expect(coordStack.top.x).toEqual(5);
+		expect(coordStack.top.y).toEqual(3);
 
 		coordStack.freetop();
 
-		const result2 = coordStack.peek();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
+		expect(coordStack.top.x).toEqual(2);
+		expect(coordStack.top.y).toEqual(6);
 	});
 	test('gridBatch.pop should return last added item', () => {
 		const coordStack = new CoordinatesStack();
 		coordStack.push(2, 6);
 		coordStack.push(5, 3);
-		const result = coordStack.peek();
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
+		expect(coordStack.top.x).toEqual(5);
+		expect(coordStack.top.y).toEqual(3);
 
 		coordStack.freetop();
 
-		const result2 = coordStack.peek();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
+		expect(coordStack.top.x).toEqual(2);
+		expect(coordStack.top.y).toEqual(6);
 	});
 
 
@@ -64,14 +57,12 @@ describe('CoordStack tests', () => {
 		coordStack.push(2, 6);
 		coordStack.push(5, 3);
 
-		const result = coordStack.peek();
-		expect(result.x).toEqual(5);
-		expect(result.y).toEqual(3);
+		expect(coordStack.top.x).toEqual(5);
+		expect(coordStack.top.y).toEqual(3);
 
 		coordStack.freetop();
 
-		const result2 = coordStack.peek();
-		expect(result2.x).toEqual(2);
-		expect(result2.y).toEqual(6);
+		expect(coordStack.top.x).toEqual(2);
+		expect(coordStack.top.y).toEqual(6);
 	});
 })
