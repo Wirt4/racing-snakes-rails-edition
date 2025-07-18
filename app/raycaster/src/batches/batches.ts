@@ -2,6 +2,7 @@ import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ColorName } from "../color/color_name";
 import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
+
 interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class CoordinatesStack {
@@ -39,6 +40,22 @@ class CoordinatesStack {
 		}
 		this.top--;
 		return this.stck[this.top];
+	}
+
+	peek(): Coordinates {
+		if (this.isEmpty) {
+			throw new Error('Stack is empty');
+		}
+		return this.stck[this.top - 1];
+	}
+
+	freetop(): void {
+		if (this.isEmpty) {
+			throw new Error('Stack is empty');
+		}
+		this.top--;
+		this.pool.release(this.stck[this.top]);
+		this.stck[this.top] = this.pool.acquire();
 	}
 
 	private reallocateIfNecessary(): void {
