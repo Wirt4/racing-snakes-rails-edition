@@ -1,6 +1,7 @@
 import { Directions } from '../controls/directions';
 class Camera {
 	private frameCount: number;
+
 	constructor(private readonly turnTime: number) {
 		this.frameCount = this.turnTime;
 	}
