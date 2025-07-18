@@ -7,7 +7,7 @@ class BatchRenderer {
         this.gridColor = gridColor;
         this._batches = new Batches();
     }
-    set batches(batches) {
+    set batches(batches: Batches) {
         this._batches = batches;
     }
     renderSlices() {
@@ -38,8 +38,9 @@ class BatchRenderer {
         this.contextRenderer.fillColor(this.gridColor, 50);
         // use a preallocated array and a basic Knuth style stack with a pointer to track i
         // // use a preallocated array and a basic Knuth style stack with a pointer to track it
-        if (this._batches.gridBatch.isEmpty)
+        if (this._batches.gridBatch.isEmpty) {
             return;
+        }
         const path = new Path2D();
         while (!this._batches.gridBatch.isEmpty) {
             const rectSpec = this._batches.gridBatch.pop();

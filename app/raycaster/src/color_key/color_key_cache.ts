@@ -29,14 +29,3 @@ export function getColorKey(color: ColorName, intensity: number): ColorKey {
 	}
 	return innerMap.get(rounded_key)!;
 }
-
-export function logColorKeyCacheStats(): void {
-	console.log('🧠 ColorKey Cache Stats');
-	let total = 0;
-	for (const [color, innerMap] of keyCache.entries()) {
-		const count = innerMap.size;
-		total += count;
-		console.log(`  ${color}: ${count} entries`);
-	}
-	console.log(`  Total unique ColorKeys: ${total}`);
-}
