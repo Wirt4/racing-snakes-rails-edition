@@ -1,29 +1,13 @@
-// scripts/build-worker.mjs
 import { build } from 'esbuild';
+import { buildEs } from './build-es.mjs';
 
 const watchMode = process.argv.includes('--watch');
 try {
-	await build({
-		entryPoints: ['src/worker/worker.ts'],
-		outfile: '../../public/workers/worker.js',
-		bundle: true,
-		format: 'esm',
-		target: 'es2020',
-		sourcemap: true,
-		watch: watchMode ? {
-			onRebuild(error) {
-				if (error) console.error('❌ Worker bundle rebuild failed:', error);
-				else console.log('✅ Worker bundle rebuilt');
-			}
-		} : false
-	});
-	if (!watchMode) {
-		console.log('✅ Worker bundle built successfully');
-	} else {
-		console.log('🟢 Watching for changes in worker bundle...');
-	}
+	await buildEs('src/worker/worker.ts', '../../public/workers/worker.js', watchMode)
 } catch (err) {
-	console.error(err);
-	if (!watchMode) process.exit(1);
+	console.error('Error in build-worker.mjs:', err);
+	if (!watchMode) {
+		console.error('Exiting due to error in build-worker.mjs');
+		process.exit(1);
+	}
 }
-

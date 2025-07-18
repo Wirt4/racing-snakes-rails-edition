@@ -1,14 +1,8 @@
-// scripts/build-all.mjs
-import { build } from 'esbuild';
-
-// Define options for both builds (no watch mode here, this is a one-time full build)
-const commonOpts = { bundle: true, format: 'esm', target: 'es2020', sourcemap: true };
-const mainOpts = { ...commonOpts, entryPoints: ['src/main.ts'], outfile: '../assets/builds/raycaster.js' };
-const workerOpts = { ...commonOpts, entryPoints: ['src/worker/worker.ts'], outfile: '../../public/workers/worker.js' };
+import { buildEs } from './build-es.mjs';
 
 try {
-	await build(mainOpts);
-	await build(workerOpts);
+	await buildEs('src/main.ts', '../assets/builds/raycaster.js');
+	await buildEs('src/worker/worker.ts', '../../public/workers/worker.js');
 	console.log('✅ Both main and worker bundles built successfully');
 } catch (err) {
 	console.error('❌ Build failed:', err);
