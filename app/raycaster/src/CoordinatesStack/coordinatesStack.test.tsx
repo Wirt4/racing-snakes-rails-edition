@@ -8,11 +8,9 @@ describe('CoordStack tests', () => {
 	test('gridBatch.pop should return last added item', () => {
 		const coordStack = new CoordinatesStack();
 		coordStack.push(4, 2);
-		//TODO: consider changing the function name peek to a getter for "Top"
-		const result = coordStack.peek();
 
-		expect(result.x).toEqual(4);
-		expect(result.y).toEqual(2);
+		expect(coordStack.top.x).toEqual(4);
+		expect(coordStack.top.y).toEqual(2);
 	})
 
 	test('gridBatch.pop should return last added item', () => {
