@@ -6,7 +6,6 @@ import { BrightnessInterface } from '../brightness/interface';
 import { BatchRenderer } from '../batchRenderer/batchRenderer';
 import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
 import { ColorName } from '../color/color_name';
-import { logColorKeyCacheStats } from '../color_key/color_key_cache';
 
 class Game {
 	fieldOfVision: number = Settings.FIELD_OF_VISION;
