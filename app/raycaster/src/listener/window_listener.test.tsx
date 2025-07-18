@@ -27,6 +27,7 @@ describe('Keydown Tests', () => {
 			[{ type: 'turn', direction: Directions.LEFT }]
 		]);
 	})
+
 	test('should turn right', () => {
 		const mockWorker = { postMessage: jest.fn() };
 		const listener = new Listener(mockWorker as unknown as Worker);
@@ -39,6 +40,7 @@ describe('Keydown Tests', () => {
 			direction: Directions.RIGHT
 		});
 	})
+
 	test('should turn right after turning left', () => {
 		const mockWorker = { postMessage: jest.fn() };
 		const listener = new Listener(mockWorker as unknown as Worker);
@@ -51,5 +53,25 @@ describe('Keydown Tests', () => {
 			[{ type: 'turn', direction: Directions.RIGHT }]
 		]);
 	})
+	test('should not turn if the same key is pressed twice', () => {
+		const mockWorker = { postMessage: jest.fn() };
+		const listener = new Listener(mockWorker as unknown as Worker);
+
+		listener.keydown('ArrowLeft');
+		listener.keydown('ArrowLeft');
+
+		expect(mockWorker.postMessage.mock.calls).toEqual([
+			[{ type: 'turn', direction: Directions.LEFT }]
+		]);
+	})
+	test('shoult not accept any keys other than ArrowLeft or ArrowRight', () => {
+		const mockWorker = { postMessage: jest.fn() };
+		const listener = new Listener(mockWorker as unknown as Worker);
+
+		listener.keydown('a');
+
+		expect(mockWorker.postMessage).not.toHaveBeenCalled();
+	})
+
 
 })

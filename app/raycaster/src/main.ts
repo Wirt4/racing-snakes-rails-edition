@@ -3,7 +3,7 @@ import { Settings } from './settings';
 import { Directions } from './controls/directions';
 const canvas = document.createElement("canvas");
 const width = Settings.CANVAS_WIDTH;
-canvas.width = width;;
+canvas.width = width;
 canvas.height = Settings.CANVAS_HEIGHT;
 canvas.id = "game-window";
 document.getElementById("app")?.appendChild(canvas);
