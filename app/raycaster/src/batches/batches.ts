@@ -3,15 +3,15 @@ import { ColorName } from "../color/color_name";
 import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
 import { CoordinatesStack } from "../CoordinatesStack/coordinatesStack";
-interface BatchedRect { x: number, y: number, width: number, height: number };
 
+interface BatchedRect { x: number, y: number, width: number, height: number };
 
 class Batches {
 	gridBatch: CoordinatesStack = new CoordinatesStack();
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
+	private rectPool: ObjectPool<BatchedRect> = new ObjectPool<BatchedRect>(1500, Batches.defaultRect);
 
-	private rectPool: ObjectPool<BatchedRect> = new ObjectPool<BatchedRect>(1500, () => ({ x: -1, y: -1, width: -1, height: -1 }));
 	clear(): void {
 		this.gridBatch.clear();
 		this.mapBatches.clear();
@@ -52,6 +52,10 @@ class Batches {
 			this.mapBatches.set(colorKey, []);
 		}
 		this.mapBatches.get(colorKey)?.push(wall.line);
+	}
+
+	private static defaultRect(): BatchedRect {
+		return { x: -1, y: -1, width: -1, height: -1 };
 	}
 
 }
