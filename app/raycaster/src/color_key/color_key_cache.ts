@@ -8,8 +8,8 @@ export interface ColorKey {
 const keyCache = new Map<ColorName, Map<number, ColorKey>>();
 
 export function getColorKey(color: ColorName, intensity: number): ColorKey {
-
-	const rounded_key = Math.round(intensity * 16);
+	const levels = 16;
+	const rounded_key = Math.round(intensity * levels);
 
 	if (!keyCache.has(color)) {
 		keyCache.set(color, new Map());
@@ -17,7 +17,7 @@ export function getColorKey(color: ColorName, intensity: number): ColorKey {
 	const innerMap = keyCache.get(color)!;
 
 	if (!innerMap.has(rounded_key)) {
-		innerMap.set(rounded_key, { color, intensity: rounded_key / 16 });
+		innerMap.set(rounded_key, { color, intensity: rounded_key / levels });
 	}
 	return innerMap.get(rounded_key)!;
 }
