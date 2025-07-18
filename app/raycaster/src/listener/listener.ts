@@ -22,6 +22,7 @@ class Listener {
 	}
 
 	keyup(keystroke: string): void {
+		this.lastDirection = LastDirection.NONE;
 	}
 
 	private isValidKey(keystroke: string): boolean {

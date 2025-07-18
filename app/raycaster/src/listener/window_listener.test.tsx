@@ -78,6 +78,7 @@ describe('Keydown Tests', () => {
 		const keyStroke = 'ArrowLeft';
 		listener.keydown(keyStroke);
 		listener.keyup(keyStroke);
+		listener.keydown(keyStroke);
 		expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
 	})
 })
