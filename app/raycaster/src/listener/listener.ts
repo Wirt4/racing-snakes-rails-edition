@@ -10,25 +10,28 @@ enum LastDirection {
 
 class Listener {
 	private lastDirection: LastDirection = LastDirection.NONE;
+	private leftKey = "ArrowLeft";
+	private rightKey = "ArrowRight";
 	constructor(private worker: Worker) { }
 
 	keydown(keystroke: string): void {
 		if (!this.isValidKey(keystroke)) {
 			return;
 		}
-		const direction = keystroke === "ArrowLeft" ? LastDirection.LEFT : LastDirection.RIGHT;
-		this.postIfDirectionChanged(direction);
-		this.lastDirection = direction;
+		this.postIfDirectionChanged(keystroke);
 	}
 
 	private isValidKey(keystroke: string): boolean {
-		return keystroke === "ArrowLeft" || keystroke === "ArrowRight";
+		return keystroke === this.leftKey || keystroke === this.rightKey;
 	}
 
-	private postIfDirectionChanged(direction: LastDirection): void {
+	private postIfDirectionChanged(keystroke: string): void {
+		const direction = keystroke === this.leftKey ? LastDirection.LEFT : LastDirection.RIGHT;
 		if (direction !== this.lastDirection) {
 			this.worker.postMessage({ type, direction });
 		}
+		this.lastDirection = direction;
+
 	}
 }
 
