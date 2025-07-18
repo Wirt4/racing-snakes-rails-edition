@@ -2,14 +2,14 @@ import { Directions } from '../controls/directions';
 
 const type = "turn";
 
-enum LastDirection {
+enum DirectionRecord {
 	LEFT = Directions.LEFT,
 	RIGHT = Directions.RIGHT,
 	NONE = "none"
 }
 
 class Listener {
-	private lastDirection: LastDirection = LastDirection.NONE;
+	private lastDirection: DirectionRecord = DirectionRecord.NONE;
 	private leftKey = "ArrowLeft";
 	private rightKey = "ArrowRight";
 	constructor(private worker: Worker) { }
@@ -22,7 +22,7 @@ class Listener {
 	}
 
 	keyup(keystroke: string): void {
-		this.lastDirection = LastDirection.NONE;
+		this.lastDirection = DirectionRecord.NONE;
 	}
 
 	private isValidKey(keystroke: string): boolean {
@@ -30,12 +30,12 @@ class Listener {
 	}
 
 	private handleValidKey(keystroke: string): void {
-		const direction = keystroke === this.leftKey ? LastDirection.LEFT : LastDirection.RIGHT;
+		const direction = keystroke === this.leftKey ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
 		this.postIfDirectionChanged(direction);
 		this.lastDirection = direction;
 	}
 
-	private postIfDirectionChanged(direction: LastDirection): void {
+	private postIfDirectionChanged(direction: DirectionRecord): void {
 		if (direction !== this.lastDirection) {
 			this.worker.postMessage({ type, direction });
 		}
