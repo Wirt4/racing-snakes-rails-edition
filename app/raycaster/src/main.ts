@@ -9,8 +9,8 @@ canvas.id = "game-window";
 document.getElementById("app")?.appendChild(canvas);
 
 const offscreen = canvas.transferControlToOffscreen();
-//below address is from the Ruby view, not relative to the TS system
-const worker = new Worker('/workers/worker.js', { type: 'module' });
+const addressToCompiledExecutable = '/workers/worker.js'
+const worker = new Worker(addressToCompiledExecutable, { type: 'module' });
 
 worker.postMessage({
 	type: "init",
@@ -20,24 +20,33 @@ worker.postMessage({
 
 let lastDirection: Directions | null = null;
 
+function postIfDirectionChanged(direction: Directions | null) {
+	if (direction !== lastDirection) {
+		worker.postMessage({ type: "turn", direction });
+		lastDirection = direction;
+	}
+}
+
 window.addEventListener("keydown", (e: KeyboardEvent) => {
 	let direction: Directions | null = null;
 	if (e.key === "ArrowLeft") direction = Directions.LEFT;
 	if (e.key === "ArrowRight") direction = Directions.RIGHT;
-
-	// Only post if direction changed
-	if (direction !== null && direction !== lastDirection) {
-		worker.postMessage({ type: "turn", direction });
-		lastDirection = direction;
-	}
+	postIfDirectionChanged(direction);
 });
 
+function IsReleasingSameKey(keyStroke: string): boolean {
+	if (keyStroke == "ArrowLeft" && lastDirection === Directions.LEFT) {
+		return true
+	}
+	return keyStroke === "ArrowRight" && lastDirection === Directions.RIGHT
+}
+
+function resetDirection() {
+	lastDirection = null;
+}
+
 window.addEventListener("keyup", (e: KeyboardEvent) => {
-	// Reset only if releasing the same key
-	if (
-		(e.key === "ArrowLeft" && lastDirection === Directions.LEFT) ||
-		(e.key === "ArrowRight" && lastDirection === Directions.RIGHT)
-	) {
-		lastDirection = null;
+	if (IsReleasingSameKey(e.key)) {
+		resetDirection()
 	}
 });
