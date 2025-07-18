@@ -4,7 +4,7 @@ class Listener {
 
 	keydown(keystroke: string): void {
 
-		this.worker.postMessage({ type: "turn", direction: "LEFT" });
+		this.worker.postMessage({ type: "turn", direction: Directions.LEFT });
 	}
 }
 
