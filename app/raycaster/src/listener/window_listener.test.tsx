@@ -25,7 +25,17 @@ describe('Keydown Tests', () => {
 		expect(mockWorker.postMessage.mock.calls).toEqual([
 			[{ type: 'turn', direction: Directions.LEFT }]
 		]);
-
 	})
+	test('should turn right', () => {
+		const mockWorker = { postMessage: jest.fn() };
+		const listener = new Listener(mockWorker as unknown as Worker);
+		const keyStroke = 'ArrowRight';
 
+		listener.keydown(keyStroke);
+
+		expect(mockWorker.postMessage).toHaveBeenCalledWith({
+			type: 'turn',
+			direction: Directions.RIGHT
+		});
+	})
 })

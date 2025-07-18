@@ -7,8 +7,9 @@ class Listener {
 	constructor(private worker: Worker) { }
 
 	keydown(keystroke: string): void {
+		const direction = keystroke === "ArrowLeft" ? Directions.LEFT : Directions.RIGHT;
 		if (!this.buttonPressed) {
-			this.worker.postMessage({ type, direction: Directions.LEFT });
+			this.worker.postMessage({ type, direction });
 		}
 		this.buttonPressed = true;
 	}
