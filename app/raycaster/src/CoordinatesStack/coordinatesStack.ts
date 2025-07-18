@@ -2,7 +2,7 @@ import { ObjectPool } from '../objectPool/objectPool';
 import { Coordinates } from '../geometry/interfaces';
 
 class CoordinatesStack {
-	private _top: number = 0;
+	private index: number = 0;
 	private stck: Array<Coordinates>;
 	private pool: ObjectPool<Coordinates>;
 	constructor(size: number = 1500) {
@@ -12,44 +12,44 @@ class CoordinatesStack {
 	}
 
 	get isEmpty(): boolean {
-		return this._top === 0;
+		return this.index === 0;
 	}
 
 	get top(): Coordinates {
-		return this.stck[this._top - 1];
+		return this.stck[this.index - 1];
 	}
 	push(x: number, y: number): void {
 		this.reallocateIfNecessary();
-		this.stck[this._top].x = x;
-		this.stck[this._top].y = y;
-		this._top++;
+		this.stck[this.index].x = x;
+		this.stck[this.index].y = y;
+		this.index++;
 	}
 
 	clear(): void {
-		for (let i = 0; i < this._top; i++) {
+		for (let i = 0; i < this.index; i++) {
 			this.pool.release(this.stck[i]);
 		}
-		this._top = 0;
+		this.index = 0;
 	}
 
 	peek(): Coordinates {
 		if (this.isEmpty) {
 			throw new Error('Stack is empty');
 		}
-		return this.stck[this._top - 1];
+		return this.stck[this.index - 1];
 	}
 
 	freetop(): void {
 		if (this.isEmpty) {
 			throw new Error('Stack is empty');
 		}
-		this._top--;
-		this.pool.release(this.stck[this._top]);
-		this.stck[this._top] = this.pool.acquire();
+		this.index--;
+		this.pool.release(this.stck[this.index]);
+		this.stck[this.index] = this.pool.acquire();
 	}
 
 	private reallocateIfNecessary(): void {
-		if (this._top >= this.stck.length) {
+		if (this.index >= this.stck.length) {
 			this.reallocate();
 		}
 	}
