@@ -1,5 +1,6 @@
 import { ColorName } from '../color/color_name';
 import { WallInterface } from '../gamemap/interface';
+
 export interface PlayerInterface {
 	turnLeft: () => void;
 	turnRight: () => void;
@@ -10,3 +11,6 @@ export interface PlayerInterface {
 	angle: number;
 	color: ColorName;
 }
+// before writing more code, let's list reasons why the implementation
+// of each member-method would change
+//two responsibilities here: positioning and controls

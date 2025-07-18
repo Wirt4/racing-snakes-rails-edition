@@ -30,13 +30,12 @@ class Player implements PlayerInterface {
 		this.currentHeading = angle;
 		this.nextHeading = angle;
 		this.lastPosition = { x: this.x, y: this.y };
-		this._trail = [{ line: { start: this.lastPosition, end: this.lastPosition }, color: color }];
+		const startWall = { line: { start: this.lastPosition, end: this.lastPosition }, color };
+		this._trail = [startWall];
 		this.color = color;
 	}
 
-
 	get trail(): WallInterface[] {
-		throw new Error('Todo: cleaning pass with player class');
 		return this._trail;
 	}
 
@@ -103,16 +102,25 @@ class Player implements PlayerInterface {
 		if (this.isTurning) {
 			return
 		}
+		this.beginTurnExectution(angle);
+	}
+
+	private beginTurnExectution(angle: number): void {
 		this.isTurning = true;
 		this.nextHeading = normalizeAngle(this.currentHeading + angle);
 		this.fillInbetweens(angle);
+
 	}
 
 	private fillInbetweens(angle: number): void {
 		const frames = Math.floor(this.turnDistance / this.speed)
 		const sign = angle > 0 ? 1 : -1;
+		this.pushToInbetweens(sign, frames);
+	}
+
+	private pushToInbetweens(sign: number, frames: number): void {
 		for (let i = 0; i < frames; i++) {
-			this.inbetweens.push(sign * ((Math.PI) / 2) / frames);
+			this.inbetweens.push(sign * NINETY_DEGREES / frames);
 		}
 	}
 }
