@@ -84,7 +84,6 @@ class BatchRenderer {
 			path.rect(rect.x, rect.y, rect.width, rect.height);
 			this._batches.releaseSlice(rect);
 		}
-
 	}
 
 	private renderHUDMap(): void {
