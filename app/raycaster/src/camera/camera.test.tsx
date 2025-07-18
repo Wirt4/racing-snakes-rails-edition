@@ -1,12 +1,13 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { Camera } from './camera';
 import { Directions } from '../controls/directions';
-import { NINETY_DEGREES } from '../geometry/constants';
+import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES } from '../geometry/constants';
 
 describe('isRotating tests', () => {
+	const turnFrames = 15;
 	let camera: Camera;
 	beforeEach(() => {
-		camera = new Camera(15, 0);
+		camera = new Camera(turnFrames, 0);
 	});
 	test('camera is not rotating  when created', () => {
 		expect(camera.isRotating).toBe(false);
@@ -17,7 +18,7 @@ describe('isRotating tests', () => {
 	});
 	test('given the camera is instantiated with a turn time of 15 frames, after 15 adjustments, then rotating is false again', () => {
 		camera.beginTurnExecution(Directions.RIGHT);
-		for (let i = 0; i < 15; i++) {
+		for (let i = 0; i < turnFrames; i++) {
 			expect(camera.isRotating).toBe(true);
 			camera.adjust();
 		}
@@ -25,9 +26,17 @@ describe('isRotating tests', () => {
 	});
 	test('after rotation has completed, the camera angle is now facing in the new direction', () => {
 		camera.beginTurnExecution(Directions.LEFT);
-		for (let i = 0; i < 15; i++) {
+		for (let i = 0; i < turnFrames; i++) {
 			camera.adjust();
 		}
 		expect(camera.angle).toBe(NINETY_DEGREES);
 	});
+	test('after rotation has completed, the camera angle is now facing in the new direction', () => {
+		camera.beginTurnExecution(Directions.RIGHT);
+		for (let i = 0; i < turnFrames; i++) {
+			camera.adjust();
+		}
+		expect(camera.angle).toBe(TWO_HUNDRED_SEVENTY_DEGREES);
+	});
+
 });
