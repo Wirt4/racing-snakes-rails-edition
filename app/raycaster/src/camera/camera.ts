@@ -1,5 +1,5 @@
 import { Directions } from '../controls/directions';
-import { NINETY_DEGREES } from '../geometry/constants';
+import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES } from '../geometry/constants';
 
 class Camera {
 	private frameCount: number;
@@ -14,7 +14,7 @@ class Camera {
 
 	beginTurnExecution(turnDirection: Directions): void {
 		this.frameCount = 0;
-		this.angle = NINETY_DEGREES
+		this.angle = turnDirection === Directions.LEFT ? NINETY_DEGREES : TWO_HUNDRED_SEVENTY_DEGREES;
 	}
 
 	adjust(): void {
