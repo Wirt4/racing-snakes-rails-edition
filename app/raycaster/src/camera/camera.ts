@@ -1,8 +1,11 @@
 import { Directions } from '../controls/directions';
 class Camera {
-	isRotating: boolean = false
+	private _isRotating: boolean = false;
+	get isRotating(): boolean {
+		return this._isRotating;
+	}
 	beginTurnExecution(turnDirection: Directions): void {
-		this.isRotating = true;
+		this._isRotating = true;
 	}
 }
 export { Camera }
