@@ -1,4 +1,3 @@
-// esbuild.config.mjs
 import { build } from 'esbuild';
 
 const commonOptions = {
