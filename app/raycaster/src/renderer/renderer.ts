@@ -84,7 +84,7 @@ class Renderer implements ContextRendererInterface {
 
 		const brightnessPercent = brightness / 100;
 		let hsl: HSL;
-		if (color == ColorName.NONE) {
+		if (color === ColorName.NONE) {
 			hsl = this.getCachedHSL(ColorName.WHITE)
 		} else {
 			hsl = this.getCachedHSL(color)
@@ -93,7 +93,6 @@ class Renderer implements ContextRendererInterface {
 		hsl.lightness = brightnessPercent;
 		const hxcd = hsl.toHex();
 		if (this.lastFillColorStyle === hxcd) {
-			// no need to set the fill style if it hasn't changed
 			return;
 		}
 		this.context.fillStyle = hxcd;

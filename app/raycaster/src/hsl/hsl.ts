@@ -2,7 +2,7 @@ const globalHSLHexCache = new Map<number, string>();
 
 function hashHSL(h: number, l: number): number {
 	const qH = Math.round(h / 20) * 20;
-	const qS = 100; // see what this does
+	const qS = 100;
 	const qL = Math.round(l * 16) / 16;
 	return ((qH & 0xFF) << 16) | (Math.round(qS * 100) << 8) | Math.round(qL * 100);
 }
@@ -16,7 +16,7 @@ class HSL {
 		saturation: number,
 		lightness: number) {
 		/**
-		 * Preconditions: 
+		 * Preconditions:
 		 * hue is a float representing the hue in degrees  between 0 and 360 (inclusive).
 		 * saturation is a float representing the saturation as a percentage between 0 and 1 (inclusive).
 		 * lightness is a float representing the lightness as a percentage between 0 and 1 (inclusive).
@@ -35,7 +35,7 @@ class HSL {
 
 	toHex(): string {
 		/**
-		 * Preconditions: 
+		 * Preconditions:
 		 * The HSL object has valid hue, saturation, and lightness values.
 		 * Postconditions:
 		 * Returns a string representing the color in hexadecimal format.

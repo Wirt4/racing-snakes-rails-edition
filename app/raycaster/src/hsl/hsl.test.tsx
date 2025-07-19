@@ -18,13 +18,13 @@ describe('HSL object tests', () => {
 	})
 	test('enforce validity of saturation', () => {
 		expect(() => new HSL(240, -10, 1)).toThrow("Saturation must be between 0 and 1");
-		expect(() => new HSL(240, 11, 1)).toThrow("Saturation must be between 0 and 1");
+		expect(() => new HSL(240, 110, 1)).toThrow("Saturation must be between 0 and 1");
 		expect(() => new HSL(240, 1, 1)).not.toThrow();
 		expect(() => new HSL(240, 0, 1)).not.toThrow();
 	})
 	test('enforce validity of lightness', () => {
 		expect(() => new HSL(240, 1, -10)).toThrow("Lightness must be between 0 and 1");
-		expect(() => new HSL(240, 1, 11)).toThrow("Lightness must be between 0 and 1");
+		expect(() => new HSL(240, 1, 110)).toThrow("Lightness must be between 0 and 1");
 		expect(() => new HSL(240, 1, 1)).not.toThrow();
 		expect(() => new HSL(240, 0, 0)).not.toThrow();
 	})
