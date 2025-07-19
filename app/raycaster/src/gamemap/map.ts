@@ -28,6 +28,7 @@ export class GameMap implements GameMapInterface {
 	private bMath = BMath.getInstance();
 	private _currentSlice: Slice = { distance: 0, color: ColorName.NONE, gridHits: [], intersection: { x: 0, y: 0 } };
 	private rayOrigin: Coordinates = { x: 0, y: 0 };
+
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -60,6 +61,7 @@ export class GameMap implements GameMapInterface {
 
 	get playerPosition(): Coordinates {
 		const { x, y } = this.player;
+		//ton of object creation here -- will need to change this later
 		return { x, y };
 	}
 
@@ -104,8 +106,8 @@ export class GameMap implements GameMapInterface {
 				closest.distance = hit.distance;
 				closest.x = hit.x;
 				closest.y = hit.y;
+				this.intersectionPool.release(hit);
 				color = wall.color;
-				//todo: allocate and remove "hit"
 			}
 		}
 
@@ -116,9 +118,8 @@ export class GameMap implements GameMapInterface {
 				closest.x = hit.x;
 				closest.y = hit.y;
 				closest.distance = hit.distance;
+				this.intersectionPool.release(hit);
 				color = this.player.color;
-
-				//TODO: allocate and remove "hit"
 			}
 		}
 
@@ -188,7 +189,8 @@ export class GameMap implements GameMapInterface {
 		this.rayPoint.y = rayOrigin.y + direction.y;
 		const rayPoint = this.rayPoint;
 		const determinant = this.calculateDeterminant(wall.start, wall.end, rayOrigin, rayPoint);
-		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
+		const result = this.intersectionPool.acquire();
+		result.isValid = false;
 
 		if (this.isParallel(determinant)) {
 			return result;
