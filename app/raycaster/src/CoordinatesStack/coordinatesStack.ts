@@ -6,7 +6,7 @@ class CoordinatesStack {
 	private stck: Array<Coordinates>;
 	private pool: ObjectPool<Coordinates>;
 	constructor(size: number = 1500) {
-		this.pool = new ObjectPool<Coordinates>(size, () => ({ x: -1, y: -1 }));
+		this.pool = new ObjectPool<Coordinates>(size, () => ({ x: -1, y: -1 }), true);
 		this.stck = new Array(size);
 		this.fillStack(this.stck, 0, size);
 	}

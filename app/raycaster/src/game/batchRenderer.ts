@@ -6,7 +6,7 @@ import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
 import { ColorKey } from './color_key_cache';
-
+//some duplication here with batchCorrelator.ts, remove when compile and tests are clean
 class BatchCorrelator {
 	public batches: Batches;
 	private rays: Float32Array;
@@ -63,16 +63,16 @@ class BatchCorrelator {
 		angle: number,
 		index: number,
 	): void {
-		const { gridHits } = this._gameMap.castRay(angle, this.maxDistance);
-		for (let j = 0; j < gridHits.length; j++) {
-			this.appendGridPoint(gridHits[j], angle, index);
+		this._gameMap.castRay(angle, this.maxDistance);
+		for (let j = 0; j < this._gameMap.currentSlice.gridHits.length; j++) {
+			this.appendGridPoint(this._gameMap.currentSlice.gridHits[j], angle, index);
 		}
 	}
 
 	private getAdjustedDistance(angle: number): { distance: number, color: ColorName } {
-		const { distance, color } = this._gameMap.castRay(angle, this.maxDistance);
-		const correctedDistance = this.raycaster.removeFishEye(distance, angle, this._gameMap.playerAngle);
-		return { distance: correctedDistance, color };
+		this._gameMap.castRay(angle, this.maxDistance);
+		const correctedDistance = this.raycaster.removeFishEye(this._gameMap.currentSlice.distance, angle, this._gameMap.playerAngle);
+		return { distance: correctedDistance, color: this._gameMap.currentSlice.color };
 	}
 
 	private sliceHeight(

@@ -4,6 +4,7 @@ import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
+import { ObjectPool } from '../objectPool/objectPool';
 
 interface Intersection {
 	isValid: boolean;
@@ -12,14 +13,17 @@ interface Intersection {
 	distance: number;
 }
 
+function nullIntersection(): Intersection {
+	return { isValid: false, x: -1, y: -1, distance: Infinity };
+}
+
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
-	private intersectionPool: Intersection[] = [];
-	private intersectionIndex = 0;
+	private intersectionPool: ObjectPool<Intersection> = new ObjectPool<Intersection>(1000, nullIntersection);
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 	constructor(
@@ -46,10 +50,6 @@ export class GameMap implements GameMapInterface {
 			this.initializeWall(right_top, right_bottom, boundaryColor),
 			this.initializeWall(left_bottom, right_bottom, boundaryColor),
 		];
-
-		for (let i = 0; i < 1000; i++) {
-			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-		}
 	}
 
 	get playerTrail(): WallInterface[] {
@@ -61,12 +61,16 @@ export class GameMap implements GameMapInterface {
 		return { x, y };
 	}
 
+	get currentSlice(): Slice {
+		throw new Error("currentSlice is not yet implemented in GameMap");
+	}
+
 	get playerAngle(): number {
 		return this.player.angle;
 	}
 
 	public resetIntersections(): void {
-		this.intersectionIndex = 0;
+		this.intersectionPool.clear();
 	}
 
 	appendWall(wall: WallInterface): void {
@@ -111,24 +115,13 @@ export class GameMap implements GameMapInterface {
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
 		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
-
+		// this is returning an object: might need to refactor so it exposes an object
 		return {
 			distance: closest.distance,
 			color,
 			gridHits,
 			intersection: rayEnd
 		};
-	}
-
-	private getIntersection(): Intersection {
-		if (this.intersectionIndex >= this.intersectionPool.length) {
-			const length = this.intersectionPool.length;
-			for (let i = 0; i < length; i++) {
-				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-
-			}
-		}
-		return this.intersectionPool[this.intersectionIndex++];
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {

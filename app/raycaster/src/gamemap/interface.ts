@@ -24,7 +24,8 @@ interface GameMapInterface {
 	playerPosition: Coordinates;
 	playerAngle: number;
 	playerTrail: WallInterface[];
-	castRay(angle: number, distance: number): Slice;
+	currentSlice: Slice;
+	castRay(angle: number, distance: number): void;
 	resetIntersections(): void;
 	appendWall(wall: WallInterface): void;
 }
