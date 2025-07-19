@@ -93,7 +93,6 @@ class Renderer implements ContextRendererInterface {
 		hsl.lightness = brightnessPercent;
 		const hxcd = hsl.toHex();
 		if (this.lastFillColorStyle === hxcd) {
-			// no need to set the fill style if it hasn't changed
 			return;
 		}
 		this.context.fillStyle = hxcd;
@@ -143,7 +142,6 @@ class Renderer implements ContextRendererInterface {
 
 	private getCachedHSL(color: ColorName): HSL {
 		if (!this.hslCache[color]) {
-			console.log('calling hslFactory for color:', color);
 			this.hslCache[color] = hslFactory(color);
 		}
 		return this.hslCache[color];
