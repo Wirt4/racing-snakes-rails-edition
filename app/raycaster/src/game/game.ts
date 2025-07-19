@@ -1,13 +1,16 @@
 import { ContextRendererInterface } from '../renderer/interface';
 import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
-import { Settings } from '../settings';
+import { Settings } from '../settings/settings';
 import { BrightnessInterface } from '../brightness/interface';
-import { BatchRenderer, BatchCorrelator } from './batchRenderer';
-import { ColorName } from './color/color_name';
+import { BatchRenderer } from '../batchRenderer/batchRenderer';
+import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
+import { ColorName } from '../color/color_name';
+import { PlayerInterface } from '../player/interface';
 
 class Game {
-	fieldOfVision: number = Settings.FIELD_OF_VISION;
+	private settings: Settings = new Settings();
+	fieldOfVision: number = this.settings.FIELD_OF_VISION;
 	private batchRenderer: BatchRenderer;
 	private batchCorrelator: BatchCorrelator;
 
@@ -16,38 +19,38 @@ class Game {
 		renderer: ContextRendererInterface,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
-		private readonly displayHUD: Boolean
+		private readonly displayHUD: Boolean,
+		private player: PlayerInterface,
 	) {
 		this.batchCorrelator = new BatchCorrelator(
 			map,
 			raycaster,
-			Settings.MAX_DISTANCE,
-			Settings.HORIZON_Y,
-			Settings.CAMERA_HEIGHT,
-			Settings.WALL_HEIGHT,
+			this.settings.MAX_DISTANCE,
+			this.settings.HORIZON_Y,
+			this.settings.CAMERA_HEIGHT,
+			this.settings.WALL_HEIGHT,
 			brightness,
-			Settings.RESOLUTION
+			this.settings.RESOLUTION
 		)
 		this.batchRenderer = new BatchRenderer(
 			renderer,
-			Settings.CANVAS_WIDTH,
-			Settings.CANVAS_HEIGHT,
+			this.settings.CANVAS_WIDTH,
+			this.settings.CANVAS_HEIGHT,
 			ColorName.BLUE
 		);
-
 	}
 
 	update(): void {
-		this.map.movePlayer();
+		this.player.move();
 	}
 
 	draw(
 	): void {
-		this.batchCorrelator.gameMap = this.map;
+		this.map.resetIntersections()
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
 		this.batchRenderer.renderSlices();
-
+		//TODO: (on separate branch) - try buffer swapping if that may speed up rendering
 		if (this.displayHUD) {
 			this.batchRenderer.renderHUD();
 		}

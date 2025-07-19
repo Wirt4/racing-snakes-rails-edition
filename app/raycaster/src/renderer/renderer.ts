@@ -1,6 +1,6 @@
-import { ColorName } from "../game/color/color_name";
-import { hslFactory } from "./hsl/hsl_factory";
-import { HSL } from "./hsl/hsl";
+import { ColorName } from "../color/color_name";
+import { hslFactory } from "../hsl/hsl_factory";
+import { HSL } from "../hsl/hsl";
 import { Coordinates, LineSegment } from "../geometry/interfaces";
 import { ContextRendererInterface } from "./interface";
 
@@ -108,6 +108,14 @@ class Renderer implements ContextRendererInterface {
 		 */
 		this.context.lineWidth = stroke;
 		this.context.ellipse(origin.x, origin.y, 1, 1, 0, 0, 0)
+	}
+
+	public fillPath(path: Path2D): void {
+		/**
+		 * Precondition: the context is a valid CanvasRenderingContext2D and the path is a valid Path2D object
+		 * Postcondition: the context fills the specified path with the current fill style
+		 */
+		this.context.fill(path);
 	}
 
 	public noStroke(): void {

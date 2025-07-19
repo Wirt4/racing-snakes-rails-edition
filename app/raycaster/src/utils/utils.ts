@@ -1,4 +1,4 @@
-import { FULL_CIRCLE } from './geometry/constants'
+import { FULL_CIRCLE } from '../geometry/constants'
 function assertIsNonNegative(value: number): void {
 	if (typeof value !== 'number' || value < 0) {
 		throw new Error("Value must be a non-negative number");

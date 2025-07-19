@@ -1,6 +1,6 @@
 
 
-import { assertIsPositiveInteger } from './utils';
+import { assertIsPositiveInteger } from './utils/utils';
 
 const ONE_SECOND_IN_MS = 100
 

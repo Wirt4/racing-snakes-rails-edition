@@ -1,22 +1,27 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
+import { BMath } from '../boundedMath/bmath';
+
 interface Intersection {
 	isValid: boolean;
 	x: number;
 	y: number;
 	distance: number;
 }
+
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
-
-
+	private intersectionPool: Intersection[] = [];
+	private intersectionIndex = 0;
+	private rayPoint: Coordinates = { x: 0, y: 0 };
+	private bMath = BMath.getInstance();
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -41,13 +46,14 @@ export class GameMap implements GameMapInterface {
 			this.initializeWall(right_top, right_bottom, boundaryColor),
 			this.initializeWall(left_bottom, right_bottom, boundaryColor),
 		];
+
+		for (let i = 0; i < 1000; i++) {
+			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
+		}
 	}
 
 	get playerTrail(): WallInterface[] {
-		return this.player.trail.map((wall) => ({
-			line: wall,
-			color: this.player.color
-		}));
+		return this.player.trail
 	}
 
 	get playerPosition(): Coordinates {
@@ -57,6 +63,10 @@ export class GameMap implements GameMapInterface {
 
 	get playerAngle(): number {
 		return this.player.angle;
+	}
+
+	public resetIntersections(): void {
+		this.intersectionIndex = 0;
 	}
 
 	appendWall(wall: WallInterface): void {
@@ -110,6 +120,17 @@ export class GameMap implements GameMapInterface {
 		};
 	}
 
+	private getIntersection(): Intersection {
+		if (this.intersectionIndex >= this.intersectionPool.length) {
+			const length = this.intersectionPool.length;
+			for (let i = 0; i < length; i++) {
+				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
+
+			}
+		}
+		return this.intersectionPool[this.intersectionIndex++];
+	}
+
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
 		const gridHits: number[] = [];
 		for (const grid of this.gridLines) {
@@ -140,8 +161,8 @@ export class GameMap implements GameMapInterface {
 	}
 	private rayDirecton(angle: number): Coordinates {
 		return {
-			x: Math.cos(angle),
-			y: Math.sin(angle)
+			x: this.bMath.cos(angle),
+			y: this.bMath.sin(angle)
 		};
 	}
 
@@ -161,7 +182,9 @@ export class GameMap implements GameMapInterface {
 	}
 
 	private rayIntersectsWall(rayOrigin: Coordinates, direction: Coordinates, wall: LineSegment): Intersection {
-		const rayPoint: Coordinates = { x: rayOrigin.x + direction.x, y: rayOrigin.y + direction.y };
+		this.rayPoint.x = rayOrigin.x + direction.x;
+		this.rayPoint.y = rayOrigin.y + direction.y;
+		const rayPoint = this.rayPoint;
 		const determinant = this.calculateDeterminant(wall.start, wall.end, rayOrigin, rayPoint);
 		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
 

@@ -1,12 +1,13 @@
 import { RaycasterInterface } from './interface';
-import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils';
+import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils/utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
-
+import { BMath } from '../boundedMath/bmath';
 class Raycaster implements RaycasterInterface {
 
 	public focalLength: number;
 	private offsets: Array<number>;
 	private fovOffset: number;
+	private bMath: BMath = BMath.getInstance();
 
 	constructor(
 		private resolution: number,
@@ -42,6 +43,12 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
+	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
+		for (let i = 0; i < this.resolution; i++) {
+			rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
+		}
+	}
+
 	getViewRays(viewerAngle: number): Float32Array {
 		/*Precondition: 0<=viewerAngle<=2*Math.PI
 		 * Postconditions: 
@@ -50,11 +57,7 @@ class Raycaster implements RaycasterInterface {
 		 * The length of the array is equal to the resolution
 		 * the array is arranged from 
 		 */
-
-		//start angle is viewerAngle - offset, end angle is viewerAngle + offset
-		for (let i = 0; i < this.resolution; i++) {
-			this.rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
-		}
+		this.fillRaysInto(this.rays, viewerAngle);
 		return this.rays;
 	}
 
@@ -67,7 +70,7 @@ class Raycaster implements RaycasterInterface {
 		if (this.fieldOfView >= NINETY_DEGREES) {
 			return distance; //no correction needed for wide FOV
 		}
-		return distance * Math.cos(relativeAngle - centerAngle);
+		return distance * this.bMath.cos(relativeAngle - centerAngle);
 	}
 
 	wallHeightToSliceHeight(distance: number, height: number): number {
