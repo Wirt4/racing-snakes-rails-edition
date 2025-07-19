@@ -26,6 +26,8 @@ export class GameMap implements GameMapInterface {
 	private intersectionPool: ObjectPool<Intersection> = new ObjectPool<Intersection>(1000, nullIntersection);
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
+	private _currentSlice: Slice = { distance: 0, color: ColorName.NONE, gridHits: [], intersection: { x: 0, y: 0 } };
+
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -62,13 +64,12 @@ export class GameMap implements GameMapInterface {
 	}
 
 	get currentSlice(): Slice {
-		throw new Error("currentSlice is not yet implemented in GameMap");
+		return this._currentSlice;
 	}
 
 	get playerAngle(): number {
 		return this.player.angle;
 	}
-
 	public resetIntersections(): void {
 		this.intersectionPool.clear();
 	}
@@ -89,7 +90,7 @@ export class GameMap implements GameMapInterface {
 		}
 	}
 
-	castRay(angle: number, maximumAllowableDistance: number): Slice {
+	castRay(angle: number, maximumAllowableDistance: number): void {
 		const rayDirection = this.rayDirecton(angle);
 		let closest = this.deafaultIntersection(maximumAllowableDistance);
 		let color = ColorName.NONE;
@@ -115,13 +116,11 @@ export class GameMap implements GameMapInterface {
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
 		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
-		// this is returning an object: might need to refactor so it exposes an object
-		return {
-			distance: closest.distance,
-			color,
-			gridHits,
-			intersection: rayEnd
-		};
+
+		this._currentSlice.distance = closest.distance;
+		this._currentSlice.color = color;
+		this._currentSlice.gridHits = gridHits;
+		this._currentSlice.intersection = rayEnd;
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
