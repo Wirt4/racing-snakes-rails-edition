@@ -11,6 +11,3 @@ export interface PlayerInterface {
 	angle: number;
 	color: ColorName;
 }
-// before writing more code, let's list reasons why the implementation
-// of each member-method would change
-//two responsibilities here: positioning and controls
