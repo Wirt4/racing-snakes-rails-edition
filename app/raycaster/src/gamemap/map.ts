@@ -27,7 +27,7 @@ export class GameMap implements GameMapInterface {
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 	private _currentSlice: Slice = { distance: 0, color: ColorName.NONE, gridHits: [], intersection: { x: 0, y: 0 } };
-
+	private rayOrigin: Coordinates = { x: 0, y: 0 };
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -92,35 +92,45 @@ export class GameMap implements GameMapInterface {
 
 	castRay(angle: number, maximumAllowableDistance: number): void {
 		const rayDirection = this.rayDirecton(angle);
-		let closest = this.deafaultIntersection(maximumAllowableDistance);
+		const closest = this.defaultIntersection(maximumAllowableDistance);
 		let color = ColorName.NONE;
 		const { x, y } = this.player;
-		const rayOrigin: Coordinates = { x, y };
+		this.rayOrigin.x = x
+		this.rayOrigin.y = y
 
 		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall.line);
+			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, wall.line);
 			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
+				closest.distance = hit.distance;
+				closest.x = hit.x;
+				closest.y = hit.y;
 				color = wall.color;
+				//todo: allocate and remove "hit"
 			}
 		}
 
 		for (let i = 0; i < this.playerTrail.length - 1; i++) {
 			const wall = this.playerTrail[i].line;
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
+			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
+				closest.x = hit.x;
+				closest.y = hit.y;
+				closest.distance = hit.distance;
 				color = this.player.color;
+
+				//TODO: allocate and remove "hit"
 			}
 		}
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
-		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
+		const gridHits = this.getGridHits(this.rayOrigin, rayDirection, closest.distance);
 
 		this._currentSlice.distance = closest.distance;
 		this._currentSlice.color = color;
 		this._currentSlice.gridHits = gridHits;
 		this._currentSlice.intersection = rayEnd;
+
+		this.intersectionPool.release(closest);
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
@@ -142,13 +152,13 @@ export class GameMap implements GameMapInterface {
 
 	}
 
-	private deafaultIntersection(distance: number): Intersection {
-		return {
-			isValid: false,
-			x: -1,
-			y: -1,
-			distance
-		};
+	private defaultIntersection(distance: number): Intersection {
+		const defaultIntersection = this.intersectionPool.acquire();
+		defaultIntersection.isValid = false;
+		defaultIntersection.x = -1;
+		defaultIntersection.y = -1;
+		defaultIntersection.distance = distance;
+		return defaultIntersection;
 
 	}
 	private rayDirecton(angle: number): Coordinates {
