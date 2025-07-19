@@ -2,7 +2,7 @@ const globalHSLHexCache = new Map<number, string>();
 
 function hashHSL(h: number, l: number): number {
 	const qH = Math.round(h / 20) * 20;
-	const qS = 100; // see what this does
+	const qS = 100;
 	const qL = Math.round(l * 16) / 16;
 	return ((qH & 0xFF) << 16) | (Math.round(qS * 100) << 8) | Math.round(qL * 100);
 }
@@ -44,21 +44,20 @@ class HSL {
 		const key = hashHSL(this.hue, this.lightness);
 		const cached = globalHSLHexCache.get(key);
 		if (cached) return cached;
-		const l = this.lightness / 100;
 
 		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
-		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor, l);
-		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor, l);
-		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor, l);
+		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
+		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
+		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
 		globalHSLHexCache.set(key, `#${redHex}${greenHex}${blueHex}`);
 		return globalHSLHexCache.get(key) as string || "#000000"; // Fallback in case of unexpected error
 	}
 
 
-	private colorChannelToHex(channel: number, adjustmentFactor: number, lightness: number): string {
+	private colorChannelToHex(channel: number, adjustmentFactor: number): string {
 
 		const wheelColor = (channel + this.hue / 30) % 12;
-		const color = lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);
+		const color = this.lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);
 
 		return Math.round(255 * color)
 			.toString(16)
@@ -68,7 +67,7 @@ class HSL {
 
 
 	private assertSatOrLight(value: number, name: string): void {
-		this.assertInRange(value, 0, 100, name);
+		this.assertInRange(value, 0, 1, name);
 	}
 
 	private assertInRange(value: number, min: number, max: number, name: string): void {

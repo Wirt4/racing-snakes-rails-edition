@@ -11,20 +11,20 @@ describe('HSL object tests', () => {
 		expect(hsl.hue).toEqual(240);
 	})
 	test('enforce validity of hue', () => {
-		expect(() => new HSL(-10, 100, 100)).toThrow("Hue must be between 0 and 360");
-		expect(() => new HSL(370, 100, 100)).toThrow("Hue must be between 0 and 360");
-		expect(() => new HSL(360, 100, 100)).not.toThrow();
-		expect(() => new HSL(0, 100, 100)).not.toThrow();
+		expect(() => new HSL(-10, 1, 1)).toThrow("Hue must be between 0 and 360");
+		expect(() => new HSL(370, 1, 1)).toThrow("Hue must be between 0 and 360");
+		expect(() => new HSL(360, 1, 1)).not.toThrow();
+		expect(() => new HSL(0, 1, 1)).not.toThrow();
 	})
 	test('enforce validity of saturation', () => {
-		expect(() => new HSL(240, -10, 1)).toThrow("Saturation must be between 0 and 100");
-		expect(() => new HSL(240, 110, 1)).toThrow("Saturation must be between 0 and 100");
+		expect(() => new HSL(240, -10, 1)).toThrow("Saturation must be between 0 and 1");
+		expect(() => new HSL(240, 110, 1)).toThrow("Saturation must be between 0 and 1");
 		expect(() => new HSL(240, 1, 1)).not.toThrow();
 		expect(() => new HSL(240, 0, 1)).not.toThrow();
 	})
 	test('enforce validity of lightness', () => {
-		expect(() => new HSL(240, 1, -10)).toThrow("Lightness must be between 0 and 100");
-		expect(() => new HSL(240, 1, 110)).toThrow("Lightness must be between 0 and 100");
+		expect(() => new HSL(240, 1, -10)).toThrow("Lightness must be between 0 and 1");
+		expect(() => new HSL(240, 1, 110)).toThrow("Lightness must be between 0 and 1");
 		expect(() => new HSL(240, 1, 1)).not.toThrow();
 		expect(() => new HSL(240, 0, 0)).not.toThrow();
 	})
