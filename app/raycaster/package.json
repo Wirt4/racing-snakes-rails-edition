@@ -11,10 +11,11 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1"
   },
-  "scripts": {
-  "build": "esbuild src/main.ts --bundle --outfile=../assets/builds/raycaster.js --format=esm --target=es2020 --sourcemap",
-  "build:worker": "esbuild src/worker/worker.ts --bundle --outfile=../../public/workers/worker.js --format=esm --target=es2020 --sourcemap",
-    "build:all": "npm run build && npm run build:worker"
+  "scripts": { 
+    "build": "node scripts/build.mjs",
+    "build:watch": "node scripts/build.mjs --watch",
+    "build:worker": "node scripts/build-worker.mjs",
+    "build:all": "node scripts/build-all.mjs"
   },
   "overrides": {
     "glob": "^10.3.10"

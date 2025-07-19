@@ -1,8 +1,9 @@
 import { GameMapInterface, WallInterface } from './interface';
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
+import { BMath } from '../boundedMath/bmath';
 
 interface Intersection {
 	isValid: boolean;
@@ -20,8 +21,7 @@ export class GameMap implements GameMapInterface {
 	private intersectionPool: Intersection[] = [];
 	private intersectionIndex = 0;
 	private rayPoint: Coordinates = { x: 0, y: 0 };
-	private cachedPlayerTrail: WallInterface[] = [];
-	private lastTrailLength = -1;
+	private bMath = BMath.getInstance();
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -65,7 +65,7 @@ export class GameMap implements GameMapInterface {
 		return this.player.angle;
 	}
 
-	public prepareFrame(): void {
+	public resetIntersections(): void {
 		this.intersectionIndex = 0;
 	}
 
@@ -119,11 +119,11 @@ export class GameMap implements GameMapInterface {
 			intersection: rayEnd
 		};
 	}
+
 	private getIntersection(): Intersection {
 		if (this.intersectionIndex >= this.intersectionPool.length) {
 			const length = this.intersectionPool.length;
 			for (let i = 0; i < length; i++) {
-				//just double it
 				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 
 			}
@@ -161,8 +161,8 @@ export class GameMap implements GameMapInterface {
 	}
 	private rayDirecton(angle: number): Coordinates {
 		return {
-			x: Math.cos(angle),
-			y: Math.sin(angle)
+			x: this.bMath.cos(angle),
+			y: this.bMath.sin(angle)
 		};
 	}
 

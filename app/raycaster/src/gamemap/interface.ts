@@ -1,5 +1,5 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
-import { ColorName } from '../game/color/color_name';
+import { ColorName } from '../color/color_name';
 
 interface WallInterface {
 	line: LineSegment;
@@ -9,6 +9,10 @@ interface WallInterface {
 interface Slice {
 	distance: number;
 	color: ColorName;
+	/**
+	 * TODO: grid hits seems ineligant, 
+	 * should be able to calculate the intervals from some kind of modulus operation in the batcher
+	 * **/
 	gridHits: number[];
 	intersection: Coordinates;
 }
@@ -20,10 +24,8 @@ interface GameMapInterface {
 	playerPosition: Coordinates;
 	playerAngle: number;
 	playerTrail: WallInterface[];
-	movePlayer(): void;
-	prepareFrame(): void;
-	turnPlayer(angle: number): void;
-	castRay(angle: number, maximumAllowableDistance: number): Slice;
+	castRay(angle: number, distance: number): Slice;
+	resetIntersections(): void;
 	appendWall(wall: WallInterface): void;
 }
 

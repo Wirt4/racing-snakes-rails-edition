@@ -1,52 +1,29 @@
-// test for game loop
-import { Settings } from './settings';
-import { Directions } from './controls/directions';
+import { Settings } from './settings/settings';
+import { Listener } from './listener/listener';
 const canvas = document.createElement("canvas");
-const width = Settings.CANVAS_WIDTH;
-canvas.width = width;;
-canvas.height = Settings.CANVAS_HEIGHT;
+const settings = new Settings();
+const width = settings.CANVAS_WIDTH;
+canvas.width = width;
+canvas.height = settings.CANVAS_HEIGHT;
 canvas.id = "game-window";
 document.getElementById("app")?.appendChild(canvas);
 
 const offscreen = canvas.transferControlToOffscreen();
-//below address is from the Ruby view, not relative to the TS system
-const worker = new Worker('/workers/worker.js', { type: 'module' });
+const addressToCompiledExecutable = '/workers/worker.js'
+const worker = new Worker(addressToCompiledExecutable, { type: 'module' });
 
 worker.postMessage({
 	type: "init",
 	canvas: offscreen,
-	settings: Settings
+	settings
 }, [offscreen]);
 
-// onkeydown = (e: KeyboardEvent) => {
-// 	if (e.key === "ArrowLeft") {
-// 		worker.postMessage({ type: "turn", direction: Directions.LEFT });
-// 	}
-// 	if (e.key === "ArrowRight") {
-// 		worker.postMessage({ type: "turn", direction: Directions.RIGHT });
-// 	}
-// }
-
-let lastDirection: Directions | null = null;
+const listener = new Listener(worker);
 
 window.addEventListener("keydown", (e: KeyboardEvent) => {
-	let direction: Directions | null = null;
-	if (e.key === "ArrowLeft") direction = Directions.LEFT;
-	if (e.key === "ArrowRight") direction = Directions.RIGHT;
-
-	// Only post if direction changed
-	if (direction !== null && direction !== lastDirection) {
-		worker.postMessage({ type: "turn", direction });
-		lastDirection = direction;
-	}
+	listener.keydown(e.key);
 });
 
 window.addEventListener("keyup", (e: KeyboardEvent) => {
-	// Reset only if releasing the same key
-	if (
-		(e.key === "ArrowLeft" && lastDirection === Directions.LEFT) ||
-		(e.key === "ArrowRight" && lastDirection === Directions.RIGHT)
-	) {
-		lastDirection = null;
-	}
+	listener.keyup(e.key);
 });
