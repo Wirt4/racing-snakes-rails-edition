@@ -31,7 +31,7 @@ describe('Player.move())', () => {
 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
 		const speed = 5;
 		const camera = new MockCamera();
-		camera.angle = 0; // 0 degrees
+		camera.angle = 0;
 		const player = new Player({ x: 5, y: 5 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(10);
@@ -40,7 +40,7 @@ describe('Player.move())', () => {
 	test('given  a player is at coordinates 9, 10 with an angle of 3pi/2 and a speed of 7, when move is called, then the resulting coordinates are 9, 3', () => {
 		const speed = 7;
 		const camera = new MockCamera();
-		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES; // 270 degrees
+		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
 		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(9);
@@ -49,7 +49,7 @@ describe('Player.move())', () => {
 	test('given  a player is at coordinates 9, 10 with an angle of pi/2 and a speed of 7, when move is called, then the resulting coordinates are 9, 24', () => {
 		const speed = 7;
 		const camera = new MockCamera();
-		camera.angle = Math.PI / 2; // 90 degrees
+		camera.angle = Math.PI / 2;
 		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(9);
@@ -87,7 +87,7 @@ describe('Player. turns', () => {
 
 describe('Player.move - trail continuity', () => {
 	test('creates a continuous trail when moving straight', () => {
-		const speed = 1; // moving at speed 1
+		const speed = 1;
 		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
 
 		for (let i = 0; i < 10; i++) {
@@ -103,17 +103,16 @@ describe('Player.move - trail continuity', () => {
 	test('creates a continuous trail when turning right', () => {
 		const speed = 1;
 		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
-		// 4 frames to turn
 
-		player.move(); // start forward
+		player.move();
 		player.turnRight();
 
 		for (let i = 0; i < 4; i++) {
-			player.move(); // during turn
+			player.move();
 		}
 
 		for (let i = 0; i < 5; i++) {
-			player.move(); // after turn
+			player.move();
 		}
 
 		const trail = player.trail;
@@ -124,7 +123,7 @@ describe('Player.move - trail continuity', () => {
 	test('creates a continuous trail with multiple turns', () => {
 		const speed = 1;
 		const camera = new MockCamera();
-		camera.isRotating = false; // Ensure camera is not rotating
+		camera.isRotating = false;
 		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, camera);
 
 		player.move();
