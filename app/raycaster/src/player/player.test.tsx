@@ -28,14 +28,14 @@ class MockCamera implements CameraInterface {
 }
 
 describe('Player.move())', () => {
-	// 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
-	// 		const angle = 0;
-	// 		const speed = 5;
-	// 		const player = new Player({ x: 5, y: 5 }, angle, speed, ColorName.RED, new MockCamera());
-	// 		player.move();
-	// 		expect(player.x).toBe(10);
-	// 		expect(player.y).toBe(5);
-	// 	})
+	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
+		const angle = 0;
+		const speed = 5;
+		const player = new Player({ x: 5, y: 5 }, angle, speed, ColorName.RED, new MockCamera());
+		player.move();
+		expect(player.x).toBe(10);
+		expect(player.y).toBe(5);
+	})
 	test('given  a player is at coordinates 9, 10 with an angle of 3pi/2 and a speed of 7, when move is called, then the resulting coordinates are 9, 3', () => {
 		const angle = TWO_HUNDRED_SEVENTY_DEGREES;
 		const speed = 7;

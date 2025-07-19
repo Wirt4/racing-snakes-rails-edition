@@ -14,7 +14,7 @@ class Player implements PlayerInterface {
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
 	private bMath: BMath = BMath.getInstance();
-	private turning: boolean = false;
+	private isTurning: boolean = false;
 
 	constructor(
 		coordinates: Coordinates,
@@ -37,26 +37,30 @@ class Player implements PlayerInterface {
 	}
 
 	turnLeft(): void {
-		this.camera.beginTurnExecution(Directions.LEFT);
-		this.turning = true;
+		this.turn(Directions.LEFT);
 	}
 
 	turnRight(): void {
-		this.camera.beginTurnExecution(Directions.RIGHT);
-		this.turning = true;
+		this.turn(Directions.RIGHT);
 	}
 
 	move(): void {
-		console.log(`Player is moving from (${this.x}, ${this.y}) with angle ${this.angle} and speed ${this.speed}`);
 		this.adjustCamera();
 		this.moveAlongHeading();
 		this.redirectIfTurned();
 	}
 
+	private turn(dir: Directions): void {
+		if (!this.isTurning) {
+			this.camera.beginTurnExecution(dir);
+			this.isTurning = true;
+		}
+	}
+
 	private redirectIfTurned(): void {
-		if (this.cameraTurnHasCompleted() && this.turning) {
+		if (this.cameraTurnHasCompleted() && this.isTurning) {
 			this.redirect();
-			this.turning = false;
+			this.isTurning = false;
 			this.angle = this.camera.angle;
 		}
 	}
@@ -66,7 +70,7 @@ class Player implements PlayerInterface {
 	}
 
 	private adjustCamera(): void {
-		if (this.cameraIsRotating()) {
+		if (this.camera.isRotating) {
 			this.camera.adjust();
 		}
 	}
@@ -76,7 +80,7 @@ class Player implements PlayerInterface {
 	}
 
 	private cameraTurnHasCompleted(): boolean {
-		return !this.cameraIsRotating();
+		return !this.camera.isRotating;
 	}
 
 	private growTrail(): void {
@@ -84,15 +88,9 @@ class Player implements PlayerInterface {
 	}
 
 	private moveAlongHeading(): void {
-		console.log('moveAlongHeading called');
-		console.log(`Moving player at (${this.x}, ${this.y}) with heading ${this.currentHeading} and speed ${this.speed}`);
 		this.x += Math.round(this.bMath.cos(this.currentHeading)) * this.speed;
 		this.y += this.bMath.sin(this.currentHeading) * this.speed;
 		this.growTrail();
-	}
-
-	private cameraIsRotating(): boolean {
-		return this.camera.isRotating;
 	}
 }
 
