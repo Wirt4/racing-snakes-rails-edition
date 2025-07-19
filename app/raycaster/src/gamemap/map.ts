@@ -23,7 +23,7 @@ export class GameMap implements GameMapInterface {
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
-	private intersectionPool: ObjectPool<Intersection> = new ObjectPool<Intersection>(1000, nullIntersection);
+	private intersectionPool: ObjectPool<Intersection> = new ObjectPool<Intersection>(32000, nullIntersection);
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 	private _currentSlice: Slice = { distance: 0, color: ColorName.NONE, gridHits: [], intersection: { x: 0, y: 0 } };
@@ -106,9 +106,9 @@ export class GameMap implements GameMapInterface {
 				closest.distance = hit.distance;
 				closest.x = hit.x;
 				closest.y = hit.y;
-				this.intersectionPool.release(hit);
 				color = wall.color;
 			}
+			this.intersectionPool.release(hit);
 		}
 
 		for (let i = 0; i < this.playerTrail.length - 1; i++) {
@@ -118,9 +118,9 @@ export class GameMap implements GameMapInterface {
 				closest.x = hit.x;
 				closest.y = hit.y;
 				closest.distance = hit.distance;
-				this.intersectionPool.release(hit);
 				color = this.player.color;
 			}
+			this.intersectionPool.release(hit);
 		}
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
@@ -141,6 +141,7 @@ export class GameMap implements GameMapInterface {
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
 			}
+			this.intersectionPool.release(hit);
 		}
 		return gridHits;
 	}
