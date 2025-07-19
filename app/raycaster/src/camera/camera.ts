@@ -1,9 +1,10 @@
 
 import { Directions } from '../controls/directions';
-import { NINETY_DEGREES, FULL_CIRCLE } from '../geometry/constants';
+import { NINETY_DEGREES } from '../geometry/constants';
 import { normalizeAngle } from '../utils/utils';
+import { CameraInterface } from './interface';
 
-class Camera {
+class Camera implements CameraInterface {
 	private frameCount: number = 0;
 	private step: number = 0;
 	private startAngle: number = 0;
