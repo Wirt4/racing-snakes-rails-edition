@@ -148,8 +148,6 @@ class BatchRenderer {
 
 	private renderGrid(): void {
 		this.contextRenderer.fillColor(this.gridColor, 50);
-		// use a preallocated array and a basic Knuth style stack with a pointer to track i
-		// // use a preallocated array and a basic Knuth style stack with a pointer to track it
 		if (this._batches.gridBatch.isEmpty) return;
 		const path = new Path2D();
 		while (!this._batches.gridBatch.isEmpty) {
