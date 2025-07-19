@@ -55,7 +55,7 @@ class Camera implements CameraInterface {
 
 	private initializeTargetAngleAndStep(sign: number): void {
 		this.targetAngle = normalizeAngle(this.startAngle + (sign * NINETY_DEGREES));
-		this.step = sign * (this.step);
+		this.step = sign * (NINETY_DEGREES / this.turnTime);
 	}
 }
 export { Camera };

@@ -69,6 +69,7 @@ class Player implements PlayerInterface {
 
 	private redirect(): void {
 		this.addTrailSegment();
+		this.currentHeading = this.camera.angle;
 	}
 
 	private adjustCamera(): void {
