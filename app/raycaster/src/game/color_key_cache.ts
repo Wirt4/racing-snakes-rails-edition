@@ -1,4 +1,4 @@
-import { ColorName } from './color/color_name';
+import { ColorName } from '../color/color_name';
 
 export interface ColorKey {
 	color: ColorName;

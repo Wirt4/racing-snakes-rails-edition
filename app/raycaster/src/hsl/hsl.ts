@@ -44,19 +44,18 @@ class HSL {
 		const key = hashHSL(this.hue, this.lightness);
 		const cached = globalHSLHexCache.get(key);
 		if (cached) return cached;
-		const s = this.saturation / 100;
 		const l = this.lightness / 100;
 
 		const chomaticAdjustmentFactor = this.saturation * Math.min(this.lightness, 1 - this.lightness);
-		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor);
-		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor);
-		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor);
+		const redHex = this.colorChannelToHex(0, chomaticAdjustmentFactor, l);
+		const greenHex = this.colorChannelToHex(8, chomaticAdjustmentFactor, l);
+		const blueHex = this.colorChannelToHex(4, chomaticAdjustmentFactor, l);
 		globalHSLHexCache.set(key, `#${redHex}${greenHex}${blueHex}`);
 		return globalHSLHexCache.get(key) as string || "#000000"; // Fallback in case of unexpected error
 	}
 
 
-	private colorChannelToHex(channel: number, adjustmentFactor: number, lightness): string {
+	private colorChannelToHex(channel: number, adjustmentFactor: number, lightness: number): string {
 
 		const wheelColor = (channel + this.hue / 30) % 12;
 		const color = lightness - adjustmentFactor * Math.max(Math.min(wheelColor - 3, 9 - wheelColor, 1), -1);

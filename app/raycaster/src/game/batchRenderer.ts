@@ -1,7 +1,7 @@
 import { ContextRendererInterface } from '../renderer/interface';
-import { ColorName } from './color/color_name';
+import { ColorName } from '../color/color_name';
 import { GameMapInterface } from '../gamemap/interface';
-import { Batches, BatchedRect } from './batches';
+import { Batches, BatchedRect } from '../batches/batches';
 import { LineSegment } from '../geometry/interfaces';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
@@ -56,7 +56,7 @@ class BatchCorrelator {
 		const { distance, color } = this.getAdjustedDistance(angle);
 		const slice = this.sliceHeight(distance);
 		const wallBrightness = this.brightness.calculateBrightness(distance);
-		this.batches.addWallSlice(color, wallBrightness, { x: index, y: slice.origin }, slice.magnitude);
+		this.batches.addWallSlice(color, wallBrightness, index, slice.origin, slice.magnitude);
 	}
 
 	private appendGridSlice(
@@ -153,8 +153,9 @@ class BatchRenderer {
 		if (this._batches.gridBatch.isEmpty) return;
 		const path = new Path2D();
 		while (!this._batches.gridBatch.isEmpty) {
-			const rectSpec = this._batches.gridBatch.pop();
+			const rectSpec = this._batches.gridBatch.top;
 			path.rect(rectSpec.x, rectSpec.y, 1, 1);
+			this._batches.gridBatch.freetop();
 		}
 		this.contextRenderer.fillColor(this.gridColor, 50);
 		this.contextRenderer.fillPath(path);
