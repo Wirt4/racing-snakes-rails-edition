@@ -147,7 +147,6 @@ class BatchRenderer {
 	}
 
 	private renderGrid(): void {
-		this.contextRenderer.fillColor(this.gridColor, 50);
 		if (this._batches.gridBatch.isEmpty) return;
 		const path = new Path2D();
 		while (!this._batches.gridBatch.isEmpty) {
