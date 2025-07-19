@@ -28,24 +28,9 @@ onmessage = (e) => {
 		}
 
 		renderer = new Renderer(ctx);
-		if (!msg.settings) {
-			throw new Error("Settings are required to initialize the game.");
-		}
-		if (!msg.settings.CANVAS_WIDTH || !msg.settings.CANVAS_HEIGHT) {
-			throw new Error("Canvas dimensions are required in settings.");
-		}
 		const mapSize = { width: msg.settings.CANVAS_WIDTH, height: msg.settings.CANVAS_HEIGHT };
-		if (!msg.settings.TURN_TIME || !msg.settings.CAMERA_ANGLE) {
-			throw new Error("TURN_TIME and CAMERA_ANGLE are required in settings.");
-		}
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
-		if (!msg.settings.PLAYER_SPEED || !msg.settings.PLAYER_COLOR) {
-			throw new Error("PLAYER_SPEED and PLAYER_COLOR are required in settings.");
-		}
-		player = new Player({ x: 10, y: 10 }, 0, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
-		if (!msg.settings.MAP_COLOR || !msg.settings.GRID_CELL_SIZE) {
-			throw new Error("MAP_COLOR and GRID_CELL_SIZE are required in settings.");
-		}
+		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 
 		raycaster = new Raycaster(

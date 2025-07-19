@@ -29,25 +29,28 @@ class MockCamera implements CameraInterface {
 
 describe('Player.move())', () => {
 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
-		const angle = 0;
 		const speed = 5;
-		const player = new Player({ x: 5, y: 5 }, angle, speed, ColorName.RED, new MockCamera());
+		const camera = new MockCamera();
+		camera.angle = 0; // 0 degrees
+		const player = new Player({ x: 5, y: 5 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(10);
 		expect(player.y).toBe(5);
 	})
 	test('given  a player is at coordinates 9, 10 with an angle of 3pi/2 and a speed of 7, when move is called, then the resulting coordinates are 9, 3', () => {
-		const angle = TWO_HUNDRED_SEVENTY_DEGREES;
 		const speed = 7;
-		const player = new Player({ x: 9, y: 10 }, angle, speed, ColorName.RED, new MockCamera());
+		const camera = new MockCamera();
+		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES; // 270 degrees
+		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(9);
 		expect(player.y).toBe(3);
 	})
 	test('given  a player is at coordinates 9, 10 with an angle of pi/2 and a speed of 7, when move is called, then the resulting coordinates are 9, 24', () => {
-		const angle = NINETY_DEGREES;
 		const speed = 7;
-		const player = new Player({ x: 9, y: 10 }, angle, speed, ColorName.RED, new MockCamera());
+		const camera = new MockCamera();
+		camera.angle = Math.PI / 2; // 90 degrees
+		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
 		player.move();
 		expect(player.x).toBe(9);
 		expect(player.y).toBe(17);
@@ -55,11 +58,10 @@ describe('Player.move())', () => {
 })
 describe('Player. turns', () => {
 	test('given a player has a 0 degree heading, when the player.rotate is called with 90 degress is moved <turn interval> time, then the players angle is reset to 90 degress.', () => {
-		const angle = 0
 		const speed = 2
 		const turnDistance = 11
 		const camera = new MockCamera();
-		const player = new Player({ x: 1, y: 1 }, angle, speed, ColorName.RED, camera)
+		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera)
 
 		player.turnLeft()
 
@@ -70,11 +72,10 @@ describe('Player. turns', () => {
 		expect(player.angle).toBe(NINETY_DEGREES);
 	})
 	test('rotating a player by -90 degrees should change the angle from 0 to 3*Math.PI / 2', () => {
-		const angle = 0
 		const speed = 2
 		const turnDistance = 40
 		const camera = new MockCamera();
-		const player = new Player({ x: 1, y: 1 }, angle, speed, ColorName.RED, camera);
+		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera);
 		player.turnRight()
 		for (let i = 0; i < turnDistance; i += speed) {
 			camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
@@ -86,9 +87,8 @@ describe('Player. turns', () => {
 
 describe('Player.move - trail continuity', () => {
 	test('creates a continuous trail when moving straight', () => {
-		const angle = 0; // facing right
 		const speed = 1; // moving at speed 1
-		const player = new Player({ x: 0, y: 0 }, angle, speed, ColorName.RED, new MockCamera());
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
 
 		for (let i = 0; i < 10; i++) {
 			player.move();
@@ -101,9 +101,8 @@ describe('Player.move - trail continuity', () => {
 	});
 
 	test('creates a continuous trail when turning right', () => {
-		const angle = 0;
 		const speed = 1;
-		const player = new Player({ x: 0, y: 0 }, angle, speed, ColorName.RED, new MockCamera());
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
 		// 4 frames to turn
 
 		player.move(); // start forward
@@ -123,11 +122,10 @@ describe('Player.move - trail continuity', () => {
 	});
 
 	test('creates a continuous trail with multiple turns', () => {
-		const angle = 0;
 		const speed = 1;
 		const camera = new MockCamera();
 		camera.isRotating = false; // Ensure camera is not rotating
-		const player = new Player({ x: 0, y: 0 }, angle, speed, ColorName.RED, camera);
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, camera);
 
 		player.move();
 		player.turnRight();

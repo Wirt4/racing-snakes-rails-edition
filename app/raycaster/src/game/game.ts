@@ -1,7 +1,7 @@
 import { ContextRendererInterface } from '../renderer/interface';
 import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
-import { Settings } from '../settings';
+import { Settings } from '../settings/settings';
 import { BrightnessInterface } from '../brightness/interface';
 import { BatchRenderer } from '../batchRenderer/batchRenderer';
 import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
@@ -9,7 +9,8 @@ import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 
 class Game {
-	fieldOfVision: number = Settings.FIELD_OF_VISION;
+	private settings: Settings = new Settings();
+	fieldOfVision: number = this.settings.FIELD_OF_VISION;
 	private batchRenderer: BatchRenderer;
 	private batchCorrelator: BatchCorrelator;
 
@@ -24,17 +25,17 @@ class Game {
 		this.batchCorrelator = new BatchCorrelator(
 			map,
 			raycaster,
-			Settings.MAX_DISTANCE,
-			Settings.HORIZON_Y,
-			Settings.CAMERA_HEIGHT,
-			Settings.WALL_HEIGHT,
+			this.settings.MAX_DISTANCE,
+			this.settings.HORIZON_Y,
+			this.settings.CAMERA_HEIGHT,
+			this.settings.WALL_HEIGHT,
 			brightness,
-			Settings.RESOLUTION
+			this.settings.RESOLUTION
 		)
 		this.batchRenderer = new BatchRenderer(
 			renderer,
-			Settings.CANVAS_WIDTH,
-			Settings.CANVAS_HEIGHT,
+			this.settings.CANVAS_WIDTH,
+			this.settings.CANVAS_HEIGHT,
 			ColorName.BLUE
 		);
 	}

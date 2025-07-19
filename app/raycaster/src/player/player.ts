@@ -18,18 +18,21 @@ class Player implements PlayerInterface {
 
 	constructor(
 		coordinates: Coordinates,
-		public angle: number,
 		private speed: number,
 		color: ColorName = ColorName.RED,
 		private camera: CameraInterface
 	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
-		this.currentHeading = angle;
+		this.currentHeading = camera.angle;
 		this.lastPosition = { x: this.x, y: this.y };
 		const startWall = { line: { start: this.lastPosition, end: this.lastPosition }, color };
 		this._trail = [startWall];
 		this.color = color;
+	}
+
+	get angle(): number {
+		return this.camera.angle;
 	}
 
 	get trail(): WallInterface[] {
@@ -61,7 +64,6 @@ class Player implements PlayerInterface {
 		if (this.cameraTurnHasCompleted() && this.isTurning) {
 			this.redirect();
 			this.isTurning = false;
-			this.angle = this.camera.angle;
 		}
 	}
 
