@@ -70,7 +70,7 @@ class Player implements PlayerInterface {
 	}
 
 	private redirect(): void {
-		this.addTrailSegment();
+		this.trail.append(this.x, this.y);
 		this.currentHeading = this.camera.angle;
 	}
 
@@ -78,11 +78,6 @@ class Player implements PlayerInterface {
 		if (this.camera.isRotating) {
 			this.camera.adjust();
 		}
-	}
-
-	private addTrailSegment(): void {
-		this.trail.append(this.x, this.y);
-		//this._temp.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
 	}
 
 	private cameraTurnHasCompleted(): boolean {

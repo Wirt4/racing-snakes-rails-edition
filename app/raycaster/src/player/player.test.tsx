@@ -137,15 +137,13 @@ describe('Player.move - trail continuity', () => {
 		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
 		player.move();
 		expect(trail.append).toHaveBeenCalledWith(0, 0);
+		for (let i = 0; i < 4; i++) {
+			player.move();
+		}
+		player.turnLeft();
+		camera.angle = 0;
 		player.move();
-		expect(trail.append).not.toHaveBeenCalled();
-		// for (let i = 0; i < 4; i++) {
-		// 	player.move();
-		// }
-		// player.turnLeft();
-		// camera.angle = 0;
-		// player.move();
-		// expect(trail.append).toHaveBeenCalledWith(0, -4);
+		expect(trail.append).toHaveBeenCalledWith(0, -5);
 	});
 });
 
