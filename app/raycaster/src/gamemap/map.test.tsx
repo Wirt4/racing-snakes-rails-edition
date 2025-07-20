@@ -158,7 +158,6 @@ describe("Player tests", () => {
 	beforeEach(() => {
 		player = {
 			turnLeft: jest.fn(() => { }), turnRight: jest.fn(), move: jest.fn(() => { }), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
-			temp: [],
 			trail: {
 				append: jest.fn(),
 				head: { x: 0, y: 0 },

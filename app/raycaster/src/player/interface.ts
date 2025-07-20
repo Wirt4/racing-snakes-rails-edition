@@ -1,6 +1,5 @@
 import { ColorName } from '../color/color_name';
 import { TrailInterface } from '../trail/interface';
-import { WallInterface } from '../gamemap/interface';
 
 export interface PlayerInterface {
 	turnLeft: () => void;
@@ -11,5 +10,4 @@ export interface PlayerInterface {
 	trail: TrailInterface;
 	angle: number;
 	color: ColorName;
-	temp: WallInterface[];
 }

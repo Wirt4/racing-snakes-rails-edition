@@ -12,15 +12,6 @@ function areCoordsEqual(a: Coordinates, b: Coordinates): boolean {
 	return a.x === b.x && a.y === b.y;
 }
 
-function isTrailContinuous(trail: WallInterface[]): boolean {
-	for (let i = 0; i < trail.length - 1; i++) {
-		if (!areCoordsEqual(trail[i].line.end, trail[i + 1].line.start)) {
-			return false;
-		}
-	}
-	return true;
-}
-
 class MockCamera implements CameraInterface {
 	isRotating: boolean = false;
 	adjust(): void { }
@@ -102,25 +93,6 @@ describe('Player.move - trail continuity', () => {
 
 		expect(player.trail.head).toEqual(expect.objectContaining({ x: 10, y: 0 }));
 		expect(player.trail.tail).toEqual(expect.objectContaining({ x: 0, y: 0 }));
-	});
-
-	test('creates a continuous trail when turning right', () => {
-		const speed = 1;
-		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera(), new MockTrail());
-
-		player.move();
-		player.turnRight();
-
-		for (let i = 0; i < 4; i++) {
-			player.move();
-		}
-
-		for (let i = 0; i < 5; i++) {
-			player.move();
-		}
-
-		const trail = player.temp;
-		expect(isTrailContinuous(trail)).toBe(true);
 	});
 
 	test('Adds points to the trail at turns', () => {

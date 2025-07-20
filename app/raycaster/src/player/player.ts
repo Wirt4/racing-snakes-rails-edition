@@ -1,7 +1,6 @@
 import { PlayerInterface } from './interface';
 import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
-import { WallInterface } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
@@ -10,7 +9,6 @@ import { TrailInterface } from '../trail/interface';
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
-	private _temp: WallInterface[] = [];
 	private currentHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
@@ -29,12 +27,7 @@ class Player implements PlayerInterface {
 		this.currentHeading = camera.angle;
 		this.lastPosition = { x: this.x, y: this.y };
 		const startWall = { line: { start: this.lastPosition, end: this.lastPosition }, color };
-		this._temp = [startWall];
 		this.color = color;
-	}
-
-	get temp(): WallInterface[] {
-		return this._temp;
 	}
 
 	get angle(): number {

@@ -56,7 +56,7 @@ export class GameMap implements GameMapInterface {
 	}
 
 	get playerTrail(): WallInterface[] {
-		return this.player.temp
+		throw new Error("Player trail as Wall Interface isn't implemented");
 	}
 
 	get playerPosition(): Coordinates {
