@@ -100,7 +100,7 @@ describe('Player.move - trail continuity', () => {
 			player.move();
 		}
 
-		const trail = player.trail;
+		const trail = player.temp;
 		expect(trail.length).toBe(1);
 		expect(trail[0].line.start).toEqual({ x: 0, y: 0 });
 		expect(trail[0].line.end).toEqual({ x: 10, y: 0 });
@@ -121,7 +121,7 @@ describe('Player.move - trail continuity', () => {
 			player.move();
 		}
 
-		const trail = player.trail;
+		const trail = player.temp;
 		expect(trail.length).toBeGreaterThan(1);
 		expect(isTrailContinuous(trail)).toBe(true);
 	});
@@ -140,7 +140,7 @@ describe('Player.move - trail continuity', () => {
 		for (let i = 0; i < 4; i++) player.move();
 		for (let i = 0; i < 3; i++) player.move();
 
-		const trail = player.trail;
+		const trail = player.temp;
 		expect(trail.length).toBeGreaterThan(2);
 		expect(isTrailContinuous(trail)).toBe(true);
 	});

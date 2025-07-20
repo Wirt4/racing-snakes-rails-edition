@@ -1,4 +1,5 @@
 import { ColorName } from '../color/color_name';
+import { TrailInterface } from '../trail/interface';
 import { WallInterface } from '../gamemap/interface';
 
 export interface PlayerInterface {
@@ -7,7 +8,8 @@ export interface PlayerInterface {
 	x: number;
 	y: number;
 	move: () => void;
-	trail: WallInterface[];
+	trail: TrailInterface;
 	angle: number;
 	color: ColorName;
+	temp: WallInterface[];
 }

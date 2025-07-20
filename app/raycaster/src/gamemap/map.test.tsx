@@ -5,19 +5,21 @@ import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
+import { TrailInterface } from '../trail/interface';
 
 class MockPlayer implements PlayerInterface {
 	x: number;
 	y: number;
 	angle: number;
-	trail: WallInterface[];
+	temp: WallInterface[];
 	color = ColorName.RED;
+	trail: TrailInterface = { head: { x: 0, y: 0 }, tail: { x: 0, y: 0 }, color: ColorName.RED, append: jest.fn() };
 
 	constructor(pos: Coordinates, angle: number, trail: WallInterface[]) {
 		this.x = pos.x;
 		this.y = pos.y;
 		this.angle = angle;
-		this.trail = trail;
+		this.temp = trail;
 	}
 
 	move(): void { }
@@ -156,7 +158,13 @@ describe("Player tests", () => {
 	beforeEach(() => {
 		player = {
 			turnLeft: jest.fn(() => { }), turnRight: jest.fn(), move: jest.fn(() => { }), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
-			trail: []
+			temp: [],
+			trail: {
+				append: jest.fn(),
+				head: { x: 0, y: 0 },
+				tail: { x: 0, y: 0 },
+				color: ColorName.GREEN,
+			}
 		};
 	})
 	test("angle should be passed to player class", () => {

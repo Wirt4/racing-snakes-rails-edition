@@ -22,7 +22,7 @@ class Player implements PlayerInterface {
 		private speed: number,
 		color: ColorName = ColorName.RED,
 		private camera: CameraInterface,
-		trail: TrailInterface
+		public trail: TrailInterface
 	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
@@ -33,12 +33,12 @@ class Player implements PlayerInterface {
 		this.color = color;
 	}
 
-	get angle(): number {
-		return this.camera.angle;
+	get temp(): WallInterface[] {
+		return this._temp;
 	}
 
-	get trail(): WallInterface[] {
-		return this._temp;
+	get angle(): number {
+		return this.camera.angle;
 	}
 
 	turnLeft(): void {
