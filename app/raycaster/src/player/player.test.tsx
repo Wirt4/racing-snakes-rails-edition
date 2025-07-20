@@ -100,10 +100,8 @@ describe('Player.move - trail continuity', () => {
 			player.move();
 		}
 
-		const trail = player.temp;
-		expect(trail.length).toBe(1);
-		expect(trail[0].line.start).toEqual({ x: 0, y: 0 });
-		expect(trail[0].line.end).toEqual({ x: 10, y: 0 });
+		expect(player.trail.head).toEqual(expect.objectContaining({ x: 10, y: 0 }));
+		expect(player.trail.tail).toEqual(expect.objectContaining({ x: 0, y: 0 }));
 	});
 
 	test('creates a continuous trail when turning right', () => {
