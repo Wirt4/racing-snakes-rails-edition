@@ -85,9 +85,7 @@ class Player implements PlayerInterface {
 	}
 
 	private growTrail(): void {
-		this.trail.head.x = this.x;
-		this.trail.head.y = this.y;
-		//this._temp[this._temp.length - 1].line.end = { x: this.x, y: this.y };
+		Object.assign(this.trail.head, { x: this.x, y: this.y });
 	}
 
 	private moveAlongHeading(): void {
