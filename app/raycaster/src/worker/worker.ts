@@ -5,6 +5,7 @@ import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
 import { Player } from '../player/player';
 import { Directions } from '../controls/directions';
+import { Trail } from '../trail/trail';
 import { Camera } from '../camera/camera';
 
 let game: Game;
@@ -30,7 +31,8 @@ onmessage = (e) => {
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_WIDTH, height: msg.settings.CANVAS_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
-		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
+		const trail = new Trail({ x: 10, y: 10 }, msg.settings.PLAYER_COLOR);
+		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera, trail);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 
 		raycaster = new Raycaster(

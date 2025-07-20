@@ -5,6 +5,7 @@ import { WallInterface } from '../gamemap/interface';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ColorName } from '../color/color_name';
+import { TrailInterface } from '../trail/interface';
 import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES } from '../geometry/constants';
 
 function areCoordsEqual(a: Coordinates, b: Coordinates): boolean {
@@ -26,13 +27,18 @@ class MockCamera implements CameraInterface {
 	beginTurnExecution(d: Directions): void { }
 	angle: number = 0;
 }
-
+class MockTrail implements TrailInterface {
+	head: { x: number, y: number } = { x: 0, y: 0 };
+	tail: { x: number, y: number } = { x: 0, y: 0 };
+	color: ColorName = ColorName.RED;
+	append(x: number, y: number): void { }
+}
 describe('Player.move())', () => {
 	test('given  a player is at coordinates 5, 5 with an angle of 0 and a speed of 5, when move is called, then the resulting coordinates are 10,5', () => {
 		const speed = 5;
 		const camera = new MockCamera();
 		camera.angle = 0;
-		const player = new Player({ x: 5, y: 5 }, speed, ColorName.RED, camera);
+		const player = new Player({ x: 5, y: 5 }, speed, ColorName.RED, camera, new MockTrail());
 		player.move();
 		expect(player.x).toBe(10);
 		expect(player.y).toBe(5);
@@ -41,7 +47,7 @@ describe('Player.move())', () => {
 		const speed = 7;
 		const camera = new MockCamera();
 		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
-		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
+		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera, new MockTrail());
 		player.move();
 		expect(player.x).toBe(9);
 		expect(player.y).toBe(3);
@@ -50,7 +56,7 @@ describe('Player.move())', () => {
 		const speed = 7;
 		const camera = new MockCamera();
 		camera.angle = Math.PI / 2;
-		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera);
+		const player = new Player({ x: 9, y: 10 }, speed, ColorName.RED, camera, new MockTrail());
 		player.move();
 		expect(player.x).toBe(9);
 		expect(player.y).toBe(17);
@@ -61,7 +67,7 @@ describe('Player. turns', () => {
 		const speed = 2
 		const turnDistance = 11
 		const camera = new MockCamera();
-		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera)
+		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera, new MockTrail());
 
 		player.turnLeft()
 
@@ -75,7 +81,7 @@ describe('Player. turns', () => {
 		const speed = 2
 		const turnDistance = 40
 		const camera = new MockCamera();
-		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera);
+		const player = new Player({ x: 1, y: 1 }, speed, ColorName.RED, camera, new MockTrail());
 		player.turnRight()
 		for (let i = 0; i < turnDistance; i += speed) {
 			camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
@@ -88,7 +94,7 @@ describe('Player. turns', () => {
 describe('Player.move - trail continuity', () => {
 	test('creates a continuous trail when moving straight', () => {
 		const speed = 1;
-		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera(), new MockTrail());
 
 		for (let i = 0; i < 10; i++) {
 			player.move();
@@ -102,7 +108,7 @@ describe('Player.move - trail continuity', () => {
 
 	test('creates a continuous trail when turning right', () => {
 		const speed = 1;
-		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera());
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, new MockCamera(), new MockTrail());
 
 		player.move();
 		player.turnRight();
@@ -124,7 +130,7 @@ describe('Player.move - trail continuity', () => {
 		const speed = 1;
 		const camera = new MockCamera();
 		camera.isRotating = false;
-		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, camera);
+		const player = new Player({ x: 0, y: 0 }, speed, ColorName.RED, camera, new MockTrail());
 
 		player.move();
 		player.turnRight();

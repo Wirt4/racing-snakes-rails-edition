@@ -5,11 +5,12 @@ import { WallInterface } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
+import { TrailInterface } from '../trail/interface';
 
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
-	private _trail: WallInterface[] = [];
+	private _temp: WallInterface[] = [];
 	private currentHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
@@ -20,14 +21,15 @@ class Player implements PlayerInterface {
 		coordinates: Coordinates,
 		private speed: number,
 		color: ColorName = ColorName.RED,
-		private camera: CameraInterface
+		private camera: CameraInterface,
+		trail: TrailInterface
 	) {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
 		this.currentHeading = camera.angle;
 		this.lastPosition = { x: this.x, y: this.y };
 		const startWall = { line: { start: this.lastPosition, end: this.lastPosition }, color };
-		this._trail = [startWall];
+		this._temp = [startWall];
 		this.color = color;
 	}
 
@@ -36,7 +38,7 @@ class Player implements PlayerInterface {
 	}
 
 	get trail(): WallInterface[] {
-		return this._trail;
+		return this._temp;
 	}
 
 	turnLeft(): void {
@@ -79,7 +81,7 @@ class Player implements PlayerInterface {
 	}
 
 	private addTrailSegment(): void {
-		this._trail.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
+		this._temp.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
 	}
 
 	private cameraTurnHasCompleted(): boolean {
@@ -87,7 +89,7 @@ class Player implements PlayerInterface {
 	}
 
 	private growTrail(): void {
-		this._trail[this._trail.length - 1].line.end = { x: this.x, y: this.y };
+		this._temp[this._temp.length - 1].line.end = { x: this.x, y: this.y };
 	}
 
 	private moveAlongHeading(): void {
