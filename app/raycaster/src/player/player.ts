@@ -81,7 +81,8 @@ class Player implements PlayerInterface {
 	}
 
 	private addTrailSegment(): void {
-		this._temp.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
+		this.trail.append(this.x, this.y);
+		//this._temp.push({ line: { start: { x: this.x, y: this.y }, end: { x: this.x, y: this.y } }, color: this.color })
 	}
 
 	private cameraTurnHasCompleted(): boolean {
