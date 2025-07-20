@@ -51,8 +51,8 @@ class Player implements PlayerInterface {
 
 	move(): void {
 		this.adjustCamera();
-		this.moveAlongHeading();
 		this.redirectIfTurned();
+		this.moveAlongHeading();
 	}
 
 	private turn(dir: Directions): void {
