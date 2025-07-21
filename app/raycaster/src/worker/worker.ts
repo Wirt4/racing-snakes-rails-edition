@@ -31,7 +31,7 @@ onmessage = (e) => {
 		renderer = new Renderer(ctx);
 		const mapSize = { width: msg.settings.CANVAS_WIDTH, height: msg.settings.CANVAS_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
-		const trail = new Trail({ x: 10, y: 10 }, msg.settings.PLAYER_COLOR);
+		const trail = new Trail(10, 10, msg.settings.PLAYER_COLOR);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera, trail);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 

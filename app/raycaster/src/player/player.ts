@@ -10,7 +10,6 @@ class Player implements PlayerInterface {
 	x: number;
 	y: number;
 	private currentHeading: number;
-	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
 	private bMath: BMath = BMath.getInstance();
 	private isTurning: boolean = false;
@@ -25,8 +24,6 @@ class Player implements PlayerInterface {
 		this.x = coordinates.x;
 		this.y = coordinates.y;
 		this.currentHeading = camera.angle;
-		this.lastPosition = { x: this.x, y: this.y };
-		const startWall = { line: { start: this.lastPosition, end: this.lastPosition }, color };
 		this.color = color;
 	}
 
