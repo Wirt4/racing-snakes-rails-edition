@@ -265,6 +265,7 @@ describe('GameMap.castRay()', () => {
 		];
 
 		const trail = new MockTrail({ x: 7, y: 2 });
+		trail.color = ColorName.RED;
 		trailInfo.forEach((point) => {
 			trail.append(point.x, point.y);
 		})
