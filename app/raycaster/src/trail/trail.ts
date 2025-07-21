@@ -9,8 +9,10 @@ class Trail implements TrailInterface {
 		this.head = { x: originX, y: originY };
 		this.tail = { x: originX, y: originY };
 	}
+
 	append(x: number, y: number): void {
-		throw new Error('Method not implemented.');
+		const temp = { x, y, next: this.head };
+		this.head = temp;
 	}
 }
 

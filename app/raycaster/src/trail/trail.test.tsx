@@ -24,7 +24,7 @@ describe('append test', () => {
 	})
 	test('append to trail', () => {
 		trail.append(1, 1);
-		expect(trail.head).toEqual({ x: 1, y: 1 });
-		expect(trail.tail).toEqual({ x: 0, y: 0 });
+		expect(trail.head).toEqual(expect.objectContaining({ x: 1, y: 1 }));
+		expect(trail.tail).toEqual(expect.objectContaining({ x: 0, y: 0 }));
 	})
 })
