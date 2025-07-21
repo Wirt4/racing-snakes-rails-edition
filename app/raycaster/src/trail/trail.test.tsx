@@ -1,6 +1,7 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { Trail } from './trail';
 import { ColorName } from '../color/color_name';
+
 describe('Trail object tests', () => {
 	test('object creation', () => {
 		const trail = new Trail(0, 0, ColorName.RED);
@@ -14,5 +15,16 @@ describe('Trail object tests', () => {
 		expect(trail.tail).toEqual({ x: 5, y: 5 });
 		expect(trail.color).toEqual(ColorName.BLUE);
 	})
+})
 
+describe('append test', () => {
+	let trail: Trail;
+	beforeEach(() => {
+		trail = new Trail(0, 0, ColorName.RED);
+	})
+	test('append to trail', () => {
+		trail.append(1, 1);
+		expect(trail.head).toEqual({ x: 1, y: 1 });
+		expect(trail.tail).toEqual({ x: 0, y: 0 });
+	})
 })
