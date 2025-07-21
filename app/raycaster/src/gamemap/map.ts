@@ -1,4 +1,5 @@
 import { GameMapInterface, WallInterface } from './interface';
+import { TrailInterface } from '../trail/interface';
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
@@ -55,7 +56,7 @@ export class GameMap implements GameMapInterface {
 		];
 	}
 
-	get playerTrail(): WallInterface[] {
+	get playerTrail(): TrailInterface {
 		throw new Error("Player trail as Wall Interface isn't implemented");
 	}
 
@@ -111,16 +112,18 @@ export class GameMap implements GameMapInterface {
 			this.intersectionPool.release(hit);
 		}
 
-		for (let i = 0; i < this.playerTrail.length - 1; i++) {
-			const wall = this.playerTrail[i].line;
-			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, wall);
+		let cur = this.playerTrail.head;
+		while (cur && cur.next) {
+			//todo: remove this implcit allocation in the assignment
+			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, { start: cur, end: cur.next });
 			if (hit.isValid && hit.distance < closest.distance) {
+				closest.distance = hit.distance;
 				closest.x = hit.x;
 				closest.y = hit.y;
-				closest.distance = hit.distance;
-				color = this.player.color;
+				color = this.playerTrail.color;
 			}
 			this.intersectionPool.release(hit);
+			cur = cur.next;
 		}
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);

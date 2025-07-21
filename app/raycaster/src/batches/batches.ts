@@ -1,4 +1,5 @@
 import { Coordinates, LineSegment } from "../geometry/interfaces";
+import { TrailInterface } from "../trail/interface";
 import { ColorName } from "../color/color_name";
 import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
@@ -39,7 +40,12 @@ class Batches {
 			this.addMapWall(wall);
 		}
 	}
-
+	addTrailWalls(trail: TrailInterface): void {
+		let cur = trail.head;
+		while (cur && cur.next) {
+			this.addMapWall({ color: trail.color, line: { start: cur, end: cur.next } });
+		}
+	}
 	addMapWall(wall: WallInterface): void {
 		const colorKey = getColorKey(wall.color, 1);
 		if (!this.mapBatches.has(colorKey)) {

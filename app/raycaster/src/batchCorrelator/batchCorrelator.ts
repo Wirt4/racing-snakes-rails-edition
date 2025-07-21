@@ -38,7 +38,7 @@ class BatchCorrelator {
 
 	private appendAllMapWalls(): void {
 		this.batches.addMapWalls(this.gameMap.walls);
-		this.batches.addMapWalls(this.gameMap.playerTrail);
+		this.batches.addTrailWalls(this.gameMap.playerTrail);
 	}
 
 	private setRays(): void {
