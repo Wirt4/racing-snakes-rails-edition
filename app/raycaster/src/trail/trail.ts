@@ -3,9 +3,11 @@ import { ColorName } from '../color/color_name';
 import { TrailSegment } from './interface';
 
 class Trail implements TrailInterface {
-	head: { x: number, y: number } = { x: 0, y: 0 };
-	tail: TrailSegment = this.head;
+	head: TrailSegment;
+	tail: TrailSegment;
 	constructor(originX: number, originY: number, public color: ColorName) {
+		this.head = { x: originX, y: originY };
+		this.tail = { x: originX, y: originY };
 	}
 	append(x: number, y: number): void {
 		throw new Error('Method not implemented.');
