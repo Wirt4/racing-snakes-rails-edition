@@ -113,6 +113,7 @@ export class GameMap implements GameMapInterface {
 		}
 
 		let cur = this.playerTrail.head;
+		console.log({ cur })
 		while (cur && cur.next) {
 			//todo: remove this implcit allocation in the assignment
 			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, { start: cur, end: cur.next });
