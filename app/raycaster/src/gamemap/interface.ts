@@ -1,6 +1,6 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
-
+import { TrailInterface } from '../trail/interface';
 interface WallInterface {
 	line: LineSegment;
 	color: ColorName
@@ -23,8 +23,9 @@ interface GameMapInterface {
 	gridLinesY: LineSegment[];
 	playerPosition: Coordinates;
 	playerAngle: number;
-	playerTrail: WallInterface[];
-	castRay(angle: number, distance: number): Slice;
+	playerTrail: TrailInterface;
+	currentSlice: Slice;
+	castRay(angle: number, distance: number): void;
 	resetIntersections(): void;
 	appendWall(wall: WallInterface): void;
 }

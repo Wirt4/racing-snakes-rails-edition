@@ -1,9 +1,11 @@
 import { GameMapInterface, WallInterface } from './interface';
+import { TrailInterface } from '../trail/interface';
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../gamemap/interface';
 import { BMath } from '../boundedMath/bmath';
+import { ObjectPool } from '../objectPool/objectPool';
 
 interface Intersection {
 	isValid: boolean;
@@ -12,16 +14,22 @@ interface Intersection {
 	distance: number;
 }
 
+function nullIntersection(): Intersection {
+	return { isValid: false, x: -1, y: -1, distance: Infinity };
+}
+
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
-	private intersectionPool: Intersection[] = [];
-	private intersectionIndex = 0;
+	private intersectionPool: ObjectPool<Intersection> = new ObjectPool<Intersection>(32000, nullIntersection);
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
+	private _currentSlice: Slice = { distance: 0, color: ColorName.NONE, gridHits: [], intersection: { x: 0, y: 0 } };
+	private rayOrigin: Coordinates = { x: 0, y: 0 };
+
 	constructor(
 		size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
@@ -46,27 +54,27 @@ export class GameMap implements GameMapInterface {
 			this.initializeWall(right_top, right_bottom, boundaryColor),
 			this.initializeWall(left_bottom, right_bottom, boundaryColor),
 		];
-
-		for (let i = 0; i < 1000; i++) {
-			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-		}
 	}
 
-	get playerTrail(): WallInterface[] {
-		return this.player.trail
+	get playerTrail(): TrailInterface {
+		return this.player.trail;
 	}
 
 	get playerPosition(): Coordinates {
 		const { x, y } = this.player;
+		//ton of object creation here -- will need to change this later
 		return { x, y };
+	}
+
+	get currentSlice(): Slice {
+		return this._currentSlice;
 	}
 
 	get playerAngle(): number {
 		return this.player.angle;
 	}
-
 	public resetIntersections(): void {
-		this.intersectionIndex = 0;
+		this.intersectionPool.clear();
 	}
 
 	appendWall(wall: WallInterface): void {
@@ -85,50 +93,48 @@ export class GameMap implements GameMapInterface {
 		}
 	}
 
-	castRay(angle: number, maximumAllowableDistance: number): Slice {
+	castRay(angle: number, maximumAllowableDistance: number): void {
 		const rayDirection = this.rayDirecton(angle);
-		let closest = this.deafaultIntersection(maximumAllowableDistance);
+		const closest = this.defaultIntersection(maximumAllowableDistance);
 		let color = ColorName.NONE;
 		const { x, y } = this.player;
-		const rayOrigin: Coordinates = { x, y };
+		this.rayOrigin.x = x
+		this.rayOrigin.y = y
 
 		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall.line);
+			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, wall.line);
 			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
+				closest.distance = hit.distance;
+				closest.x = hit.x;
+				closest.y = hit.y;
 				color = wall.color;
 			}
+			this.intersectionPool.release(hit);
 		}
 
-		for (let i = 0; i < this.playerTrail.length - 1; i++) {
-			const wall = this.playerTrail[i].line;
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
+		let cur = this.playerTrail.head;
+		while (cur && cur.next) {
+			//todo: remove this implcit allocation in the assignment
+			const hit = this.rayIntersectsWall(this.rayOrigin, rayDirection, { start: cur, end: cur.next });
 			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = this.player.color;
+				closest.distance = hit.distance;
+				closest.x = hit.x;
+				closest.y = hit.y;
+				color = this.playerTrail.color;
 			}
+			this.intersectionPool.release(hit);
+			cur = cur.next;
 		}
 
 		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
-		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
+		const gridHits = this.getGridHits(this.rayOrigin, rayDirection, closest.distance);
 
-		return {
-			distance: closest.distance,
-			color,
-			gridHits,
-			intersection: rayEnd
-		};
-	}
+		this._currentSlice.distance = closest.distance;
+		this._currentSlice.color = color;
+		this._currentSlice.gridHits = gridHits;
+		this._currentSlice.intersection = rayEnd;
 
-	private getIntersection(): Intersection {
-		if (this.intersectionIndex >= this.intersectionPool.length) {
-			const length = this.intersectionPool.length;
-			for (let i = 0; i < length; i++) {
-				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-
-			}
-		}
-		return this.intersectionPool[this.intersectionIndex++];
+		this.intersectionPool.release(closest);
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
@@ -138,6 +144,7 @@ export class GameMap implements GameMapInterface {
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
 			}
+			this.intersectionPool.release(hit);
 		}
 		return gridHits;
 	}
@@ -150,13 +157,13 @@ export class GameMap implements GameMapInterface {
 
 	}
 
-	private deafaultIntersection(distance: number): Intersection {
-		return {
-			isValid: false,
-			x: -1,
-			y: -1,
-			distance
-		};
+	private defaultIntersection(distance: number): Intersection {
+		const defaultIntersection = this.intersectionPool.acquire();
+		defaultIntersection.isValid = false;
+		defaultIntersection.x = -1;
+		defaultIntersection.y = -1;
+		defaultIntersection.distance = distance;
+		return defaultIntersection;
 
 	}
 	private rayDirecton(angle: number): Coordinates {
@@ -186,7 +193,8 @@ export class GameMap implements GameMapInterface {
 		this.rayPoint.y = rayOrigin.y + direction.y;
 		const rayPoint = this.rayPoint;
 		const determinant = this.calculateDeterminant(wall.start, wall.end, rayOrigin, rayPoint);
-		const result = { isValid: false, x: -1, y: -1, distance: Infinity };
+		const result = this.intersectionPool.acquire();
+		result.isValid = false;
 
 		if (this.isParallel(determinant)) {
 			return result;

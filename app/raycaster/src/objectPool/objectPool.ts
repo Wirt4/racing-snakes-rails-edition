@@ -3,7 +3,11 @@ export class ObjectPool<T> {
 	private top: number = 0;
 	private pool: T[];
 
-	constructor(size: number = 1500, private factory: () => T) {
+	constructor(
+		size: number = 1500,
+		private factory: () => T,
+		private dynamicAllocation: boolean = false
+	) {
 		this.pool = new Array(size);
 		for (let i = 0; i < size; i++) {
 			this.pool[i] = this.factory();
@@ -13,10 +17,18 @@ export class ObjectPool<T> {
 
 	acquire(): T {
 		if (this.top == 0) {
-			this.reallocate();
+			if (this.dynamicAllocation) {
+				this.reallocate();
+			} else {
+				throw new Error('Object pool underflow, you may not acquire more objects than the pool size');
+			}
 		}
 		this.top--;
 		return this.pool[this.top];
+	}
+
+	clear(): void {
+		this.top = this.pool.length;
 	}
 
 	release(object: T): void {
