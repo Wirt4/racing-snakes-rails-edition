@@ -7,6 +7,7 @@ interface ContextRendererInterface {
 	save(): void;
 	scale(scale: number): void;
 	stroke(color: ColorName): void;
+	reset(): void;
 	restore(): void;
 	strokeWeight(weight: number): void;
 	line(line: LineSegment): void;
