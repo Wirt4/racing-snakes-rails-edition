@@ -2,7 +2,7 @@ import { Game } from './game';
 import { GameMapInterface } from '../gamemap/interface';
 import { PlayerInterface } from '../player/interface';
 import { ContextRendererInterface } from '../renderer/interface';
-import { describe, test, expect } from '@jest/globals';
+import { beforeEach, describe, test, jest, expect } from '@jest/globals';
 import { BrightnessInterface } from '../brightness/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { WallInterface } from '../gamemap/interface';
@@ -18,8 +18,15 @@ function mockCastRay(angle: number, distance: number) {
 }
 
 describe('isGameOver tests', () => {
-	test('if the player has collided with a wall, then its game over for them', () => {
-		let map: GameMapInterface = {
+	let map: GameMapInterface
+	let player: PlayerInterface
+	let renderer: ContextRendererInterface
+	let brightness: BrightnessInterface
+	let raycaster: RaycasterInterface
+	let game: Game
+
+	beforeEach(() => {
+		map = {
 			walls: [],
 			gridLinesX: [],
 			gridLinesY: [],
@@ -28,15 +35,19 @@ describe('isGameOver tests', () => {
 			playerTrail: [],
 			castRay: mockCastRay,
 			resetIntersections: () => { },
-			appendWall: (wall: WallInterface) => { }
+			appendWall: (wall: WallInterface) => { },
+			hasCollidedWithWall: () => false
 		}
 
-		let player: PlayerInterface = {} as PlayerInterface;
-		let renderer: ContextRendererInterface = {
+		player = {} as PlayerInterface;
+		renderer = {
 		} as ContextRendererInterface;
-		let brightness: BrightnessInterface = {} as BrightnessInterface;
-		let raycaster: RaycasterInterface = {} as RaycasterInterface;
-		const game = new Game(map, renderer, raycaster, brightness, false, player)
+		brightness = {} as BrightnessInterface;
+		raycaster = {} as RaycasterInterface;
+		game = new Game(map, renderer, raycaster, brightness, false, player)
+
+	})
+	test('if the player has collided with a wall, then its game over for them', () => {
 		expect(game.isGameOver()).toBe(true);
 	})
 })

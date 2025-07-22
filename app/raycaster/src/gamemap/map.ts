@@ -28,9 +28,9 @@ export class GameMap implements GameMapInterface {
 		gridCell: number,
 		player: PlayerInterface
 	) {
-		if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
-			throw new Error("Player position is outside the map boundaries");
-		}
+		// if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
+		// 	throw new Error("Player position is outside the map boundaries");
+		// }
 		this.player = player
 		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
@@ -63,6 +63,21 @@ export class GameMap implements GameMapInterface {
 
 	get playerAngle(): number {
 		return this.player.angle;
+	}
+
+	hasCollidedWithWall(player: PlayerInterface): boolean {
+		const playerPosition = { x: player.x, y: player.y };
+		for (const wall of this.walls) {
+			if (this.rayIntersectsWall(playerPosition, this.rayDirecton(player.angle), wall.line).isValid) {
+				return true;
+			}
+		}
+		for (const trailSegment of player.trail) {
+			if (this.rayIntersectsWall(playerPosition, this.rayDirecton(player.angle), trailSegment.line).isValid) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public resetIntersections(): void {

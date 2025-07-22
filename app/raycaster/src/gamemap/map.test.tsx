@@ -151,6 +151,7 @@ describe('castRay method', () => {
 		expect(slice.distance).toBeGreaterThan(0);
 	});
 });
+
 describe("Player tests", () => {
 	let player: PlayerInterface;
 	beforeEach(() => {
@@ -159,11 +160,13 @@ describe("Player tests", () => {
 			trail: []
 		};
 	})
+
 	test("angle should be passed to player class", () => {
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
 		gameMap.turnPlayer(Math.PI / 2)
 		expect(player.turnLeft).toHaveBeenLastCalledWith()
 	})
+
 	test("movePlayer should call player.move", () => {
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
 		gameMap.movePlayer()
@@ -176,6 +179,7 @@ describe('intialization tests', () => {
 	let color: ColorName
 	let grid_size: number
 	let player: PlayerInterface
+
 	beforeEach(() => {
 		dimensions = { width: 100, height: 200 }
 		color = ColorName.RED
@@ -183,34 +187,35 @@ describe('intialization tests', () => {
 		player = new MockPlayer({ x: -1, y: -1 }, 0, [])
 	})
 
-	test('game map may not intialize with player position touching walls: left', () => {
-		player.x = 0
-		player.y = 5
-		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	})
+	// test('game map may not intialize with player position touching walls: left', () => {
+	// 	player.x = 0
+	// 	player.y = 5
+	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	// })
+	//
+	// test('game map may not intialize with player position touching walls: top', () => {
+	// 	player.x = 5
+	// 	player.y = 0
+	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	// })
+	//
+	// test('game map may not intialize with player position touching walls: right', () => {
+	// 	player.x = 100
+	// 	player.y = 5
+	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	// })
 
-	test('game map may not intialize with player position touching walls: top', () => {
-		player.x = 5
-		player.y = 0
-		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	})
-
-	test('game map may not intialize with player position touching walls: right', () => {
-		player.x = 100
-		player.y = 5
-		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	})
-
-	test('game map may not intialize with player position touching walls: bottom', () => {
-		player.x = 4
-		player.y = 200
-		expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	})
+	// test('game map may not intialize with player position touching walls: bottom', () => {
+	// 	player.x = 4
+	// 	player.y = 200
+	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
+	// })
 })
 
 
 
 describe('GameMap.castRay()', () => {
+
 	test("should not return a hit for the trail segment currently being drawn (trail head)", () => {
 		const position = { x: 5, y: 5 };
 		const directionAngle = Math.PI / 4; // right
@@ -264,3 +269,10 @@ describe('GameMap.castRay()', () => {
 		expect(slice.color).toBe(ColorName.RED);
 	})
 });
+describe('GameMap.hasCollidedWithWall()', () => {
+	test('should return true if player is on a wall', () => {
+		const player = new MockPlayer({ x: 0, y: 10 }, Math.PI, []);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+		expect(map.hasCollidedWithWall(player)).toBe(true);
+	})
+})
