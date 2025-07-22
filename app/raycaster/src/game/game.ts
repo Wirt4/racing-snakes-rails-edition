@@ -42,7 +42,12 @@ class Game {
 
 	update(): void {
 		this.player.move();
+		//check for if game is over
 	}
+
+	isGameOver(): boolean {
+		return true;
+	};
 
 	draw(
 	): void {
