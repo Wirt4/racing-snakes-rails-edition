@@ -63,59 +63,58 @@ export class GameMap implements GameMapInterface {
 	}
 
 	hasCollidedWithWall(player: PlayerInterface): boolean {
-		if (player.x <= 0 || player.x >= this.size.width || player.y <= 0 || player.y >= this.size.height) {
+		if (this.hasHitArenaBoundary()) {
 			return true;
 		}
-		if (this.player.trail.length < 2) {
+		if (!this.hasEnoughTailForSelfCollision(player)) {
+			return false
+		}
+		return this.hasIntersectedOwnTrail(player.trail);
+	}
+
+	private head: TrailSegment | undefined;
+
+	private hasIntersectedOwnTrail(trail: WallInterface[]): boolean {
+		if (trail.length < 2) {
 			return false;
 		}
-		const head = player.trail[player.trail.length - 1].line;
-		const headIsVertical = this.isVertical(head);
-		for (let i = 0; i < this.player.trail.length - 2; i++) {
-			const segment = this.player.trail[i].line;
-			if (this.isVertical(segment) === headIsVertical) {
-				continue;
-			}
-			let crosses: boolean;
-			if (headIsVertical) {
-				crosses = this.isCrossing(head, segment)
-			} else {
-				crosses = this.isCrossing(segment, head)
-			}
-			if (crosses === true) {
+		this.head = new TrailSegment(trail[trail.length - 1].line);
+		return this.findInterection(trail.slice(0, trail.length - 2), this.head)
+	}
+
+	private findInterection(trail: WallInterface[], head: TrailSegment): boolean {
+		for (const { line } of trail) {
+			if (this.selfIntersecst(head, line)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private isVertical(line: LineSegment): boolean {
-		return line.start.x === line.end.x;
+	private bodySegment: TrailSegment | undefined;
+	private selfIntersecst(head: TrailSegment, segment: LineSegment): boolean {
+		this.bodySegment = new TrailSegment(segment);
+		if (head.isVertical === this.bodySegment.isVertical) {
+			return false;
+		}
+		return head.isVertical ? this.isCrossing(head, this.bodySegment) : this.isCrossing(this.bodySegment, head);
 	}
 
-	private isCrossing(verticalSegment: LineSegment, horizontalSegment: LineSegment): boolean {
-		const hStart = Math.min(horizontalSegment.start.x, horizontalSegment.end.x);
-		const hEnd = Math.max(horizontalSegment.start.x, horizontalSegment.end.x);
-		if (verticalSegment.start.x < hStart || verticalSegment.start.x > hEnd) {
+	private hasHitArenaBoundary(): boolean {
+		const { x, y } = this.player;
+		return x <= 0 || x >= this.size.width || y <= 0 || y >= this.size.height;
+	}
+
+	private hasEnoughTailForSelfCollision(player: PlayerInterface) {
+		return player.trail.length > 2;
+	}
+
+	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
+		if (verticalSegment.hStart < horizontalSegment.hStart || verticalSegment.hStart > horizontalSegment.hEnd) {
 			return false;
 		}
 
-		const vStart = Math.min(verticalSegment.start.y, verticalSegment.end.y);
-		const vEnd = Math.max(verticalSegment.start.y, verticalSegment.end.y);
-		return (horizontalSegment.start.y >= vStart && horizontalSegment.start.y <= vEnd)
-	}
-
-	private touchesTrail(line: LineSegment): boolean {
-		const { x, y } = this.player;
-		if (line.start.x === line.end.x) {
-			const yMin = Math.min(line.start.y, line.end.y);
-			const yMax = Math.max(line.start.y, line.end.y);
-			return x === line.start.x && y >= yMin && y <= yMax;
-		}
-
-		const xMin = Math.min(line.start.x, line.end.x);
-		const xMax = Math.max(line.start.x, line.end.x);
-		return y === line.start.y && x >= xMin && x <= xMax;
+		return (horizontalSegment.vStart >= verticalSegment.vStart && horizontalSegment.vStart <= verticalSegment.vEnd)
 	}
 
 	public resetIntersections(): void {
@@ -285,9 +284,32 @@ export class GameMap implements GameMapInterface {
 		}
 		return lines;
 	}
+}
 
-	private isInRange(value: number, limit: number): boolean {
-		return value < limit && value > 0
+class TrailSegment {
+	start: Coordinates;
+	end: Coordinates;
+	constructor(line: LineSegment) {
+		this.start = line.start;
+		this.end = line.end;
+	}
+	get isVertical(): boolean {
+		return this.start.x === this.end.x;
 	}
 
+	get hStart(): number {
+		return Math.min(this.start.x, this.end.x);
+	}
+
+	get hEnd(): number {
+		return Math.max(this.start.x, this.end.x);
+	}
+
+	get vStart(): number {
+		return Math.min(this.start.y, this.end.y);
+	}
+
+	get vEnd(): number {
+		return Math.max(this.start.y, this.end.y);
+	}
 }
