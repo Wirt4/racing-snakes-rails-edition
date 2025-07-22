@@ -227,10 +227,17 @@ describe('GameMap.castRay()', () => {
 		expect(slice.color).toBe(ColorName.RED);
 	})
 });
+
 describe('GameMap.hasCollidedWithWall()', () => {
 	test('should return true if player is on a wall', () => {
 		const player = new MockPlayer({ x: 0, y: 10 }, Math.PI, []);
 		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
 		expect(map.hasCollidedWithWall(player)).toBe(true);
+	})
+
+	test('should return false if player is not on a wall', () => {
+		const player = new MockPlayer({ x: 1, y: 1 }, Math.PI, []);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+		expect(map.hasCollidedWithWall(player)).toBe(false);
 	})
 })

@@ -15,8 +15,6 @@ let brightness: Brightness;
 
 let running = false;
 
-
-
 onmessage = (e) => {
 	const msg = e.data;
 
@@ -70,6 +68,10 @@ function startLoop(): void {
 		renderer.reset();
 		game.draw();
 		game.update();
+		debugger;
+		if (game.isGameOver()) {
+			return; // Stop the loop if the game is over
+		}
 		requestAnimationFrame(loop);
 	};
 	requestAnimationFrame(loop);

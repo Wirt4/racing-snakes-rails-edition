@@ -22,8 +22,9 @@ export class GameMap implements GameMapInterface {
 	private intersectionIndex = 0;
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
+
 	constructor(
-		size: Dimensions,
+		private size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
 		gridCell: number,
 		player: PlayerInterface
@@ -66,16 +67,8 @@ export class GameMap implements GameMapInterface {
 	}
 
 	hasCollidedWithWall(player: PlayerInterface): boolean {
-		const playerPosition = { x: player.x, y: player.y };
-		for (const wall of this.walls) {
-			if (this.rayIntersectsWall(playerPosition, this.rayDirecton(player.angle), wall.line).isValid) {
-				return true;
-			}
-		}
-		for (const trailSegment of player.trail) {
-			if (this.rayIntersectsWall(playerPosition, this.rayDirecton(player.angle), trailSegment.line).isValid) {
-				return true;
-			}
+		if (player.x <= 0 || player.x >= this.size.width || player.y <= 0 || player.y >= this.size.height) {
+			return true;
 		}
 		return false;
 	}
