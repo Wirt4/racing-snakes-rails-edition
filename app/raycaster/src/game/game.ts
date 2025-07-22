@@ -17,7 +17,6 @@ class Game {
 		private batchRenderer: BatchRendererInterface,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
-		private readonly displayHUD: Boolean,
 		private player: PlayerInterface,
 	) {
 		this.batchCorrelator = new BatchCorrelator(
@@ -48,10 +47,6 @@ class Game {
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
 		this.batchRenderer.renderSlices();
-		//TODO: (on separate branch) - try buffer swapping if that may speed up rendering
-		if (this.displayHUD) {
-			this.batchRenderer.renderHUD();
-		}
 	}
 }
 export { Game };

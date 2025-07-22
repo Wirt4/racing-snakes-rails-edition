@@ -48,7 +48,7 @@ onmessage = (e) => {
 			msg.settings.CAMERA_HEIGHT,
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
-		game = new Game(map, batchRenderer, raycaster, brightness, msg.settings.HUD_ON, player);
+		game = new Game(map, batchRenderer, raycaster, brightness, player);
 		startLoop();
 	}
 	if (msg.type === "turn") {

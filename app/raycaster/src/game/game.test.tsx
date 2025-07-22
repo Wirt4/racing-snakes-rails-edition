@@ -48,7 +48,7 @@ describe('isGameOver tests', () => {
 		raycaster = {
 			fillRaysInto: (rays: any, angle: any) => { }
 		} as RaycasterInterface;
-		game = new Game(map, renderer, raycaster, brightness, false, player)
+		game = new Game(map, renderer, raycaster, brightness, player)
 
 	})
 	test('if the player has collided with a wall, then its game over for them', () => {
@@ -93,7 +93,7 @@ describe('Draw condition tests', () => {
 			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
 		} as RaycasterInterface;
 
-		game = new Game(map, renderer, raycaster, brightness, false, player)
+		game = new Game(map, renderer, raycaster, brightness, player)
 
 	})
 
@@ -103,5 +103,5 @@ describe('Draw condition tests', () => {
 
 		game.draw();
 		expect(spy).not.toHaveBeenCalled();
-	})
+	});
 })
