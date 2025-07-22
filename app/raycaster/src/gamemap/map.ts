@@ -66,12 +66,43 @@ export class GameMap implements GameMapInterface {
 		if (player.x <= 0 || player.x >= this.size.width || player.y <= 0 || player.y >= this.size.height) {
 			return true;
 		}
-		for (let i = 0; i < this.playerTrail.length - 2; i++) {
-			if (this.touchesTrail(this.playerTrail[i].line)) {
-				return true
+		if (this.player.trail.length < 2) {
+			return false;
+		}
+		const head = player.trail[player.trail.length - 1].line;
+		const headIsVertical = this.isVertical(head);
+		for (let i = 0; i < this.player.trail.length - 2; i++) {
+			const segment = this.player.trail[i].line;
+			if (this.isVertical(segment) === headIsVertical) {
+				continue;
+			}
+			let crosses: boolean;
+			if (headIsVertical) {
+				crosses = this.isCrossing(head, segment)
+			} else {
+				crosses = this.isCrossing(segment, head)
+			}
+			if (crosses === true) {
+				return true;
 			}
 		}
 		return false;
+	}
+
+	private isVertical(line: LineSegment): boolean {
+		return line.start.x === line.end.x;
+	}
+
+	private isCrossing(verticalSegment: LineSegment, horizontalSegment: LineSegment): boolean {
+		const hStart = Math.min(horizontalSegment.start.x, horizontalSegment.end.x);
+		const hEnd = Math.max(horizontalSegment.start.x, horizontalSegment.end.x);
+		if (verticalSegment.start.x < hStart || verticalSegment.start.x > hEnd) {
+			return false;
+		}
+
+		const vStart = Math.min(verticalSegment.start.y, verticalSegment.end.y);
+		const vEnd = Math.max(verticalSegment.start.y, verticalSegment.end.y);
+		return (horizontalSegment.start.y >= vStart && horizontalSegment.start.y <= vEnd)
 	}
 
 	private touchesTrail(line: LineSegment): boolean {
