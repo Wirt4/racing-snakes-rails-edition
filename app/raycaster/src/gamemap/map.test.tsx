@@ -211,7 +211,7 @@ describe('GameMap.castRay()', () => {
 		},
 		{
 			start: { x: 3, y: 4 },
-			end: { x: 5, y: 4 }
+			end: { x: 7, y: 4 }
 		}
 		];
 
@@ -243,6 +243,9 @@ describe('GameMap.hasCollidedWithWall()', () => {
 
 	test('should return if player connects to a trail', () => {
 		const player = new MockPlayer({ x: 5, y: 5 }, Math.PI, []);
+		player.x = 1
+		player.y = 5;
+
 		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
 
 		const trailInfo: LineSegment[] = [{
@@ -267,6 +270,8 @@ describe('GameMap.hasCollidedWithWall()', () => {
 			line: line,
 			color: ColorName.RED,
 		}));
+
+		player.trail = mockTrail;
 
 		expect(map.hasCollidedWithWall(player)).toBe(true);
 	})

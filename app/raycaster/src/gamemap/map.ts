@@ -19,7 +19,6 @@ export class GameMap implements GameMapInterface {
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
 	private intersectionPool: Intersection[] = [];
-	private intersectionIndex = 0;
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 
@@ -64,14 +63,37 @@ export class GameMap implements GameMapInterface {
 	}
 
 	hasCollidedWithWall(player: PlayerInterface): boolean {
+		console.log('Checking for collision');
 		if (player.x <= 0 || player.x >= this.size.width || player.y <= 0 || player.y >= this.size.height) {
 			return true;
+		}
+		console.log('Checking trail walls');
+		console.log({ playerTrail: this.playerTrail });
+		for (let i = 0; i < this.playerTrail.length - 1; i++) {
+			console.log('entered loop');
+			if (this.touchesTrail(this.playerTrail[i].line)) {
+				return true
+			}
 		}
 		return false;
 	}
 
+	private touchesTrail(line: LineSegment): boolean {
+		console.log({ line })
+		const { x, y } = this.player;
+		console.log(`x:${x}, y:${y}`);
+		if (line.start.x === line.end.x) {
+			const yMin = Math.min(line.start.y, line.end.y);
+			const yMax = Math.max(line.start.y, line.end.y);
+			return x === line.start.x && y >= yMin && y <= yMax;
+		}
+
+		const xMin = Math.min(line.start.x, line.end.x);
+		const xMax = Math.max(line.start.x, line.end.x);
+		return y === line.start.y && x >= xMin && x <= xMax;
+	}
+
 	public resetIntersections(): void {
-		this.intersectionIndex = 0;
 	}
 
 	appendWall(wall: WallInterface): void {
