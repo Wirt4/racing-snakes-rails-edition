@@ -72,9 +72,13 @@ function startLoop(): void {
 	running = true;
 	function loop(): void {
 		batchRenderer.clear();
-		game.draw(); // todo, some how pass the game into the renderer to make the relationship clearer
 		game.update();
-		requestAnimationFrame(loop);
+		game.draw();
+		if (!game.isGameOver()) {
+			requestAnimationFrame(loop);
+		} else {
+			running = false;
+		}
 	};
 	requestAnimationFrame(loop);
 }

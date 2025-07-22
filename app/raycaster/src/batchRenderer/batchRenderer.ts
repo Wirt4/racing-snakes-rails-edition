@@ -91,6 +91,7 @@ class BatchRenderer implements BatchRendererInterface {
 	}
 
 	private renderHUDMap(): void {
+		debugger;
 		for (const [key, rects] of this._batches.mapBatches.entries()) {
 			this.renderHUDLines(key, rects);
 		}
@@ -100,9 +101,9 @@ class BatchRenderer implements BatchRendererInterface {
 		key: ColorKey,
 		lines: LineSegment[]
 	): void {
-		const { color, intensity: weight } = key;
+		const { color } = key;
 		this.contextRenderer.stroke(color);
-		this.contextRenderer.strokeWeight(weight);
+		this.contextRenderer.strokeWeight(1);
 		this.drawLines(lines);
 	}
 
