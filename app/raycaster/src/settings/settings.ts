@@ -15,9 +15,11 @@ export class Settings implements SettingsInterface {
 	FIELD_OF_VISION = 5 * Math.PI / 12 //try wider angle for greater illusion of speed
 	MAX_DISTANCE = 100
 	MAX_PERCENT_BRIGHTNESS = 60
-	MIN_PERCENT_BRIGHTNESS = 30
+	MIN_PERCENT_BRIGHTNESS = 20
 	FADE_DISTANCE = 2
 	CANVAS_WIDTH = 400
+	ARENA_WIDTH = 200
+	ARENA_HEIGHT = 200
 	HORIZON_Y = 200
 	GRID_CELL_SIZE = 2
 	CANVAS_HEIGHT = 640

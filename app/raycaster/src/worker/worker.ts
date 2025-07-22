@@ -26,7 +26,7 @@ onmessage = (e) => {
 		}
 
 		renderer = new Renderer(ctx);
-		const mapSize = { width: msg.settings.CANVAS_WIDTH, height: msg.settings.CANVAS_HEIGHT };
+		const mapSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
