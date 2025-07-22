@@ -7,8 +7,14 @@ describe('BatchRenderer.clear() test', () => {
 		const mockContextRenderer: ContextRendererInterface = {
 			reset: () => { }
 		} as ContextRendererInterface;
+		const width = 800;
+		const height = 600;
 		const resetSpy = jest.spyOn(mockContextRenderer, 'reset')
-		const batchRenderer = new BatchRenderer(mockContextRenderer, 800, 600, ColorName.WHITE);
+		const batchRenderer = new BatchRenderer(
+			mockContextRenderer,
+			width,
+			height,
+			ColorName.WHITE);
 
 		batchRenderer.clear()
 
