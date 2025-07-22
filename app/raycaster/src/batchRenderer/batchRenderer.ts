@@ -3,8 +3,9 @@ import { ColorName } from '../color/color_name';
 import { Batches, BatchedRect } from '../batches/batches';
 import { LineSegment } from '../geometry/interfaces';
 import { ColorKey } from '../color_key/color_key_cache';
+import { BatchRendererInterface } from './interface';
 
-class BatchRenderer {
+class BatchRenderer implements BatchRendererInterface {
 	private _batches: Batches = new Batches();
 	constructor(
 		private contextRenderer: ContextRendererInterface,

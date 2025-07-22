@@ -3,20 +3,18 @@ import { GameMapInterface } from '../gamemap/interface';
 import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings/settings';
 import { BrightnessInterface } from '../brightness/interface';
-import { BatchRenderer } from '../batchRenderer/batchRenderer';
+import { BatchRendererInterface } from '../batchRenderer/interface';
 import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
-import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 
 class Game {
 	private settings: Settings = new Settings();
 	fieldOfVision: number = this.settings.FIELD_OF_VISION;
-	private batchRenderer: BatchRenderer;
 	private batchCorrelator: BatchCorrelator;
 
 	constructor(
 		public map: GameMapInterface,
-		renderer: ContextRendererInterface,
+		private batchRenderer: BatchRendererInterface,
 		raycaster: RaycasterInterface,
 		brightness: BrightnessInterface,
 		private readonly displayHUD: Boolean,
@@ -32,12 +30,6 @@ class Game {
 			brightness,
 			this.settings.RESOLUTION
 		)
-		this.batchRenderer = new BatchRenderer(
-			renderer,
-			this.settings.CANVAS_WIDTH,
-			this.settings.CANVAS_HEIGHT,
-			ColorName.BLUE
-		);
 	}
 
 	update(): void {
