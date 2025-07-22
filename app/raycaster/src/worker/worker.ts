@@ -10,7 +10,7 @@ import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
 let game: Game;
 let player: Player;
-let renderer: Renderer;
+let batchRenderer: BatchRenderer;
 let raycaster: Raycaster;
 let brightness: Brightness;
 
@@ -26,8 +26,12 @@ onmessage = (e) => {
 			return;
 		}
 
-		renderer = new Renderer(ctx);
-		const batchRenderer = new BatchRenderer(renderer, msg.settings.CANVAS_WIDTH, msg.settings.CANVAS_HEIGHT, ColorName.BLUE);
+		batchRenderer = new BatchRenderer(
+			new Renderer(ctx),
+			msg.settings.CANVAS_WIDTH,
+			msg.settings.CANVAS_HEIGHT,
+			ColorName.BLUE);
+
 		const mapSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
@@ -67,10 +71,9 @@ function startLoop(): void {
 	if (running) return;
 	running = true;
 	function loop(): void {
-		renderer.reset();
-		game.draw();
+		batchRenderer.clear();
+		game.draw(); // todo, some how pass the game into the renderer to make the relationship clearer
 		game.update();
-		debugger;
 		if (game.isGameOver()) {
 			return; // Stop the loop if the game is over
 		}
