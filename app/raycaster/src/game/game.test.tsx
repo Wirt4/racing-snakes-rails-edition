@@ -104,4 +104,13 @@ describe('Draw condition tests', () => {
 		game.draw();
 		expect(spy).not.toHaveBeenCalled();
 	});
+
+	test('if the game is not over, then the HUD should display', () => {
+		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
+		const spy = jest.spyOn(renderer, 'renderHUD');
+
+		game.draw();
+		expect(spy).toHaveBeenCalled();
+	});
+
 })
