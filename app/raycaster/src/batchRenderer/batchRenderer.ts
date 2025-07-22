@@ -17,6 +17,9 @@ class BatchRenderer implements BatchRendererInterface {
 	set batches(batches: Batches) {
 		this._batches = batches;
 	}
+	public clear() {
+		throw new Error('BatchCorrelator.clear() is not implemented');
+	}
 
 	public renderSlices(): void {
 		this.renderBackground();
