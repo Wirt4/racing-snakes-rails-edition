@@ -63,14 +63,10 @@ export class GameMap implements GameMapInterface {
 	}
 
 	hasCollidedWithWall(player: PlayerInterface): boolean {
-		console.log('Checking for collision');
 		if (player.x <= 0 || player.x >= this.size.width || player.y <= 0 || player.y >= this.size.height) {
 			return true;
 		}
-		console.log('Checking trail walls');
-		console.log({ playerTrail: this.playerTrail });
 		for (let i = 0; i < this.playerTrail.length - 2; i++) {
-			console.log('entered loop');
 			if (this.touchesTrail(this.playerTrail[i].line)) {
 				return true
 			}
@@ -79,9 +75,7 @@ export class GameMap implements GameMapInterface {
 	}
 
 	private touchesTrail(line: LineSegment): boolean {
-		console.log({ line })
 		const { x, y } = this.player;
-		console.log(`x:${x}, y:${y}`);
 		if (line.start.x === line.end.x) {
 			const yMin = Math.min(line.start.y, line.end.y);
 			const yMax = Math.max(line.start.y, line.end.y);
