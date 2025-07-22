@@ -69,7 +69,7 @@ export class GameMap implements GameMapInterface {
 		}
 		console.log('Checking trail walls');
 		console.log({ playerTrail: this.playerTrail });
-		for (let i = 0; i < this.playerTrail.length - 1; i++) {
+		for (let i = 0; i < this.playerTrail.length - 2; i++) {
 			console.log('entered loop');
 			if (this.touchesTrail(this.playerTrail[i].line)) {
 				return true
