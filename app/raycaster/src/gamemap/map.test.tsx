@@ -1,7 +1,6 @@
 import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
 import { WallInterface } from '../gamemap/interface';
-import { Dimensions } from '../geometry/interfaces'
 import { ColorName } from '../color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
@@ -119,7 +118,6 @@ describe('castRay method', () => {
 		expect(slice.color).toEqual(ColorName.NONE);
 	});
 
-
 	test('should return same point for zero-length ray', () => {
 		const slice = gameMap.castRay(0, 0);
 		expect(slice.distance).toEqual(0);
@@ -173,46 +171,6 @@ describe("Player tests", () => {
 		expect(player.move).toHaveBeenCalled()
 	})
 })
-
-describe('intialization tests', () => {
-	let dimensions: Dimensions
-	let color: ColorName
-	let grid_size: number
-	let player: PlayerInterface
-
-	beforeEach(() => {
-		dimensions = { width: 100, height: 200 }
-		color = ColorName.RED
-		grid_size = 5
-		player = new MockPlayer({ x: -1, y: -1 }, 0, [])
-	})
-
-	// test('game map may not intialize with player position touching walls: left', () => {
-	// 	player.x = 0
-	// 	player.y = 5
-	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	// })
-	//
-	// test('game map may not intialize with player position touching walls: top', () => {
-	// 	player.x = 5
-	// 	player.y = 0
-	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	// })
-	//
-	// test('game map may not intialize with player position touching walls: right', () => {
-	// 	player.x = 100
-	// 	player.y = 5
-	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	// })
-
-	// test('game map may not intialize with player position touching walls: bottom', () => {
-	// 	player.x = 4
-	// 	player.y = 200
-	// 	expect(() => new GameMap(dimensions, color, grid_size, player)).toThrow()
-	// })
-})
-
-
 
 describe('GameMap.castRay()', () => {
 

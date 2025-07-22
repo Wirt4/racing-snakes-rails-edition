@@ -46,7 +46,8 @@ class Game {
 	}
 
 	isGameOver(): boolean {
-		return true;
+		return this.map.hasCollidedWithWall(this.player);
+		//return true;
 	};
 
 	draw(

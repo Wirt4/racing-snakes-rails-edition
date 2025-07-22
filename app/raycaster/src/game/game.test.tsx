@@ -48,6 +48,7 @@ describe('isGameOver tests', () => {
 
 	})
 	test('if the player has collided with a wall, then its game over for them', () => {
+		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
 		expect(game.isGameOver()).toBe(true);
 	})
 })
