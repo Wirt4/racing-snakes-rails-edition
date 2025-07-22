@@ -157,20 +157,20 @@ describe("Player tests", () => {
 			turnLeft: jest.fn(() => { }), turnRight: jest.fn(), move: jest.fn(() => { }), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
 			trail: []
 		};
-	})
+	});
 
 	test("angle should be passed to player class", () => {
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
 		gameMap.turnPlayer(Math.PI / 2)
 		expect(player.turnLeft).toHaveBeenLastCalledWith()
-	})
+	});
 
 	test("movePlayer should call player.move", () => {
 		const gameMap = new GameMap({ width: 10, height: 20 }, ColorName.RED, 1, player);
 		gameMap.movePlayer()
 		expect(player.move).toHaveBeenCalled()
-	})
-})
+	});
+});
 
 describe('GameMap.castRay()', () => {
 
@@ -233,11 +233,41 @@ describe('GameMap.hasCollidedWithWall()', () => {
 		const player = new MockPlayer({ x: 0, y: 10 }, Math.PI, []);
 		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
 		expect(map.hasCollidedWithWall(player)).toBe(true);
-	})
+	});
 
 	test('should return false if player is not on a wall', () => {
 		const player = new MockPlayer({ x: 1, y: 1 }, Math.PI, []);
 		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
 		expect(map.hasCollidedWithWall(player)).toBe(false);
+	});
+
+	test('should return if player connects to a trail', () => {
+		const player = new MockPlayer({ x: 5, y: 5 }, Math.PI, []);
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const trailInfo: LineSegment[] = [{
+			start: { x: 1, y: 1 },
+			end: { x: 1, y: 10 }
+		}, {
+			start: { x: 1, y: 10 },
+			end: { x: 10, y: 10 }
+
+		}, {
+			start: { x: 10, y: 10 },
+			end: { x: 10, y: 5 }
+
+		},
+		{
+			start: { x: 10, y: 5 },
+			end: { x: 1, y: 5 }
+		}
+		];
+
+		const mockTrail: WallInterface[] = trailInfo.map((line) => ({
+			line: line,
+			color: ColorName.RED,
+		}));
+
+		expect(map.hasCollidedWithWall(player)).toBe(true);
 	})
-})
+});
