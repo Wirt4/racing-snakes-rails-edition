@@ -29,9 +29,6 @@ export class GameMap implements GameMapInterface {
 		gridCell: number,
 		player: PlayerInterface
 	) {
-		// if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
-		// 	throw new Error("Player position is outside the map boundaries");
-		// }
 		this.player = player
 		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
@@ -126,17 +123,6 @@ export class GameMap implements GameMapInterface {
 			gridHits,
 			intersection: rayEnd
 		};
-	}
-
-	private getIntersection(): Intersection {
-		if (this.intersectionIndex >= this.intersectionPool.length) {
-			const length = this.intersectionPool.length;
-			for (let i = 0; i < length; i++) {
-				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-
-			}
-		}
-		return this.intersectionPool[this.intersectionIndex++];
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
