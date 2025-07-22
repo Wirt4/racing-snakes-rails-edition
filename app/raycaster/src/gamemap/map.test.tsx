@@ -241,7 +241,7 @@ describe('GameMap.hasCollidedWithWall()', () => {
 		expect(map.hasCollidedWithWall(player)).toBe(false);
 	});
 
-	test('should return if player connects to a trail', () => {
+	test('should return true if player connects to a trail', () => {
 		const player = new MockPlayer({ x: 5, y: 5 }, Math.PI, []);
 		player.x = 1
 		player.y = 5;
@@ -300,5 +300,41 @@ describe('GameMap.hasCollidedWithWall()', () => {
 
 		expect(map.hasCollidedWithWall(player)).toBe(false);
 	})
+
+	test('should return true if aplayer trail intersects connects to a trail', () => {
+		const player = new MockPlayer({ x: 5, y: 5 }, Math.PI, []);
+		player.x = 1
+		player.y = 5;
+
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const trailInfo: LineSegment[] = [{
+			start: { x: 2, y: 2 },
+			end: { x: 2, y: 10 }
+		}, {
+			start: { x: 2, y: 10 },
+			end: { x: 10, y: 10 }
+
+		}, {
+			start: { x: 10, y: 10 },
+			end: { x: 10, y: 5 }
+
+		},
+		{
+			start: { x: 10, y: 5 },
+			end: { x: 1, y: 5 }
+		}
+		];
+
+		const mockTrail: WallInterface[] = trailInfo.map((line) => ({
+			line: line,
+			color: ColorName.RED,
+		}));
+
+		player.trail = mockTrail;
+
+		expect(map.hasCollidedWithWall(player)).toBe(true);
+	});
+
 	//TODO: write a test so a player may not pass THROUGH their own trail
 });
