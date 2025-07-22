@@ -45,7 +45,9 @@ describe('isGameOver tests', () => {
 			renderSlices: () => { },
 		} as BatchRendererInterface;
 		brightness = {} as BrightnessInterface;
-		raycaster = {} as RaycasterInterface;
+		raycaster = {
+			fillRaysInto: (rays: any, angle: any) => { }
+		} as RaycasterInterface;
 		game = new Game(map, renderer, raycaster, brightness, false, player)
 
 	})
@@ -83,8 +85,14 @@ describe('Draw condition tests', () => {
 			renderSlices: () => { },
 		} as BatchRendererInterface;
 
-		brightness = {} as BrightnessInterface;
-		raycaster = {} as RaycasterInterface;
+		brightness = {
+			calculateBrightness: (distance: any) => 1,
+		} as BrightnessInterface;
+		raycaster = {
+			fillRaysInto: (rays: any, angle: any) => { },
+			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
+		} as RaycasterInterface;
+
 		game = new Game(map, renderer, raycaster, brightness, false, player)
 
 	})
