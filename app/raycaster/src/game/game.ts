@@ -46,7 +46,7 @@ class Game {
 		this.map.resetIntersections()
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
-		this.batchRenderer.renderSlices();
+		//	this.batchRenderer.renderSlices();
 		if (this.map.hasCollidedWithWall(this.player)) {
 			this.batchRenderer.renderHUD();
 		}
