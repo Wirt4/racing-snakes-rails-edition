@@ -74,9 +74,9 @@ function startLoop(): void {
 		batchRenderer.clear();
 		game.draw(); // todo, some how pass the game into the renderer to make the relationship clearer
 		game.update();
-		if (game.isGameOver()) {
-			return; // Stop the loop if the game is over
-		}
+		// if (game.isGameOver()) {
+		// 	return; // Stop the loop if the game is over
+		// }
 		requestAnimationFrame(loop);
 	};
 	requestAnimationFrame(loop);
