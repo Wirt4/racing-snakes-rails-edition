@@ -11,6 +11,13 @@
     font-family: 'Press Start 2P', monospace;
   }
 }
+
+@layer components {
+  .play-button {
+    @apply bg-pink-500 text-black px-6 py-3 rounded-md text-lg uppercase font-bold shadow-lg hover:bg-pink-400 transition-all duration-200 border-2 border-pink-300 z-10;
+  }
+}
+
 /*TODO: make scanlines verical to evoke how the rendering is actually done*/
 @layer utilities {
   .scanlines {
@@ -23,9 +30,9 @@
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: repeating-linear-gradient(
-      to bottom,
+      to right,
       rgba(255,255,255,0.08) 0px,
-      rgba(255,255,255,0.08) 1px,
+      rgba(255,255,255,0.08) 4px,
       transparent 1px,
       transparent 4px
     );
