@@ -274,5 +274,31 @@ describe('GameMap.hasCollidedWithWall()', () => {
 		player.trail = mockTrail;
 
 		expect(map.hasCollidedWithWall(player)).toBe(true);
+	});
+
+	test('player has just done a turn, collision is false', () => {
+		const player = new MockPlayer({ x: 1, y: 10 }, Math.PI, []);
+		player.x = 1;
+		player.y = 10;
+
+		const map = new GameMap({ width: 50, height: 50 }, ColorName.BLACK, 10, player);
+
+		const trailInfo: LineSegment[] = [{
+			start: { x: 1, y: 1 },
+			end: { x: 1, y: 10 }
+		}, {
+			start: { x: 1, y: 10 },
+			end: { x: 1, y: 10 }
+		}];
+
+		const mockTrail: WallInterface[] = trailInfo.map((line) => ({
+			line: line,
+			color: ColorName.RED,
+		}));
+
+		player.trail = mockTrail;
+
+		expect(map.hasCollidedWithWall(player)).toBe(false);
 	})
+
 });
