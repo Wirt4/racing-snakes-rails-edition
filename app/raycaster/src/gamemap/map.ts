@@ -79,10 +79,10 @@ export class GameMap implements GameMapInterface {
 			return false;
 		}
 		this.head = new TrailSegment(trail[trail.length - 1].line);
-		return this.findInterection(trail.slice(0, trail.length - 2), this.head)
+		return this.findIntersection(trail.slice(0, trail.length - 2), this.head)
 	}
 
-	private findInterection(trail: WallInterface[], head: TrailSegment): boolean {
+	private findIntersection(trail: WallInterface[], head: TrailSegment): boolean {
 		for (const { line } of trail) {
 			if (this.selfIntersecst(head, line)) {
 				return true;

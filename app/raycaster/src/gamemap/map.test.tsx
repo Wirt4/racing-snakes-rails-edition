@@ -335,6 +335,4 @@ describe('GameMap.hasCollidedWithWall()', () => {
 
 		expect(map.hasCollidedWithWall(player)).toBe(true);
 	});
-
-	//TODO: write a test so a player may not pass THROUGH their own trail
 });

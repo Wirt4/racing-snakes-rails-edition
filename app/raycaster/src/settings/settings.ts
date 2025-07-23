@@ -6,7 +6,6 @@ export class Settings implements SettingsInterface {
 	MAX_BRIGHTNESS = 60
 	CAMERA_ANGLE = 0
 	TURN_TIME = 12//in frames
-	PLAYER_TURN_DISTANCE = 1
 	HUD_ON = true
 	WALL_HEIGHT = 3
 	PLAYER_SPEED = 0.375 //in units per frame
