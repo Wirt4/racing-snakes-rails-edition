@@ -8,6 +8,8 @@ import { Directions } from '../controls/directions';
 import { Camera } from '../camera/camera';
 import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
+import { sleep } from '../sleep';
+
 let game: Game;
 let player: Player;
 let batchRenderer: BatchRenderer;
@@ -70,10 +72,11 @@ function startLoop(): void {
 		* */
 	if (running) return;
 	running = true;
-	function loop(): void {
+	async function loop(): Promise<void> {
 		batchRenderer.clear();
 		game.update();
 		game.draw();
+		await sleep(30);
 		if (!game.isGameOver()) {
 			requestAnimationFrame(loop);
 		} else {
