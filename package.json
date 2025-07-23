@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "cd app/raycaster && npm ci && npm run build:all"
+  }
+}

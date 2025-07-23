@@ -1,0 +1,60 @@
+
+name: Test and Deploy to Heroku
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.4
+
+      - name: Install Ruby Gems
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Node Modules
+        uses: actions/cache@v4
+        with:
+          path: app/raycaster/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('app/raycaster/package-lock.json') }}
+
+      - name: Install NPM dependencies
+        working-directory: app/raycaster
+        run: npm ci
+
+      - name: TypeScript build check
+        working-directory: app/raycaster
+        run: npm run build:all
+
+      - name: Rails Precompile Assets
+        run: bin/rails assets:precompile
+
+      - name: Run RSpec Tests
+        run: bundle exec rspec
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.14.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: lite-cycles
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
