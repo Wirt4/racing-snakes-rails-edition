@@ -91,7 +91,6 @@ class BatchRenderer implements BatchRendererInterface {
 	}
 
 	private renderHUDMap(): void {
-		debugger;
 		for (const [key, rects] of this._batches.mapBatches.entries()) {
 			this.renderHUDLines(key, rects);
 		}
