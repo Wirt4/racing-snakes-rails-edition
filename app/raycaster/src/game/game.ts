@@ -33,12 +33,10 @@ class Game {
 
 	update(): void {
 		this.player.move();
-		//check for if game is over
 	}
 
 	isGameOver(): boolean {
 		return this.map.hasCollidedWithWall(this.player);
-		//return true;
 	};
 
 	draw(
