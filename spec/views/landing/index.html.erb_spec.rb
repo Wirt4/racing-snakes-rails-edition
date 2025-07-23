@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'landing/index.html.erb', type: :view do
   it 'shows the sign up link' do
-    assign(:game, [Game.new(id: 1, title: 'Test Game')])
+    assign(:game, Game.new(id: 1, title: 'Test Game'))
 
     render
 
