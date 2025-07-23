@@ -1,5 +1,9 @@
 {
   "private": true,
+  "engines": {
+    "node": ">=24.x",
+    "npm": "11.x"
+  },
   "scripts": {
     "build": "cd app/raycaster && npm ci && npm run build:all"
   }
