@@ -301,7 +301,7 @@ describe('GameMap.hasCollidedWithWall()', () => {
 		expect(map.hasCollidedWithWall(player)).toBe(false);
 	})
 
-	test('should return true if aplayer trail intersects connects to a trail', () => {
+	test('should return true if a player trail intersects connects to a trail', () => {
 		const player = new MockPlayer({ x: 5, y: 5 }, Math.PI, []);
 		player.x = 1
 		player.y = 5;
