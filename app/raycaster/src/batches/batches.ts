@@ -4,7 +4,8 @@ import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
 import { CoordinatesStack } from "../CoordinatesStack/coordinatesStack";
 import { WallInterface } from "../gamemap/interface";
-import { BatchesInterface, BatchedRect } from "./interface";
+import { BatchesInterface } from "./interface";
+import { BatchedRect } from "./rectInterface";
 
 class Batches implements BatchesInterface {
 	gridBatch: CoordinatesStack = new CoordinatesStack();

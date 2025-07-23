@@ -1,7 +1,7 @@
 import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
 import { WallInterface } from '../gamemap/interface';
-
+import { BatchedRect } from './rectInterface';
 interface BatchesInterface {
 	clear(): void;
 	addWallSlice(color: ColorName, brightness: number, x: number, y: number, height: number): void;
@@ -11,6 +11,5 @@ interface BatchesInterface {
 	addMapWall(wall: WallInterface): void;
 }
 
-interface BatchedRect { x: number, y: number, width: number, height: number };
 
-export { BatchesInterface, BatchedRect }
+export { BatchesInterface, }
