@@ -121,7 +121,7 @@ describe('Draw condition tests', () => {
 		expect(spy).not.toHaveBeenCalled();
 	});
 
-	test('if the game is over, then the slices should  be rendered', () => {
+	test('if the game continuting, then the slices should  be rendered', () => {
 		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(false);
 		const spy = jest.spyOn(renderer, 'renderSlices');
 
