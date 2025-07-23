@@ -1,5 +1,6 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
+import { PlayerInterface } from '../player/interface';
 
 interface WallInterface {
 	line: LineSegment;
@@ -27,6 +28,7 @@ interface GameMapInterface {
 	castRay(angle: number, distance: number): Slice;
 	resetIntersections(): void;
 	appendWall(wall: WallInterface): void;
+	hasCollidedWithWall(player: PlayerInterface): boolean;
 }
 
 export { GameMapInterface, WallInterface, Slice };

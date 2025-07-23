@@ -1,6 +1,8 @@
 export interface SettingsInterface {
 	HORIZON_LINE_RATIO: number;
 	FRAME_HEIGHT: number;
+	ARENA_WIDTH: number;
+	ARENA_HEIGHT: number;
 	MAX_BRIGHTNESS: number;
 	CAMERA_ANGLE: number; // in radians
 	TURN_TIME: number; // in frames

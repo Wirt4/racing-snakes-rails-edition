@@ -6,16 +6,17 @@ import { Brightness } from '../brightness/brightness';
 import { Player } from '../player/player';
 import { Directions } from '../controls/directions';
 import { Camera } from '../camera/camera';
+import { BatchRenderer } from "../batchRenderer/batchRenderer";
+import { ColorName } from '../color/color_name';
+import { sleep } from '../sleep';
 
 let game: Game;
 let player: Player;
-let renderer: Renderer;
+let batchRenderer: BatchRenderer;
 let raycaster: Raycaster;
 let brightness: Brightness;
 
 let running = false;
-
-
 
 onmessage = (e) => {
 	const msg = e.data;
@@ -27,8 +28,13 @@ onmessage = (e) => {
 			return;
 		}
 
-		renderer = new Renderer(ctx);
-		const mapSize = { width: msg.settings.CANVAS_WIDTH, height: msg.settings.CANVAS_HEIGHT };
+		batchRenderer = new BatchRenderer(
+			new Renderer(ctx),
+			msg.settings.CANVAS_WIDTH,
+			msg.settings.CANVAS_HEIGHT,
+			ColorName.BLUE);
+
+		const mapSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
 		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
@@ -44,7 +50,7 @@ onmessage = (e) => {
 			msg.settings.CAMERA_HEIGHT,
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
-		game = new Game(map, renderer, raycaster, brightness, msg.settings.HUD_ON, player);
+		game = new Game(map, batchRenderer, raycaster, brightness, player);
 		startLoop();
 	}
 	if (msg.type === "turn") {
@@ -66,11 +72,16 @@ function startLoop(): void {
 		* */
 	if (running) return;
 	running = true;
-	function loop(): void {
-		renderer.reset();
-		game.draw();
+	async function loop(): Promise<void> {
+		batchRenderer.clear();
 		game.update();
-		requestAnimationFrame(loop);
+		game.draw();
+		await sleep(30);
+		if (!game.isGameOver()) {
+			requestAnimationFrame(loop);
+		} else {
+			running = false;
+		}
 	};
 	requestAnimationFrame(loop);
 }

@@ -19,18 +19,15 @@ export class GameMap implements GameMapInterface {
 	gridLinesY: LineSegment[] = [];
 	private gridLines: LineSegment[];
 	private intersectionPool: Intersection[] = [];
-	private intersectionIndex = 0;
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
+
 	constructor(
-		size: Dimensions,
+		private size: Dimensions,
 		boundaryColor: ColorName = ColorName.BLACK,
 		gridCell: number,
 		player: PlayerInterface
 	) {
-		if (!(this.isInRange(player.x, size.width) && this.isInRange(player.y, size.height))) {
-			throw new Error("Player position is outside the map boundaries");
-		}
 		this.player = player
 		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
 		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
@@ -65,8 +62,62 @@ export class GameMap implements GameMapInterface {
 		return this.player.angle;
 	}
 
+	hasCollidedWithWall(player: PlayerInterface): boolean {
+		if (this.hasHitArenaBoundary()) {
+			return true;
+		}
+		if (!this.hasEnoughTailForSelfCollision(player)) {
+			return false
+		}
+		return this.hasIntersectedOwnTrail(player.trail);
+	}
+
+	private head: TrailSegment | undefined;
+
+	private hasIntersectedOwnTrail(trail: WallInterface[]): boolean {
+		if (trail.length < 2) {
+			return false;
+		}
+		this.head = new TrailSegment(trail[trail.length - 1].line);
+		return this.findIntersection(trail.slice(0, trail.length - 2), this.head)
+	}
+
+	private findIntersection(trail: WallInterface[], head: TrailSegment): boolean {
+		for (const { line } of trail) {
+			if (this.selfIntersecst(head, line)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private bodySegment: TrailSegment | undefined;
+	private selfIntersecst(head: TrailSegment, segment: LineSegment): boolean {
+		this.bodySegment = new TrailSegment(segment);
+		if (head.isVertical === this.bodySegment.isVertical) {
+			return false;
+		}
+		return head.isVertical ? this.isCrossing(head, this.bodySegment) : this.isCrossing(this.bodySegment, head);
+	}
+
+	private hasHitArenaBoundary(): boolean {
+		const { x, y } = this.player;
+		return x <= 0 || x >= this.size.width || y <= 0 || y >= this.size.height;
+	}
+
+	private hasEnoughTailForSelfCollision(player: PlayerInterface) {
+		return player.trail.length > 2;
+	}
+
+	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
+		if (verticalSegment.hStart < horizontalSegment.hStart || verticalSegment.hStart > horizontalSegment.hEnd) {
+			return false;
+		}
+
+		return (horizontalSegment.vStart >= verticalSegment.vStart && horizontalSegment.vStart <= verticalSegment.vEnd)
+	}
+
 	public resetIntersections(): void {
-		this.intersectionIndex = 0;
 	}
 
 	appendWall(wall: WallInterface): void {
@@ -118,17 +169,6 @@ export class GameMap implements GameMapInterface {
 			gridHits,
 			intersection: rayEnd
 		};
-	}
-
-	private getIntersection(): Intersection {
-		if (this.intersectionIndex >= this.intersectionPool.length) {
-			const length = this.intersectionPool.length;
-			for (let i = 0; i < length; i++) {
-				this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
-
-			}
-		}
-		return this.intersectionPool[this.intersectionIndex++];
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
@@ -244,9 +284,32 @@ export class GameMap implements GameMapInterface {
 		}
 		return lines;
 	}
+}
 
-	private isInRange(value: number, limit: number): boolean {
-		return value < limit && value > 0
+class TrailSegment {
+	start: Coordinates;
+	end: Coordinates;
+	constructor(line: LineSegment) {
+		this.start = line.start;
+		this.end = line.end;
+	}
+	get isVertical(): boolean {
+		return this.start.x === this.end.x;
 	}
 
+	get hStart(): number {
+		return Math.min(this.start.x, this.end.x);
+	}
+
+	get hEnd(): number {
+		return Math.max(this.start.x, this.end.x);
+	}
+
+	get vStart(): number {
+		return Math.min(this.start.y, this.end.y);
+	}
+
+	get vEnd(): number {
+		return Math.max(this.start.y, this.end.y);
+	}
 }

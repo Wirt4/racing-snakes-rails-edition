@@ -3,8 +3,9 @@ import { ColorName } from '../color/color_name';
 import { Batches, BatchedRect } from '../batches/batches';
 import { LineSegment } from '../geometry/interfaces';
 import { ColorKey } from '../color_key/color_key_cache';
+import { BatchRendererInterface } from './interface';
 
-class BatchRenderer {
+class BatchRenderer implements BatchRendererInterface {
 	private _batches: Batches = new Batches();
 	constructor(
 		private contextRenderer: ContextRendererInterface,
@@ -15,6 +16,9 @@ class BatchRenderer {
 
 	set batches(batches: Batches) {
 		this._batches = batches;
+	}
+	public clear() {
+		this.contextRenderer.reset();
 	}
 
 	public renderSlices(): void {
@@ -96,9 +100,9 @@ class BatchRenderer {
 		key: ColorKey,
 		lines: LineSegment[]
 	): void {
-		const { color, intensity: weight } = key;
+		const { color } = key;
 		this.contextRenderer.stroke(color);
-		this.contextRenderer.strokeWeight(weight);
+		this.contextRenderer.strokeWeight(1);
 		this.drawLines(lines);
 	}
 

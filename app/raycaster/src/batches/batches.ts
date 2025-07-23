@@ -4,9 +4,10 @@ import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
 import { CoordinatesStack } from "../CoordinatesStack/coordinatesStack";
 import { WallInterface } from "../gamemap/interface";
-interface BatchedRect { x: number, y: number, width: number, height: number };
+import { BatchesInterface } from "./interface";
+import { BatchedRect } from "./rectInterface";
 
-class Batches {
+class Batches implements BatchesInterface {
 	gridBatch: CoordinatesStack = new CoordinatesStack();
 	wallBatches: Map<ColorKey, BatchedRect[]> = new Map();
 	mapBatches: Map<ColorKey, LineSegment[]> = new Map();
