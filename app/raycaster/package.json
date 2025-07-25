@@ -11,6 +11,9 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1"
   },
+  "dependeccies":{
+        "esbuild": "^0.25.5"
+  },
   "scripts": { 
     "build": "node scripts/build.mjs",
     "build:watch": "node scripts/build.mjs --watch",
