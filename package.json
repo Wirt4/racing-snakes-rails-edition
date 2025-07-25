@@ -5,7 +5,7 @@
     "npm": "10.x"
   },
   "scripts": {
-    "postinstall": "ce app/racaster && npm ci",
+    "postinstall": "cd app/raycaster && npm ci",
     "build": "cd app/raycaster && npm run build:all"
   }
 }
