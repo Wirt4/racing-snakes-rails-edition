@@ -39,6 +39,10 @@ jobs:
         working-directory: app/raycaster 
         run: npx tsc --noEmit
 
+      - name: TypeScript Tests
+        working-directory: app/raycaster/src 
+        run: npx jest 
+
       - name: Precompile assets
         run: bin/rails assets:precompile
 
