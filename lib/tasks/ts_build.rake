@@ -4,7 +4,7 @@ namespace :ts do
   task :build do
     puts '🏗️  Building TypeScript assets with npm...'
     Dir.chdir('app/raycaster') do
-      system('npm run build') or raise '❌ TypeScript build failed!'
+      system('npm run build:all') or raise '❌ TypeScript build failed!'
     end
   end
 end
