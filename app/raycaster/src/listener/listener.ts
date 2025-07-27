@@ -43,6 +43,7 @@ class Listener implements ListenerInterface {
 	private postIfDirectionChanged(direction: Directions): void {
 		if (direction !== this.lastDirection) {
 			this.worker.postMessage({ type, direction });
+			this.directionMessenger.sendTurn(direction);
 		}
 	}
 }
