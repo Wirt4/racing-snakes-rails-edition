@@ -1,4 +1,3 @@
-
 import { Settings } from '../settings/settings';
 import { Listener } from '../listener/listener';
 
@@ -11,12 +10,7 @@ export function bootstrap({
 	workerPath: string;
 	settings: Settings;
 }): void {
-	const canvas = document.createElement("canvas");
-	canvas.width = settings.CANVAS_WIDTH;
-	canvas.height = settings.CANVAS_HEIGHT;
-	canvas.id = canvasId;
-	document.getElementById("app")?.appendChild(canvas);
-
+	const canvas = createCanvas(canvasId, settings.CANVAS_WIDTH, settings.CANVAS_HEIGHT);
 	const offscreen = canvas.transferControlToOffscreen();
 	const worker = new Worker(workerPath, { type: 'module' });
 
@@ -38,4 +32,13 @@ export function bootstrap({
 	window.addEventListener("keyup", (e: KeyboardEvent) => {
 		listener.keyup(e.key);
 	});
+}
+
+function createCanvas(canvasId: string, width: number, height: number): HTMLCanvasElement {
+	const canvas = document.createElement("canvas");
+	canvas.id = canvasId;
+	canvas.width = width;
+	canvas.height = height;
+	document.getElementById("app")?.appendChild(canvas);
+	return canvas;
 }
