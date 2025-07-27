@@ -10,18 +10,17 @@ import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
 import { sleep } from '../sleep';
 
+import { MessageRouter } from '../messageRouter/messageRouter'
+
 let game: Game;
 let player: Player;
 let batchRenderer: BatchRenderer;
 let raycaster: Raycaster;
 let brightness: Brightness;
-
 let running = false;
 
-onmessage = (e) => {
-	const msg = e.data;
-
-	if (msg.type === "init") {
+const router = new MessageRouter({
+	init(msg) {
 		const ctx = msg.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
 		if (!ctx) {
 			console.error("Failed to get 2D context from OffscreenCanvas");
@@ -52,15 +51,15 @@ onmessage = (e) => {
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		game = new Game(map, batchRenderer, raycaster, brightness, player);
 		startLoop();
-	}
-	if (msg.type === "turn") {
-		if (msg.direction === Directions.LEFT) {
-			player.turnLeft()
-		} else if (msg.direction === Directions.RIGHT) {
-			player.turnRight();
-		}
-	}
-};
+	},
+	turn(msg) {
+		if (!player) return;
+		if (msg.direction === Directions.LEFT) player.turnLeft();
+		else if (msg.direction === Directions.RIGHT) player.turnRight();
+	},
+})
+
+onmessage = (e) => { router.handleMessage(e) };
 
 function startLoop(): void {
 	/**
