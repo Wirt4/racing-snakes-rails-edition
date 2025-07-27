@@ -18,6 +18,7 @@ class KeyMap implements KeyMapInterface {
 	}
 
 	toDirection(key: string): Directions {
+		debugger;
 		return this.keynames.indexOf(key) === 0 ? Directions.LEFT : Directions.RIGHT;
 	}
 }

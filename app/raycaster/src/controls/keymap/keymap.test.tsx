@@ -19,4 +19,9 @@ describe('keymap tests', () => {
 		expect(keyMap.toDirection('q')).toBe(Directions.LEFT);
 		expect(keyMap.toDirection('w')).toBe(Directions.RIGHT);
 	});
+	test('getMappedKey returns mapped key, camelCased', () => {
+		const keyMap = new KeyMap(['ArrowLeft', 'ArrowRight']);
+		expect(keyMap.toDirection('ArrowLeft')).toBe(Directions.LEFT);
+		expect(keyMap.toDirection('ArrowRight')).toBe(Directions.RIGHT);
+	});
 })
