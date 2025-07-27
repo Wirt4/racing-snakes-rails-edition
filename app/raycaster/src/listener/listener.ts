@@ -1,7 +1,6 @@
 import { Directions } from '../controls/directions';
 import { KeyMapInterface } from '../controls/keymap/interface';
 import { DirectionMessengerInterface } from '../directionMessenger/interface';
-const type = "turn";
 
 interface ListenerInterface {
 	keydown(keystroke: string): void;
@@ -10,33 +9,35 @@ interface ListenerInterface {
 
 class Listener implements ListenerInterface {
 	private lastDirection: Directions = Directions.NONE;
+
 	constructor(
 		private keyMap: KeyMapInterface,
 		private directionMessenger: DirectionMessengerInterface
 	) { }
 
 	keydown(keystroke: string): void {
-		if (!this.keyMap.isMappedKey(keystroke)) {
-			return;
+		if (this.keyMap.isMappedKey(keystroke)) {
+			this.handleMappedKey(keystroke);
 		}
-		this.handleValidKey(keystroke);
 	}
 
 	keyup(keystroke: string): void {
-		if (!(this.keyMap.isMappedKey(keystroke) && this.isLastDirection(keystroke))) {
-			return;
+		if (this.isReleasingPreviousDirection(keystroke)) {
+			this.lastDirection = Directions.NONE;
 		}
-		this.lastDirection = Directions.NONE;
 	}
 
-	private isLastDirection(keystroke: string): boolean {
-		return this.lastDirection === this.keyMap.toDirection(keystroke);
-	}
-
-	private handleValidKey(keystroke: string): void {
+	private handleMappedKey(keystroke: string): void {
 		const direction = this.keyMap.toDirection(keystroke)
 		this.postIfDirectionChanged(direction);
 		this.lastDirection = direction;
+	}
+
+	private isReleasingPreviousDirection(keystroke: string): boolean {
+		if (this.keyMap.isMappedKey(keystroke)) {
+			return this.lastDirection === this.keyMap.toDirection(keystroke);
+		}
+		return false;
 	}
 
 	private postIfDirectionChanged(direction: Directions): void {
