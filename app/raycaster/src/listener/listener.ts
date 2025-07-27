@@ -2,20 +2,15 @@ import { Directions } from '../controls/directions';
 import { KeyMapInterface } from '../controls/keymap/interface';
 const type = "turn";
 
-enum DirectionRecord {
-	LEFT = Directions.LEFT,
-	RIGHT = Directions.RIGHT,
-	NONE = "none"
-}
+
 interface ListenerInterface {
 	keydown(keystroke: string): void;
 	keyup(keystroke: string): void;
 }
 
 class Listener implements ListenerInterface {
-	private lastDirection: DirectionRecord = DirectionRecord.NONE;
+	private lastDirection: Directions = Directions.NONE;
 	private leftKey = "ArrowLeft";
-	private rightKey = "ArrowRight";
 	constructor(private worker: Worker, private keyMap: KeyMapInterface) { }
 
 	keydown(keystroke: string): void {
@@ -29,28 +24,28 @@ class Listener implements ListenerInterface {
 		if (!(this.isValidKey(keystroke) && this.isLastDirection(keystroke))) {
 			return;
 		}
-		this.lastDirection = DirectionRecord.NONE;
+		this.lastDirection = Directions.NONE;
 	}
 
 	private isLastDirection(keystroke: string): boolean {
-		return this.lastDirection === this.keystrokeToDirection(keystroke);
+		return this.lastDirection === this.keyMap.toDirection(keystroke);
 	}
 
-	private keystrokeToDirection(keystroke: string): DirectionRecord {
-		return this.leftKey === keystroke ? DirectionRecord.LEFT : DirectionRecord.RIGHT;
+	private keystrokeToDirection(keystroke: string): Directions {
+		return this.leftKey === keystroke ? Directions.LEFT : Directions.RIGHT;
 	}
 
 	private isValidKey(keystroke: string): boolean {
-		return keystroke === this.leftKey || keystroke === this.rightKey;
+		return this.keyMap.isMappedKey(keystroke);
 	}
 
 	private handleValidKey(keystroke: string): void {
-		const direction = this.keystrokeToDirection(keystroke);
+		const direction = this.keyMap.toDirection(keystroke)
 		this.postIfDirectionChanged(direction);
 		this.lastDirection = direction;
 	}
 
-	private postIfDirectionChanged(direction: DirectionRecord): void {
+	private postIfDirectionChanged(direction: Directions): void {
 		if (direction !== this.lastDirection) {
 			this.worker.postMessage({ type, direction });
 		}

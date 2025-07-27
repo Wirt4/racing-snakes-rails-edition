@@ -24,9 +24,10 @@ describe('Keydown Tests', () => {
 	});
 
 	test('should turn left', () => {
-		const keyStroke = 'ArrowLeft';
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection').mockReturnValue(Directions.LEFT);
 
-		listener.keydown(keyStroke);
+		listener.keydown('left');
 
 		expect(mockWorker.postMessage).toHaveBeenCalledWith({
 			type: 'turn',
@@ -36,6 +37,8 @@ describe('Keydown Tests', () => {
 
 	test('if user hits the same key twice, just call the worker post once', () => {
 		const keyStroke = 'ArrowLeft';
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection').mockReturnValue(Directions.LEFT);
 
 		listener.keydown(keyStroke);
 		listener.keydown(keyStroke);
@@ -47,6 +50,8 @@ describe('Keydown Tests', () => {
 
 	test('should turn right', () => {
 		const keyStroke = 'ArrowRight';
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection').mockReturnValue(Directions.RIGHT);
 
 		listener.keydown(keyStroke);
 
@@ -57,6 +62,9 @@ describe('Keydown Tests', () => {
 	})
 
 	test('should turn right after turning left', () => {
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection').mockReturnValueOnce(Directions.LEFT)
+			.mockReturnValueOnce(Directions.RIGHT);
 		listener.keydown('ArrowLeft');
 		listener.keydown('ArrowRight');
 
@@ -65,27 +73,28 @@ describe('Keydown Tests', () => {
 			[{ type: 'turn', direction: Directions.RIGHT }]
 		]);
 	})
-	test('should not turn if the same key is pressed twice', () => {
-		listener.keydown('ArrowLeft');
-		listener.keydown('ArrowLeft');
-
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }]
-		]);
-	})
 	test('shoult not accept any keys other than ArrowLeft or ArrowRight', () => {
 		listener.keydown('a');
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(false);
 
 		expect(mockWorker.postMessage).not.toHaveBeenCalled();
 	})
 	test('can turn left again after releasing arrow left key', () => {
 		const keyStroke = 'ArrowLeft';
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection').mockReturnValue(Directions.LEFT);
+
 		listener.keydown(keyStroke);
 		listener.keyup(keyStroke);
 		listener.keydown(keyStroke);
 		expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
 	})
 	test('the keyups need to match', () => {
+		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
+		jest.spyOn(keyMap, 'toDirection')
+			.mockReturnValueOnce(Directions.LEFT)
+			.mockReturnValueOnce(Directions.RIGHT)
+			.mockReturnValueOnce(Directions.LEFT);
 		listener.keydown('ArrowLeft');
 		listener.keyup('ArrowRight');
 		listener.keydown('ArrowLeft');
