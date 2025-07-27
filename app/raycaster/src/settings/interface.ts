@@ -1,9 +1,12 @@
+import { ColorName } from '../color/color_name';
 export interface SettingsInterface {
 	HORIZON_LINE_RATIO: number;
 	CANVAS_ID: string;
 	HTML_ELEMENT_ID: string;
+	PLAYER_COLOR: ColorName;
 	FRAME_HEIGHT: number;
 	ARENA_WIDTH: number;
+	MAP_COLOR: ColorName;
 	ARENA_HEIGHT: number;
 	MAX_BRIGHTNESS: number;
 	CAMERA_ANGLE: number; // in radians

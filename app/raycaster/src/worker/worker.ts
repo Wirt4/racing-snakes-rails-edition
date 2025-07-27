@@ -8,7 +8,6 @@ import { Directions } from '../controls/directions';
 import { Camera } from '../camera/camera';
 import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
-import { sleep } from '../sleep';
 
 import { MessageRouter } from '../messageRouter/messageRouter'
 import { GameFacade } from '../gameFacade/gameFacade';
@@ -20,7 +19,6 @@ let player: Player;
 let batchRenderer: BatchRenderer;
 let raycaster: Raycaster;
 let brightness: Brightness;
-let running = false;
 
 const router = new MessageRouter({
 	init(msg) {
@@ -66,26 +64,3 @@ const router = new MessageRouter({
 
 onmessage = (e) => { router.handleMessage(e) };
 
-function startLoop(): void {
-	/**
-	 * Preconditions:
-	 * The loop is not already running
-	 * Postconditions:
-	 * loop does not terminate on its own
-	 * calls requestAnimationFrame to continue the loop
-		* */
-	if (running) return;
-	running = true;
-	async function loop(): Promise<void> {
-		batchRenderer.clear();
-		game.update();
-		game.draw();
-		await sleep(30);
-		if (!game.isGameOver()) {
-			requestAnimationFrame(loop);
-		} else {
-			running = false;
-		}
-	};
-	requestAnimationFrame(loop);
-}

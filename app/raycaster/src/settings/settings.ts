@@ -1,4 +1,5 @@
 import { SettingsInterface } from './interface';
+import { ColorName } from '../color/color_name';
 
 export class Settings implements SettingsInterface {
 	HORIZON_LINE_RATIO = 0.65
@@ -6,6 +7,8 @@ export class Settings implements SettingsInterface {
 	HTML_ELEMENT_ID = 'app'
 	FRAME_HEIGHT = -200
 	MAX_BRIGHTNESS = 60
+	PLAYER_COLOR = ColorName.GREEN
+	MAP_COLOR = ColorName.BLACK
 	CAMERA_ANGLE = 0
 	TURN_TIME = 12//in frames
 	HUD_ON = true

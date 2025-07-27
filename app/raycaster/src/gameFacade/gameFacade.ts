@@ -3,8 +3,9 @@ import { Game } from '../game/game';
 import { PlayerInterface } from '../player/interface';
 import { BatchRendererInterface } from '../batchRenderer/interface';
 import { sleep } from '../sleep';
+import { GameFacadeInterface } from './interface';
 
-class GameFacade {
+class GameFacade implements GameFacadeInterface {
 	private running = false;
 
 	constructor(
