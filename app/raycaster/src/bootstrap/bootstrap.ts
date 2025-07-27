@@ -1,21 +1,28 @@
-import { Settings } from '../settings/settings';
-import { Listener } from '../listener/listener';
+import { SettingsInterface } from '../settings/interface';
+import { ListenerInterface } from '../listener/listener';
 
-export function bootstrap({
+function bootstrap({
 	canvasId,
 	workerPath,
 	settings,
+	listenerFactory,
 }: {
 	canvasId: string;
 	workerPath: string;
-	settings: Settings;
+	settings: SettingsInterface;
+	listenerFactory: (worker: Worker) => ListenerInterface;
+
 }): void {
-	const canvas = createCanvas(canvasId, settings.CANVAS_WIDTH, settings.CANVAS_HEIGHT);
-	const offscreen = canvas.transferControlToOffscreen();
+	const offscreenCanvas = createOffscreenCanvas(canvasId, settings.CANVAS_WIDTH, settings.CANVAS_HEIGHT)
 	const worker = createWorker(workerPath);
-	postInitMessage(worker, settings, offscreen);
-	const listener = new Listener(worker);
-	bindInputEvents(listener);
+	postInitMessage(worker, settings, offscreenCanvas);
+	bindInputEvents(listenerFactory(worker));
+}
+
+function createOffscreenCanvas(canvasId: string, width: number, height: number): OffscreenCanvas {
+	const canvas = createCanvas(canvasId, width, height);
+	document.getElementById("app")?.appendChild(canvas);
+	return canvas.transferControlToOffscreen();
 }
 
 function createCanvas(canvasId: string, width: number, height: number): HTMLCanvasElement {
@@ -23,7 +30,6 @@ function createCanvas(canvasId: string, width: number, height: number): HTMLCanv
 	canvas.id = canvasId;
 	canvas.width = width;
 	canvas.height = height;
-	document.getElementById("app")?.appendChild(canvas);
 	return canvas;
 }
 
@@ -41,12 +47,10 @@ function postInitMessage(worker: Worker, settings: SettingsInterface, canvas: Of
 		[canvas]
 	);
 }
-interface InputListener {
-	keydown(key: string): void;
-	keyup(key: string): void;
-}
 
-function bindInputEvents(listener: InputListener): void {
+function bindInputEvents(listener: ListenerInterface): void {
 	window.addEventListener("keydown", (e) => listener.keydown(e.key));
 	window.addEventListener("keyup", (e) => listener.keyup(e.key));
 }
+
+export { bootstrap };

@@ -7,8 +7,12 @@ enum DirectionRecord {
 	RIGHT = Directions.RIGHT,
 	NONE = "none"
 }
+interface ListenerInterface {
+	keydown(keystroke: string): void;
+	keyup(keystroke: string): void;
+}
 
-class Listener {
+class Listener implements ListenerInterface {
 	private lastDirection: DirectionRecord = DirectionRecord.NONE;
 	private leftKey = "ArrowLeft";
 	private rightKey = "ArrowRight";
@@ -53,4 +57,4 @@ class Listener {
 	}
 }
 
-export { Listener }
+export { Listener, ListenerInterface };
