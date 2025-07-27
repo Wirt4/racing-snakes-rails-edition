@@ -9,7 +9,7 @@ import { PlayerInterface } from '../player/interface';
 
 class Game {
 	private settings: Settings = new Settings();
-	fieldOfVision: number = this.settings.FIELD_OF_VISION;
+	fieldOfVision: number = this.settings.RAYCASTER_FIELD_OF_VISION;
 	private batchCorrelator: BatchCorrelator;
 
 	constructor(
@@ -27,7 +27,7 @@ class Game {
 			this.settings.CAMERA_HEIGHT,
 			this.settings.WALL_HEIGHT,
 			brightness,
-			this.settings.RESOLUTION
+			this.settings.RAYCASTER_RESOLUTION
 		)
 	}
 

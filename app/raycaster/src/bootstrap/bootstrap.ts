@@ -1,4 +1,4 @@
-import { SettingsInterface } from '../settings/interface';
+import { Settings } from '../settings/settings';
 import { ListenerInterface } from '../listener/listener';
 
 function bootstrap({
@@ -9,7 +9,7 @@ function bootstrap({
 }: {
 	canvasId: string;
 	workerPath: string;
-	settings: SettingsInterface;
+	settings: Settings;
 	listenerFactory: (worker: Worker) => ListenerInterface;
 
 }): void {
@@ -37,7 +37,7 @@ function createWorker(workerPath: string): Worker {
 	return new Worker(workerPath, { type: 'module' });
 }
 
-function postInitMessage(worker: Worker, settings: SettingsInterface, canvas: OffscreenCanvas): void {
+function postInitMessage(worker: Worker, settings: Settings, canvas: OffscreenCanvas): void {
 	worker.postMessage(
 		{
 			type: "init",

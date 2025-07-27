@@ -22,12 +22,12 @@ export function GameFacadeFactory(
 
 function createRaycaster(settings: Settings): Raycaster {
 	return new Raycaster(
-		settings.RESOLUTION,
-		settings.FIELD_OF_VISION,
+		settings.RAYCASTER_RESOLUTION,
+		settings.RAYCASTER_FIELD_OF_VISION,
 		settings.CANVAS_WIDTH,
 		settings.CANVAS_HEIGHT,
-		settings.MAX_DISTANCE,
-		settings.HORIZON_LINE_RATIO * settings.CANVAS_HEIGHT,
+		settings.RAYCASTER_MAX_DISTANCE,
+		settings.RAYCASTER_HORIZON_LINE_RATIO * settings.CANVAS_HEIGHT,
 		settings.WALL_HEIGHT,
 		settings.CAMERA_HEIGHT
 	);
