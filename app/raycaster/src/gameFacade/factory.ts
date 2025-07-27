@@ -12,19 +12,7 @@ import { Camera } from '../camera/camera';
 import { ColorName } from '../color/color_name';
 
 export function GameFacadeFactory(settings: SettingsInterface, canvas: OffscreenCanvas): GameFacadeInterface {
-	const ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-
-	if (!ctx) {
-		throw new Error("Failed to get 2D context from OffscreenCanvas");
-	}
-
-	const batchRenderer = new BatchRenderer(
-		new Renderer(ctx),
-		settings.CANVAS_WIDTH,
-		settings.CANVAS_HEIGHT,
-		ColorName.BLUE
-	);
-
+	const batchRenderer = createBatchRenderer(settings, canvas);
 	const mapSize = { width: settings.ARENA_WIDTH, height: settings.ARENA_HEIGHT };
 	const camera = new Camera(settings.TURN_TIME, settings.CAMERA_ANGLE);
 	const player = new Player({ x: 10, y: 10 }, settings.PLAYER_SPEED, settings.PLAYER_COLOR, camera);
@@ -43,4 +31,19 @@ export function GameFacadeFactory(settings: SettingsInterface, canvas: Offscreen
 	const brightness = new Brightness(settings.MAX_DISTANCE, settings.MAX_BRIGHTNESS);
 	const game = new Game(map, batchRenderer, raycaster, brightness, player);
 	return new GameFacade(game, player, batchRenderer);
+}
+
+function createBatchRenderer(settings: SettingsInterface, canvas: OffscreenCanvas): BatchRenderer {
+	const ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+
+	if (!ctx) {
+		throw new Error("Failed to get 2D context from OffscreenCanvas");
+	}
+
+	return new BatchRenderer(
+		new Renderer(ctx),
+		settings.CANVAS_WIDTH,
+		settings.CANVAS_HEIGHT,
+		ColorName.BLUE
+	);
 }
