@@ -35,12 +35,28 @@ describe('MessageRouter', () => {
 		});
 
 		const event = new MessageEvent('message', {
-			data: { type: 'unknown', payload: {} }
+			data: { type: 'bad', payload: {} }
 		});
 
 		router.handleMessage(event);
 
-		expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown message type: unknown');
+		expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown message type: bad');
 		expect(mockHandlerA).not.toHaveBeenCalled();
+	});
+
+	test('can handle multiple message types independently', () => {
+		const router = new MessageRouter({
+			init: mockHandlerA,
+			turn: mockHandlerB,
+		});
+
+		const event1 = new MessageEvent('message', { data: { type: 'init', foo: 1 } });
+		const event2 = new MessageEvent('message', { data: { type: 'turn', direction: 'LEFT' } });
+
+		router.handleMessage(event1);
+		router.handleMessage(event2);
+
+		expect(mockHandlerA).toHaveBeenCalledWith({ type: 'init', foo: 1 });
+		expect(mockHandlerB).toHaveBeenCalledWith({ type: 'turn', direction: 'LEFT' });
 	});
 });
