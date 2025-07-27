@@ -1,8 +1,9 @@
 import { SettingsInterface } from './interface';
 import { ColorName } from '../color/color_name';
-
+import { CameraSettings } from '../camera/settings';
 import { BatchRendererSettings } from '../batchRenderer/settings';
-export class Settings implements SettingsInterface, BatchRendererSettings {
+
+export class Settings implements SettingsInterface, BatchRendererSettings, CameraSettings {
 	HORIZON_LINE_RATIO = 0.65
 	CANVAS_ID = 'game-window'
 	HTML_ELEMENT_ID = 'app'

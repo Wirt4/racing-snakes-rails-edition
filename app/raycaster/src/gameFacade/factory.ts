@@ -8,9 +8,11 @@ import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
 import { Player } from '../player/player';
-import { Camera } from '../camera/camera';
+import { cameraFactory } from '../camera/factory';
 
-export function GameFacadeFactory(settings: Settings, canvas: OffscreenCanvas): GameFacadeInterface {
+export function GameFacadeFactory(
+	settings: Settings, canvas: OffscreenCanvas
+): GameFacadeInterface {
 	const batchRenderer = batchRendererFactory(settings, canvas);
 	const player = createPlayer(settings);
 	const game = createGame(settings, batchRenderer, player);
@@ -30,7 +32,11 @@ function createRaycaster(settings: Settings): Raycaster {
 	);
 }
 
-function createGame(settings: Settings, batchRenderer: BatchRendererInterface, player: Player): Game {
+function createGame(
+	settings: Settings,
+	batchRenderer: BatchRendererInterface,
+	player: Player
+): Game {
 	const mapSize = { width: settings.ARENA_WIDTH, height: settings.ARENA_HEIGHT };
 	const map = new GameMap(mapSize, settings.MAP_COLOR, settings.GRID_CELL_SIZE, player);
 	const raycaster = createRaycaster(settings);
@@ -39,15 +45,11 @@ function createGame(settings: Settings, batchRenderer: BatchRendererInterface, p
 }
 
 function createPlayer(settings: Settings): Player {
-	const camera = createCamera(settings);
+	const camera = cameraFactory(settings);
 	return new Player(
 		{ x: 10, y: 10 },
 		settings.PLAYER_SPEED,
 		settings.PLAYER_COLOR,
 		camera
 	);
-}
-
-function createCamera(settings: Settings): Camera {
-	return new Camera(settings.TURN_TIME, settings.CAMERA_ANGLE);
 }
