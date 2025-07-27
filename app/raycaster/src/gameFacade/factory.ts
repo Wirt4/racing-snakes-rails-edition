@@ -5,11 +5,11 @@ import { batchRendererFactory } from '../batchRenderer/factory';
 import { BatchRendererInterface } from '../batchRenderer/interface';
 import { Game } from '../game/game';
 import { GameMap } from '../gamemap/map';
-import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
 import { cameraFactory } from '../camera/factory';
 import { playerFactory } from '../player/factory';
 import { PlayerInterface } from '../player/interface';
+import { raycasterFactory } from '../raycaster/factory';
 
 export function GameFacadeFactory(
 	settings: Settings, canvas: OffscreenCanvas
@@ -20,19 +20,6 @@ export function GameFacadeFactory(
 	return new GameFacade(game, player, batchRenderer);
 }
 
-function createRaycaster(settings: Settings): Raycaster {
-	return new Raycaster(
-		settings.RAYCASTER_RESOLUTION,
-		settings.RAYCASTER_FIELD_OF_VISION,
-		settings.CANVAS_WIDTH,
-		settings.CANVAS_HEIGHT,
-		settings.RAYCASTER_MAX_DISTANCE,
-		settings.RAYCASTER_HORIZON_LINE_RATIO * settings.CANVAS_HEIGHT,
-		settings.WALL_HEIGHT,
-		settings.CAMERA_HEIGHT
-	);
-}
-
 function createGame(
 	settings: Settings,
 	batchRenderer: BatchRendererInterface,
@@ -40,7 +27,7 @@ function createGame(
 ): Game {
 	const mapSize = { width: settings.ARENA_WIDTH, height: settings.ARENA_HEIGHT };
 	const map = new GameMap(mapSize, settings.MAP_COLOR, settings.GRID_CELL_SIZE, player);
-	const raycaster = createRaycaster(settings);
+	const raycaster = raycasterFactory(settings);
 	const brightness = new Brightness(settings.MAX_DISTANCE, settings.MAX_BRIGHTNESS);
 	return new Game(map, batchRenderer, raycaster, brightness, player);
 }
