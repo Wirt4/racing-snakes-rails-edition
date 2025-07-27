@@ -12,7 +12,8 @@ export function bootstrap({
 }): void {
 	const canvas = createCanvas(canvasId, settings.CANVAS_WIDTH, settings.CANVAS_HEIGHT);
 	const offscreen = canvas.transferControlToOffscreen();
-	const worker = new Worker(workerPath, { type: 'module' });
+
+	const worker = createWorker(workerPath);
 
 	worker.postMessage(
 		{
@@ -41,4 +42,8 @@ function createCanvas(canvasId: string, width: number, height: number): HTMLCanv
 	canvas.height = height;
 	document.getElementById("app")?.appendChild(canvas);
 	return canvas;
+}
+
+function createWorker(workerPath: string): Worker {
+	return new Worker(workerPath, { type: 'module' });
 }
