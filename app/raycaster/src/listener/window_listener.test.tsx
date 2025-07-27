@@ -2,15 +2,20 @@ import { Listener } from './listener';
 import { beforeEach, describe, test, expect, jest } from '@jest/globals';
 import { Directions } from '../controls/directions';
 import { KeyMapInterface } from '../controls/keymap/interface';
+import { DirectionMessengerInterface } from '../directionMessenger/interface';
 
 describe('Keydown Tests', () => {
 	let mockWorker: Worker;
 	let listener: Listener;
 	let postMessageSpy: any;
 	let keyMap: KeyMapInterface;
+	let directionMessenger: DirectionMessengerInterface;
 
 	beforeEach(() => {
 		mockWorker = { postMessage: jest.fn() } as unknown as Worker;
+		directionMessenger = {
+			sendTurn: jest.fn()
+		}
 		keyMap = {
 			isMappedKey: jest.fn((key: string) => key === 'ArrowLeft' || key === 'ArrowRight'),
 			toDirection: jest.fn((key: string) => {
@@ -19,7 +24,7 @@ describe('Keydown Tests', () => {
 				return null;
 			})
 		} as KeyMapInterface;
-		listener = new Listener(mockWorker, keyMap);
+		listener = new Listener(mockWorker, keyMap, directionMessenger);
 		postMessageSpy = jest.spyOn(mockWorker, 'postMessage');;
 	});
 
@@ -28,13 +33,8 @@ describe('Keydown Tests', () => {
 		jest.spyOn(keyMap, 'toDirection').mockReturnValue(Directions.LEFT);
 
 		listener.keydown('left');
-
-		expect(mockWorker.postMessage).toHaveBeenCalledWith({
-			type: 'turn',
-			direction: Directions.LEFT
-		});
-	})
-
+		expect(directionMessenger.sendTurn).toHaveBeenCalledWith(Directions.LEFT);
+	});
 	test('if user hits the same key twice, just call the worker post once', () => {
 		const keyStroke = 'ArrowLeft';
 		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);

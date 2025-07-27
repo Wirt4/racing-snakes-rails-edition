@@ -1,7 +1,7 @@
 import { Directions } from '../controls/directions';
 import { KeyMapInterface } from '../controls/keymap/interface';
+import { DirectionMessengerInterface } from '../directionMessenger/interface';
 const type = "turn";
-
 
 interface ListenerInterface {
 	keydown(keystroke: string): void;
@@ -12,7 +12,8 @@ class Listener implements ListenerInterface {
 	private lastDirection: Directions = Directions.NONE;
 	constructor(
 		private worker: Worker,
-		private keyMap: KeyMapInterface
+		private keyMap: KeyMapInterface,
+		private directionMessenger: DirectionMessengerInterface
 	) { }
 
 	keydown(keystroke: string): void {

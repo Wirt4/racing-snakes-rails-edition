@@ -1,6 +1,7 @@
 import { Directions } from '../controls/directions';
 import { Listener, ListenerInterface } from './listener';
 import { KeyMapInterface } from '../controls/keymap/interface';
+import { DirectionMessengerInterface } from '../directionMessenger/interface';
 
 function listenerFactory(worker: Worker): ListenerInterface {
 	const keyMap: KeyMapInterface = {
@@ -11,7 +12,7 @@ function listenerFactory(worker: Worker): ListenerInterface {
 		})
 	};
 
-	return new Listener(worker, keyMap);
+	return new Listener(worker, keyMap, {} as unknown as DirectionMessengerInterface);
 }
 
 export { listenerFactory };
