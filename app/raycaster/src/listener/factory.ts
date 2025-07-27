@@ -11,8 +11,13 @@ function listenerFactory(worker: Worker): ListenerInterface {
 			return Directions.RIGHT;
 		})
 	};
+	const directionMessenger: DirectionMessengerInterface = {
+		sendTurn: (direction: Directions) => {
+			worker.postMessage({ type: 'turn', direction });
+		}
+	}
 
-	return new Listener(worker, keyMap, {} as unknown as DirectionMessengerInterface);
+	return new Listener(worker, keyMap, directionMessenger);
 }
 
 export { listenerFactory };
