@@ -1,21 +1,33 @@
-import { jest, describe, test, expect } from '@jest/globals';
+import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import { DirectionMessenger } from './directionMessenger';
 import { Directions } from '../controls/directions';
 
 describe('directionMessenger', () => {
-	test('sendTurn should call worker.postMessage with the correct direction', () => {
-		const mockWorker = {
+	let mockWorker: Worker;
+	let directionMessenger: DirectionMessenger;
+
+	beforeEach(() => {
+		mockWorker = {
 			postMessage: jest.fn(),
-		};
+		} as unknown as Worker;
+		directionMessenger = new DirectionMessenger(mockWorker);
+	});
 
-		const directionMessenger = new DirectionMessenger(mockWorker as unknown as Worker);
-
-
+	test('sendTurn should call worker.postMessage with LEFT', () => {
 		directionMessenger.sendTurn(Directions.LEFT);
 		expect(mockWorker.postMessage)
 			.toHaveBeenCalledWith
 			(expect.objectContaining(
 				{ direction: Directions.LEFT, type: 'turn' }
 			));
-	})
+	});
+
+	test('sendTurn should call worker.postMessage with RIGHT', () => {
+		directionMessenger.sendTurn(Directions.RIGHT);
+		expect(mockWorker.postMessage)
+			.toHaveBeenCalledWith
+			(expect.objectContaining(
+				{ direction: Directions.RIGHT, type: 'turn' }
+			));
+	});
 })
