@@ -12,19 +12,10 @@ export function bootstrap({
 }): void {
 	const canvas = createCanvas(canvasId, settings.CANVAS_WIDTH, settings.CANVAS_HEIGHT);
 	const offscreen = canvas.transferControlToOffscreen();
-
 	const worker = createWorker(workerPath);
 	postInitMessage(worker, settings, offscreen);
-
 	const listener = new Listener(worker);
-
-	window.addEventListener("keydown", (e: KeyboardEvent) => {
-		listener.keydown(e.key);
-	});
-
-	window.addEventListener("keyup", (e: KeyboardEvent) => {
-		listener.keyup(e.key);
-	});
+	bindInputEvents(listener);
 }
 
 function createCanvas(canvasId: string, width: number, height: number): HTMLCanvasElement {
@@ -49,6 +40,13 @@ function postInitMessage(worker: Worker, settings: SettingsInterface, canvas: Of
 		},
 		[canvas]
 	);
-
+}
+interface InputListener {
+	keydown(key: string): void;
+	keyup(key: string): void;
 }
 
+function bindInputEvents(listener: InputListener): void {
+	window.addEventListener("keydown", (e) => listener.keydown(e.key));
+	window.addEventListener("keyup", (e) => listener.keyup(e.key));
+}
