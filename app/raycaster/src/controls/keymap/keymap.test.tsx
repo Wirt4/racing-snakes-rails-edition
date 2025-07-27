@@ -10,7 +10,7 @@ describe('keymap tests', () => {
 	});
 
 	test('isMappedKey is false', () => {
-		const keyMap = new KeyMap(['ArrowLeft']);
+		const keyMap = new KeyMap(['ArrowLeft', 'ArrowRight']);
 		expect(keyMap.isMappedKey('q')).toBe(false);
 	})
 
