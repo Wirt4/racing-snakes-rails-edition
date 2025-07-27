@@ -7,6 +7,7 @@ import { RaycasterInterface } from '../raycaster/interface';
 import { WallInterface } from '../gamemap/interface';
 import { ColorName } from '../color/color_name';
 import { BatchRendererInterface } from '../batchRenderer/interface';
+import { BatchCorrelatorInterface } from '../batchCorrelator/interface';
 
 function mockCastRay(angle: number, distance: number) {
 	return {
@@ -24,6 +25,7 @@ describe('isGameOver tests', () => {
 	let brightness: BrightnessInterface
 	let raycaster: RaycasterInterface
 	let game: Game
+	let batchCorrelator: BatchCorrelatorInterface;
 
 	beforeEach(() => {
 		map = {
@@ -48,8 +50,11 @@ describe('isGameOver tests', () => {
 		raycaster = {
 			fillRaysInto: (rays: any, angle: any) => { }
 		} as RaycasterInterface;
-		game = new Game(map, renderer, raycaster, brightness, player)
-
+		batchCorrelator = {
+			batchRenderData: jest.fn(),
+			batches: null as any
+		}
+		game = new Game(map, renderer, player, batchCorrelator);
 	})
 	test('if the player has collided with a wall, then its game over for them', () => {
 		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
@@ -64,7 +69,7 @@ describe('Draw condition tests', () => {
 	let brightness: BrightnessInterface
 	let raycaster: RaycasterInterface
 	let game: Game
-
+	let batchCorrelator: BatchCorrelatorInterface;
 	beforeEach(() => {
 		map = {
 			walls: [],
@@ -92,8 +97,12 @@ describe('Draw condition tests', () => {
 			fillRaysInto: (rays: any, angle: any) => { },
 			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
 		} as RaycasterInterface;
+		batchCorrelator = {
+			batchRenderData: jest.fn(),
+			batches: null as any
+		}
 
-		game = new Game(map, renderer, raycaster, brightness, player)
+		game = new Game(map, renderer, player, batchCorrelator);
 
 	})
 

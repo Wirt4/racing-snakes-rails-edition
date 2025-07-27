@@ -1,34 +1,18 @@
 import { GameMapInterface } from '../gamemap/interface';
-import { RaycasterInterface } from '../raycaster/interface';
 import { Settings } from '../settings/settings';
-import { BrightnessInterface } from '../brightness/interface';
 import { BatchRendererInterface } from '../batchRenderer/interface';
-import { BatchCorrelator } from '../batchCorrelator/batchCorrelator';
 import { PlayerInterface } from '../player/interface';
 import { GameInterface } from './interface';
+import { BatchCorrelatorInterface } from '../batchCorrelator/interface';
 
 class Game implements GameInterface {
-	private settings: Settings = new Settings();
-	fieldOfVision: number = this.settings.RAYCASTER_FIELD_OF_VISION;
-	private batchCorrelator: BatchCorrelator;
 
 	constructor(
 		public map: GameMapInterface,
 		private batchRenderer: BatchRendererInterface,
-		raycaster: RaycasterInterface,
-		brightness: BrightnessInterface,
 		private player: PlayerInterface,
+		private batchCorrelator: BatchCorrelatorInterface
 	) {
-		this.batchCorrelator = new BatchCorrelator(
-			map,
-			raycaster,
-			this.settings.MAX_DISTANCE,
-			this.settings.HORIZON_Y,
-			this.settings.CAMERA_HEIGHT,
-			this.settings.WALL_HEIGHT,
-			brightness,
-			this.settings.RAYCASTER_RESOLUTION
-		)
 	}
 
 	update(): void {

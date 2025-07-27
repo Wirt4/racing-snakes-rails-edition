@@ -3,8 +3,9 @@ import { ColorName } from '../color/color_name';
 import { RaycasterInterface } from '../raycaster/interface';
 import { BrightnessInterface } from '../brightness/interface';
 import { GameMapInterface } from '../gamemap/interface';
+import { BatchCorrelatorInterface } from './interface';
 
-class BatchCorrelator {
+class BatchCorrelator implements BatchCorrelatorInterface {
 	public batches: Batches;
 	private rays: Float32Array;
 	private wallTopOffset: number;
