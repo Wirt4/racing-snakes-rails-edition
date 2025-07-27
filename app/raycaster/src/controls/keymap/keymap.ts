@@ -2,10 +2,11 @@ import { KeyMapInterface } from './interface';
 import { Directions } from '../directions';
 
 class KeyMap implements KeyMapInterface {
-	constructor(private keyname: string) {
+	constructor(private keynames: Array<string>) {
 	}
+
 	isMappedKey(key: string): boolean {
-		return key === this.keyname;
+		return this.keynames.includes(key);
 	}
 
 	toDirection(key: string): Directions {
