@@ -11,6 +11,9 @@ import { ColorName } from '../color/color_name';
 import { sleep } from '../sleep';
 
 import { MessageRouter } from '../messageRouter/messageRouter'
+import { GameFacade } from '../gameFacade/gameFacade';
+
+let gameFacade: GameFacade;
 
 let game: Game;
 let player: Player;
@@ -50,12 +53,14 @@ const router = new MessageRouter({
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		game = new Game(map, batchRenderer, raycaster, brightness, player);
-		startLoop();
+
+		gameFacade = new GameFacade(game, player, batchRenderer);
+		gameFacade.startLoop();
 	},
 	turn(msg) {
-		if (!player) return;
-		if (msg.direction === Directions.LEFT) player.turnLeft();
-		else if (msg.direction === Directions.RIGHT) player.turnRight();
+		if (!gameFacade) return;
+		if (msg.direction === Directions.LEFT) gameFacade.turnLeft();
+		else if (msg.direction === Directions.RIGHT) gameFacade.turnRight();
 	},
 })
 
