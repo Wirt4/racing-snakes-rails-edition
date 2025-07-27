@@ -4,8 +4,9 @@ class MessageRouter implements MessageRouterInterface {
 	constructor(private handlers: Record<string, (formattedMessage: any) => void>) {
 	}
 
-	handleMessage(message: MessageEvent): void {
-		throw new Error('Method not implemented.');
+	handleMessage(event: MessageEvent): void {
+		const handler = this.handlers[event.data.type];
+		handler(event.data);
 	}
 }
 
