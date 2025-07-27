@@ -7,6 +7,12 @@ jest.mock('../sleep', () => ({
 	sleep: jest.fn(() => Promise.resolve())
 }));
 
+async function runTimers() {
+	await Promise.resolve();
+	jest.runAllTimers();
+	await Promise.resolve();
+}
+
 describe('GameFacade', () => {
 	let mockGame: any;
 	let mockPlayer: any;
@@ -53,9 +59,7 @@ describe('GameFacade', () => {
 		mockGame.isGameOver.mockReturnValueOnce(false).mockReturnValueOnce(true);
 
 		facade.startLoop();
-		await Promise.resolve();
-		jest.runAllTimers();
-		await Promise.resolve();
+		await runTimers();
 
 		expect(mockRenderer.clear).toHaveBeenCalled();
 		expect(mockGame.update).toHaveBeenCalled();
@@ -76,9 +80,7 @@ describe('GameFacade', () => {
 		mockGame.isGameOver.mockReturnValueOnce(true);
 
 		facade.startLoop();
-		await Promise.resolve();
-		jest.runAllTimers();
-		await Promise.resolve();
+		await runTimers();
 
 		expect(mockGame.isGameOver).toHaveBeenCalled();
 	});

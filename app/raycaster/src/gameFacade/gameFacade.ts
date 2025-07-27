@@ -1,25 +1,16 @@
 
 import { Game } from '../game/game';
-import { Player } from '../player/player';
-import { BatchRenderer } from '../batchRenderer/batchRenderer';
+import { PlayerInterface } from '../player/interface';
+import { BatchRendererInterface } from '../batchRenderer/interface';
 import { sleep } from '../sleep';
 
-interface LoopController {
-	startLoop(): void;
-}
-
-interface PlayerController {
-	turnLeft(): void;
-	turnRight(): void;
-}
-
-class GameFacade implements LoopController, PlayerController {
+class GameFacade {
 	private running = false;
 
 	constructor(
 		private readonly game: Game,
-		private readonly player: Player,
-		private readonly batchRenderer: BatchRenderer
+		private readonly player: PlayerInterface,
+		private readonly batchRenderer: BatchRendererInterface
 	) { }
 
 	startLoop(): void {
@@ -50,4 +41,5 @@ class GameFacade implements LoopController, PlayerController {
 		this.player.turnRight();
 	}
 }
-export { GameFacade, LoopController, PlayerController };
+
+export { GameFacade };
