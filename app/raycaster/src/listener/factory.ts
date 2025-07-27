@@ -1,16 +1,10 @@
-import { Directions } from '../controls/directions';
 import { Listener, ListenerInterface } from './listener';
 import { KeyMap } from '../controls/keymap/keymap';
-import { DirectionMessengerInterface } from '../directionMessenger/interface';
+import { DirectionMessenger } from '../directionMessenger/directionMessenger';
 
 function listenerFactory(worker: Worker): ListenerInterface {
 	const keyMap = new KeyMap(['ArrowLeft', 'ArrowRight']);
-	const directionMessenger: DirectionMessengerInterface = {
-		sendTurn: (direction: Directions) => {
-			worker.postMessage({ type: 'turn', direction });
-		}
-	}
-
+	const directionMessenger = new DirectionMessenger(worker);
 	return new Listener(keyMap, directionMessenger);
 }
 
