@@ -14,15 +14,7 @@ export function bootstrap({
 	const offscreen = canvas.transferControlToOffscreen();
 
 	const worker = createWorker(workerPath);
-
-	worker.postMessage(
-		{
-			type: "init",
-			canvas: offscreen,
-			settings,
-		},
-		[offscreen]
-	);
+	postInitMessage(worker, settings, offscreen);
 
 	const listener = new Listener(worker);
 
@@ -47,3 +39,16 @@ function createCanvas(canvasId: string, width: number, height: number): HTMLCanv
 function createWorker(workerPath: string): Worker {
 	return new Worker(workerPath, { type: 'module' });
 }
+
+function postInitMessage(worker: Worker, settings: SettingsInterface, canvas: OffscreenCanvas): void {
+	worker.postMessage(
+		{
+			type: "init",
+			canvas,
+			settings,
+		},
+		[canvas]
+	);
+
+}
+
