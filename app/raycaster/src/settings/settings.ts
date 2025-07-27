@@ -1,7 +1,8 @@
 import { SettingsInterface } from './interface';
 import { ColorName } from '../color/color_name';
 
-export class Settings implements SettingsInterface {
+import { BatchRendererSettings } from '../batchRenderer/settings';
+export class Settings implements SettingsInterface, BatchRendererSettings {
 	HORIZON_LINE_RATIO = 0.65
 	CANVAS_ID = 'game-window'
 	HTML_ELEMENT_ID = 'app'
@@ -24,6 +25,7 @@ export class Settings implements SettingsInterface {
 	CANVAS_WIDTH = 400
 	ARENA_WIDTH = 200
 	ARENA_HEIGHT = 200
+	GRID_COLOR = ColorName.BLUE
 	HORIZON_Y = 200
 	GRID_CELL_SIZE = 4
 	CANVAS_HEIGHT = 640

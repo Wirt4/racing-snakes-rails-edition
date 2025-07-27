@@ -1,24 +1,24 @@
 import { GameFacadeInterface } from './interface';
 import { GameFacade } from './gameFacade';
-import { SettingsInterface } from '../settings/interface';
-import { BatchRenderer } from '../batchRenderer/batchRenderer';
-import { Renderer } from '../renderer/renderer';
+import { Settings } from '../settings/settings';
+import { batchRendererFactory } from '../batchRenderer/factory';
+import { BatchRendererInterface } from '../batchRenderer/interface';
 import { Game } from '../game/game';
 import { GameMap } from '../gamemap/map';
 import { Raycaster } from '../raycaster/raycaster';
 import { Brightness } from '../brightness/brightness';
 import { Player } from '../player/player';
 import { Camera } from '../camera/camera';
-import { ColorName } from '../color/color_name';
 
-export function GameFacadeFactory(settings: SettingsInterface, canvas: OffscreenCanvas): GameFacadeInterface {
-	const batchRenderer = createBatchRenderer(settings, canvas);
-	const mapSize = { width: settings.ARENA_WIDTH, height: settings.ARENA_HEIGHT };
-	const camera = new Camera(settings.TURN_TIME, settings.CAMERA_ANGLE);
-	const player = new Player({ x: 10, y: 10 }, settings.PLAYER_SPEED, settings.PLAYER_COLOR, camera);
-	const map = new GameMap(mapSize, settings.MAP_COLOR, settings.GRID_CELL_SIZE, player);
+export function GameFacadeFactory(settings: Settings, canvas: OffscreenCanvas): GameFacadeInterface {
+	const batchRenderer = batchRendererFactory(settings, canvas);
+	const player = createPlayer(settings);
+	const game = createGame(settings, batchRenderer, player);
+	return new GameFacade(game, player, batchRenderer);
+}
 
-	const raycaster = new Raycaster(
+function createRaycaster(settings: Settings): Raycaster {
+	return new Raycaster(
 		settings.RESOLUTION,
 		settings.FIELD_OF_VISION,
 		settings.CANVAS_WIDTH,
@@ -26,24 +26,28 @@ export function GameFacadeFactory(settings: SettingsInterface, canvas: Offscreen
 		settings.MAX_DISTANCE,
 		settings.HORIZON_LINE_RATIO * settings.CANVAS_HEIGHT,
 		settings.WALL_HEIGHT,
-		settings.CAMERA_HEIGHT,
+		settings.CAMERA_HEIGHT
 	);
-	const brightness = new Brightness(settings.MAX_DISTANCE, settings.MAX_BRIGHTNESS);
-	const game = new Game(map, batchRenderer, raycaster, brightness, player);
-	return new GameFacade(game, player, batchRenderer);
 }
 
-function createBatchRenderer(settings: SettingsInterface, canvas: OffscreenCanvas): BatchRenderer {
-	const ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+function createGame(settings: Settings, batchRenderer: BatchRendererInterface, player: Player): Game {
+	const mapSize = { width: settings.ARENA_WIDTH, height: settings.ARENA_HEIGHT };
+	const map = new GameMap(mapSize, settings.MAP_COLOR, settings.GRID_CELL_SIZE, player);
+	const raycaster = createRaycaster(settings);
+	const brightness = new Brightness(settings.MAX_DISTANCE, settings.MAX_BRIGHTNESS);
+	return new Game(map, batchRenderer, raycaster, brightness, player);
+}
 
-	if (!ctx) {
-		throw new Error("Failed to get 2D context from OffscreenCanvas");
-	}
-
-	return new BatchRenderer(
-		new Renderer(ctx),
-		settings.CANVAS_WIDTH,
-		settings.CANVAS_HEIGHT,
-		ColorName.BLUE
+function createPlayer(settings: Settings): Player {
+	const camera = createCamera(settings);
+	return new Player(
+		{ x: 10, y: 10 },
+		settings.PLAYER_SPEED,
+		settings.PLAYER_COLOR,
+		camera
 	);
+}
+
+function createCamera(settings: Settings): Camera {
+	return new Camera(settings.TURN_TIME, settings.CAMERA_ANGLE);
 }
