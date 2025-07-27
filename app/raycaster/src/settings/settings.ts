@@ -2,6 +2,8 @@ import { SettingsInterface } from './interface';
 
 export class Settings implements SettingsInterface {
 	HORIZON_LINE_RATIO = 0.65
+	CANVAS_ID = 'game-window'
+	HTML_ELEMENT_ID = 'app'
 	FRAME_HEIGHT = -200
 	MAX_BRIGHTNESS = 60
 	CAMERA_ANGLE = 0

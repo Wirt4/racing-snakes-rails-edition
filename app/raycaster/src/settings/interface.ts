@@ -1,5 +1,7 @@
 export interface SettingsInterface {
 	HORIZON_LINE_RATIO: number;
+	CANVAS_ID: string;
+	HTML_ELEMENT_ID: string;
 	FRAME_HEIGHT: number;
 	ARENA_WIDTH: number;
 	ARENA_HEIGHT: number;
