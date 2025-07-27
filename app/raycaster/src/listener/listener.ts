@@ -11,7 +11,6 @@ interface ListenerInterface {
 class Listener implements ListenerInterface {
 	private lastDirection: Directions = Directions.NONE;
 	constructor(
-		private worker: Worker,
 		private keyMap: KeyMapInterface,
 		private directionMessenger: DirectionMessengerInterface
 	) { }
@@ -42,7 +41,6 @@ class Listener implements ListenerInterface {
 
 	private postIfDirectionChanged(direction: Directions): void {
 		if (direction !== this.lastDirection) {
-			this.worker.postMessage({ type, direction });
 			this.directionMessenger.sendTurn(direction);
 		}
 	}

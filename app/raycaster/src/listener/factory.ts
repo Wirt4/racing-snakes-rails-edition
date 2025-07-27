@@ -17,7 +17,7 @@ function listenerFactory(worker: Worker): ListenerInterface {
 		}
 	}
 
-	return new Listener(worker, keyMap, directionMessenger);
+	return new Listener(keyMap, directionMessenger);
 }
 
 export { listenerFactory };

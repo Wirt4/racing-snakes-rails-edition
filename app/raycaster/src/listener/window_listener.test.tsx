@@ -5,17 +5,16 @@ import { KeyMapInterface } from '../controls/keymap/interface';
 import { DirectionMessengerInterface } from '../directionMessenger/interface';
 
 describe('Keydown Tests', () => {
-	let mockWorker: Worker;
 	let listener: Listener;
-	let postMessageSpy: any;
 	let keyMap: KeyMapInterface;
 	let directionMessenger: DirectionMessengerInterface;
+	let sendTurnSpy: jest.MockedFunction<any>;
 
 	beforeEach(() => {
-		mockWorker = { postMessage: jest.fn() } as unknown as Worker;
 		directionMessenger = {
 			sendTurn: jest.fn()
 		}
+		sendTurnSpy = jest.spyOn(directionMessenger, 'sendTurn');
 		keyMap = {
 			isMappedKey: jest.fn((key: string) => key === 'ArrowLeft' || key === 'ArrowRight'),
 			toDirection: jest.fn((key: string) => {
@@ -24,8 +23,7 @@ describe('Keydown Tests', () => {
 				return null;
 			})
 		} as KeyMapInterface;
-		listener = new Listener(mockWorker, keyMap, directionMessenger);
-		postMessageSpy = jest.spyOn(mockWorker, 'postMessage');;
+		listener = new Listener(keyMap, directionMessenger);
 	});
 
 	test('should turn left', () => {
@@ -43,8 +41,8 @@ describe('Keydown Tests', () => {
 		listener.keydown(keyStroke);
 		listener.keydown(keyStroke);
 
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }]
+		expect(sendTurnSpy.mock.calls).toEqual([
+			[Directions.LEFT]
 		]);
 	})
 
@@ -55,29 +53,28 @@ describe('Keydown Tests', () => {
 
 		listener.keydown(keyStroke);
 
-		expect(mockWorker.postMessage).toHaveBeenCalledWith({
-			type: 'turn',
-			direction: Directions.RIGHT
-		});
+		expect(directionMessenger.sendTurn).toHaveBeenCalledWith(Directions.RIGHT);
 	})
 
 	test('should turn right after turning left', () => {
 		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
 		jest.spyOn(keyMap, 'toDirection').mockReturnValueOnce(Directions.LEFT)
 			.mockReturnValueOnce(Directions.RIGHT);
+
 		listener.keydown('ArrowLeft');
 		listener.keydown('ArrowRight');
 
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }],
-			[{ type: 'turn', direction: Directions.RIGHT }]
+		expect(sendTurnSpy.mock.calls).toEqual([
+			[Directions.LEFT],
+			[Directions.RIGHT]
 		]);
 	})
 	test('shoult not accept any keys other than ArrowLeft or ArrowRight', () => {
-		listener.keydown('a');
 		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(false);
 
-		expect(mockWorker.postMessage).not.toHaveBeenCalled();
+		listener.keydown('a');
+
+		expect(directionMessenger.sendTurn).not.toHaveBeenCalled();
 	})
 	test('can turn left again after releasing arrow left key', () => {
 		const keyStroke = 'ArrowLeft';
@@ -87,7 +84,8 @@ describe('Keydown Tests', () => {
 		listener.keydown(keyStroke);
 		listener.keyup(keyStroke);
 		listener.keydown(keyStroke);
-		expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
+
+		expect(directionMessenger.sendTurn).toHaveBeenCalledTimes(2);
 	})
 	test('the keyups need to match', () => {
 		jest.spyOn(keyMap, 'isMappedKey').mockReturnValue(true);
@@ -95,10 +93,11 @@ describe('Keydown Tests', () => {
 			.mockReturnValueOnce(Directions.LEFT)
 			.mockReturnValueOnce(Directions.RIGHT)
 			.mockReturnValueOnce(Directions.LEFT);
+
 		listener.keydown('ArrowLeft');
 		listener.keyup('ArrowRight');
 		listener.keydown('ArrowLeft');
-		expect(mockWorker.postMessage).toHaveBeenCalledTimes(1);
-	})
 
+		expect(directionMessenger.sendTurn).toHaveBeenCalledTimes(1);
+	})
 })
