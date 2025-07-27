@@ -28,4 +28,19 @@ describe('MessageRouter', () => {
 
 		expect(mockHandlerA).toHaveBeenCalledWith({ type: 'init', payload: { foo: 'bar' } });
 	});
+
+	test('logs a warning for unknown message types', () => {
+		const router = new MessageRouter({
+			init: mockHandlerA,
+		});
+
+		const event = new MessageEvent('message', {
+			data: { type: 'unknown', payload: {} }
+		});
+
+		router.handleMessage(event);
+
+		expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown message type: unknown');
+		expect(mockHandlerA).not.toHaveBeenCalled();
+	});
 });
