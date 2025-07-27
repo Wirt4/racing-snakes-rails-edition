@@ -1,16 +1,28 @@
 import { Listener } from './listener';
 import { beforeEach, describe, test, expect, jest } from '@jest/globals';
 import { Directions } from '../controls/directions';
+import { KeyMapInterface } from '../controls/keymap/interface';
 
 describe('Keydown Tests', () => {
 	let mockWorker: Worker;
 	let listener: Listener;
 	let postMessageSpy: any;
+	let keyMap: KeyMapInterface;
+
 	beforeEach(() => {
 		mockWorker = { postMessage: jest.fn() } as unknown as Worker;
-		listener = new Listener(mockWorker);
+		keyMap = {
+			isMappedKey: jest.fn((key: string) => key === 'ArrowLeft' || key === 'ArrowRight'),
+			toDirection: jest.fn((key: string) => {
+				if (key === 'ArrowLeft') return Directions.LEFT;
+				if (key === 'ArrowRight') return Directions.RIGHT;
+				return null;
+			})
+		} as KeyMapInterface;
+		listener = new Listener(mockWorker, keyMap);
 		postMessageSpy = jest.spyOn(mockWorker, 'postMessage');;
 	});
+
 	test('should turn left', () => {
 		const keyStroke = 'ArrowLeft';
 

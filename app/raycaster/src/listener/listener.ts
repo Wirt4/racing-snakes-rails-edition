@@ -1,5 +1,5 @@
 import { Directions } from '../controls/directions';
-
+import { KeyMapInterface } from '../controls/keymap/interface';
 const type = "turn";
 
 enum DirectionRecord {
@@ -16,7 +16,7 @@ class Listener implements ListenerInterface {
 	private lastDirection: DirectionRecord = DirectionRecord.NONE;
 	private leftKey = "ArrowLeft";
 	private rightKey = "ArrowRight";
-	constructor(private worker: Worker) { }
+	constructor(private worker: Worker, private keyMap: KeyMapInterface) { }
 
 	keydown(keystroke: string): void {
 		if (!this.isValidKey(keystroke)) {
