@@ -1,6 +1,6 @@
 import { Coordinates } from '../geometry/interfaces'
 
-export interface Trail {
+export interface TrailInterface {
 	add(coordinates: Coordinates): void
-	hasInterescted(): boolean
+	hasIntersected(): boolean
 }
