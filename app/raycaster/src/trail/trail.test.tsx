@@ -12,4 +12,10 @@ describe('trail tests', () => {
 		expect(trail.hasIntersected()).toBe(false)
 	})
 
+	test('trail intersects', () => {
+		[{ x: 1, y: 5 }, { x: 5, y: 5 }, { x: 5, y: 2 }].forEach(coords => {
+			trail.add(coords)
+			expect(trail.hasIntersected()).toBe(false)
+		})
+	})
 })
