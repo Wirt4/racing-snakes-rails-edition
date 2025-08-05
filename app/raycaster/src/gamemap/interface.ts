@@ -2,10 +2,6 @@ import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 
-interface WallInterface {
-	line: LineSegment;
-	color: ColorName
-}
 
 interface Slice {
 	distance: number;
