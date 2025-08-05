@@ -7,6 +7,6 @@ export class Trail implements TrailInterface {
 	}
 
 	hasIntersected(): boolean {
-		throw new Error('not implemented')
+		return false
 	}
 }
