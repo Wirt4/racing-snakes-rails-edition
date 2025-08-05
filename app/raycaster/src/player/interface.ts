@@ -1,5 +1,5 @@
 import { ColorName } from '../color/color_name';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 
 export interface PlayerInterface {
 	turnLeft: () => void;

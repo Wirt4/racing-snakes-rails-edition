@@ -1,7 +1,7 @@
 import { PlayerInterface } from './interface';
 import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';

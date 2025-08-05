@@ -3,7 +3,7 @@ import { ColorName } from "../color/color_name";
 import { getColorKey, ColorKey } from "../color_key/color_key_cache";
 import { ObjectPool } from "../objectPool/objectPool";
 import { CoordinatesStack } from "../CoordinatesStack/coordinatesStack";
-import { WallInterface } from "../gamemap/interface";
+import { WallInterface } from "../wall/interface";
 import { BatchesInterface } from "./interface";
 import { BatchedRect } from "./rectInterface";
 

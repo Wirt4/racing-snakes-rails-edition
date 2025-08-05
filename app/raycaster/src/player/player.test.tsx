@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from '@jest/globals';
 import { Player } from './player'
 import { Coordinates, } from '../geometry/interfaces';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ColorName } from '../color/color_name';

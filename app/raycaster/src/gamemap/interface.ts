@@ -1,7 +1,7 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
-
+import { WallInterface } from '../wall/interface'
 
 interface Slice {
 	distance: number;
@@ -27,4 +27,4 @@ interface GameMapInterface {
 	hasCollidedWithWall(player: PlayerInterface): boolean;
 }
 
-export { GameMapInterface, WallInterface, Slice };
+export { GameMapInterface, Slice };

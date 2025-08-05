@@ -4,7 +4,7 @@ import { PlayerInterface } from '../player/interface';
 import { beforeEach, describe, test, jest, expect } from '@jest/globals';
 import { BrightnessInterface } from '../brightness/interface';
 import { RaycasterInterface } from '../raycaster/interface';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 import { ColorName } from '../color/color_name';
 import { BatchRendererInterface } from '../batchRenderer/interface';
 

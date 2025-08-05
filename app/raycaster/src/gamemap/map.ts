@@ -1,4 +1,5 @@
-import { GameMapInterface, WallInterface } from './interface';
+import { GameMapInterface } from './interface';
+import { WallInterface } from '../wall/interface'
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';

@@ -1,6 +1,6 @@
 import { describe, test, jest, expect, beforeEach } from '@jest/globals';
 import { GameMap } from './map';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 import { ColorName } from '../color/color_name';
 import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { PlayerInterface } from '../player/interface';
