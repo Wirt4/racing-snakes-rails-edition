@@ -1,18 +1,7 @@
 import { Coordinates, LineSegment } from '../geometry/interfaces';
-import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { WallInterface } from '../wall/interface'
-
-interface Slice {
-	distance: number;
-	color: ColorName;
-	/**
-	 * TODO: grid hits seems ineligant, 
-	 * should be able to calculate the intervals from some kind of modulus operation in the batcher
-	 * **/
-	gridHits: number[];
-	intersection: Coordinates;
-}
+import { Slice } from '../slice/interface'
 
 interface GameMapInterface {
 	walls: WallInterface[];
