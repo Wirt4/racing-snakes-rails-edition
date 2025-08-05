@@ -3,7 +3,7 @@ import { WallInterface } from '../wall/interface'
 import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
-import { Slice } from '../gamemap/interface';
+import { Slice } from '../slice/interface';
 import { BMath } from '../boundedMath/bmath';
 
 interface Intersection {

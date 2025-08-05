@@ -3,7 +3,7 @@ import { PlayerInterface } from '../player/interface';
 import { WallInterface } from '../wall/interface'
 import { Slice } from '../slice/interface'
 
-interface GameMapInterface {
+export interface GameMapInterface {
 	walls: WallInterface[];
 	gridLinesX: LineSegment[];
 	gridLinesY: LineSegment[];
@@ -16,4 +16,3 @@ interface GameMapInterface {
 	hasCollidedWithWall(player: PlayerInterface): boolean;
 }
 
-export { GameMapInterface, Slice };
