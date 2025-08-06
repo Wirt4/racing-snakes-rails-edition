@@ -1,4 +1,4 @@
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import { Player } from './player'
 import { Coordinates, } from '../geometry/interfaces';
 import { WallInterface } from '../wall/interface';
@@ -142,14 +142,27 @@ describe('Player.move - trail continuity', () => {
 });
 
 describe('Player.hasCollided', () => {
+	let player: Player;
+	let arena: ArenaInterface;
+	beforeEach(() => {
+		arena = { containsCoordinates: jest.fn(() => true) };
+		player = new Player({ x: 100, y: 100 }, 5, ColorName.RED, new MockCamera());
+	});
 	test("there is a collision when the player exits the arena", () => {
 		//mock the arena class with containsCoordinates set to false
-		const arena: ArenaInterface = {
-			containsCoordinates: jest.fn(() => false)
-		};
-		const player = new Player({ x: 100, y: 100 }, 5, ColorName.RED, new MockCamera());
+		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(false);
 		const acutal = player.hasCollided(arena);
 		expect(acutal).toBe(true);
-
+	})
+	test("the player runs into its own wall", () => {
+		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(true);
+		// move the player in a loop
+		player.move();
+		player.move();
+		player.turnRight();
+		player.move();
+		player.turnRight();
+		player.move();
+		expect(player.hasCollided(arena)).toBe(true);
 	})
 })
