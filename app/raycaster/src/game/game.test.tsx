@@ -29,6 +29,7 @@ describe('isGameOver tests', () => {
 		map = {
 			walls: [],
 			gridLinesX: [],
+			arena: {},
 			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
@@ -36,10 +37,11 @@ describe('isGameOver tests', () => {
 			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
-			hasCollidedWithWall: () => false
 		}
 
-		player = {} as PlayerInterface;
+		player = {
+			hasCollided: (arena: any) => { return false; },
+		} as PlayerInterface;
 		renderer = {
 			renderHUD: () => { },
 			renderSlices: () => { },
@@ -52,7 +54,7 @@ describe('isGameOver tests', () => {
 
 	})
 	test('if the player has collided with a wall, then its game over for them', () => {
-		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
+		jest.spyOn(player, 'hasCollided').mockReturnValue(true);
 		expect(game.isGameOver()).toBe(true);
 	})
 })
@@ -69,6 +71,7 @@ describe('Draw condition tests', () => {
 		map = {
 			walls: [],
 			gridLinesX: [],
+			arena: {},
 			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
@@ -76,10 +79,11 @@ describe('Draw condition tests', () => {
 			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
-			hasCollidedWithWall: () => false
 		}
 
-		player = {} as PlayerInterface;
+		player = {
+			hasCollided: (arena: any) => { return false; },
+		} as PlayerInterface;
 		renderer = {
 			renderHUD: () => { },
 			renderSlices: () => { },
@@ -98,7 +102,7 @@ describe('Draw condition tests', () => {
 	})
 
 	test('if the game is not over, then the HUD should not draw', () => {
-		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(false);
+		jest.spyOn(player, 'hasCollided').mockReturnValue(false);
 		const spy = jest.spyOn(renderer, 'renderHUD');
 
 		game.draw();
@@ -106,7 +110,7 @@ describe('Draw condition tests', () => {
 	});
 
 	test('if the game is over, then the HUD should display', () => {
-		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
+		jest.spyOn(player, 'hasCollided').mockReturnValue(true);
 		const spy = jest.spyOn(renderer, 'renderHUD');
 
 		game.draw();
@@ -114,7 +118,7 @@ describe('Draw condition tests', () => {
 	});
 
 	test('if the game is over, then the slices should not be rendered', () => {
-		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(true);
+		jest.spyOn(player, 'hasCollided').mockReturnValue(true);
 		const spy = jest.spyOn(renderer, 'renderSlices');
 
 		game.draw();
@@ -122,7 +126,7 @@ describe('Draw condition tests', () => {
 	});
 
 	test('if the game continuting, then the slices should  be rendered', () => {
-		jest.spyOn(map, 'hasCollidedWithWall').mockReturnValue(false);
+		jest.spyOn(player, 'hasCollided').mockReturnValue(false);
 		const spy = jest.spyOn(renderer, 'renderSlices');
 
 		game.draw();

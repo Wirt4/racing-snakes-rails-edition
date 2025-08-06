@@ -36,7 +36,7 @@ class Game {
 	}
 
 	isGameOver(): boolean {
-		return this.map.hasCollidedWithWall(this.player);
+		return this.player.hasCollided(this.map.arena);
 	};
 
 	draw(
@@ -44,7 +44,7 @@ class Game {
 		this.map.resetIntersections();
 		this.batchCorrelator.batchRenderData();
 		this.batchRenderer.batches = this.batchCorrelator.batches;
-		if (this.map.hasCollidedWithWall(this.player)) {
+		if (this.isGameOver()) {
 			this.batchRenderer.renderHUD();
 		} else {
 			this.batchRenderer.renderSlices();

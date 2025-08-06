@@ -5,6 +5,7 @@ import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../slice/interface';
 import { BMath } from '../boundedMath/bmath';
+import { ArenaInterface } from '../arena/interface';
 
 interface Intersection {
 	isValid: boolean;
@@ -15,6 +16,7 @@ interface Intersection {
 
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
+	arena: ArenaInterface = {}
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
@@ -61,16 +63,6 @@ export class GameMap implements GameMapInterface {
 
 	get playerAngle(): number {
 		return this.player.angle;
-	}
-
-	hasCollidedWithWall(player: PlayerInterface): boolean {
-		if (this.hasHitArenaBoundary()) {
-			return true;
-		}
-		if (!this.hasEnoughTailForSelfCollision(player)) {
-			return false
-		}
-		return this.hasIntersectedOwnTrail(player.trail);
 	}
 
 	private head: TrailSegment | undefined;

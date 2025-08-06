@@ -1,5 +1,6 @@
 import { ColorName } from '../color/color_name';
 import { WallInterface } from '../wall/interface';
+import { ArenaInterface } from '../arena/interface'
 
 export interface PlayerInterface {
 	turnLeft: () => void;
@@ -10,4 +11,5 @@ export interface PlayerInterface {
 	trail: WallInterface[];
 	angle: number;
 	color: ColorName;
+	hasCollided: (arena: ArenaInterface) => boolean;
 }

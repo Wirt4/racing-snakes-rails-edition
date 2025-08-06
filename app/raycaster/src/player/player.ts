@@ -5,6 +5,7 @@ import { WallInterface } from '../wall/interface';
 import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
+import { ArenaInterface } from '../arena/interface'
 
 class Player implements PlayerInterface {
 	x: number;
@@ -37,6 +38,10 @@ class Player implements PlayerInterface {
 
 	get trail(): WallInterface[] {
 		return this._trail;
+	}
+
+	hasCollided(a: ArenaInterface): boolean {
+		throw new Error("not implemented")
 	}
 
 	turnLeft(): void {
