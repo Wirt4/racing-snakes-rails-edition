@@ -43,10 +43,9 @@ class Player implements PlayerInterface {
 	hasCollided(arena: ArenaInterface): boolean {
 		//if player exited arena, then true
 		if (!arena.containsCoordinates(this.x, this.y)) {
-			return true; // Player has exited the aren
+			return true;
 		}
 
-		// otherwise
 		// 	create a minXCoord heap from all points in the trail
 		// 	create a BST for this.bst
 		// 	while the heap isn't empty
