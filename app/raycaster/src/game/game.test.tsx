@@ -29,7 +29,9 @@ describe('isGameOver tests', () => {
 		map = {
 			walls: [],
 			gridLinesX: [],
-			arena: {},
+			arena: {
+				containsCoordinates: (x: number, y: number) => true,
+			},
 			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
@@ -71,7 +73,9 @@ describe('Draw condition tests', () => {
 		map = {
 			walls: [],
 			gridLinesX: [],
-			arena: {},
+			arena: {
+				containsCoordinates: (x: number, y: number) => true,
+			},
 			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,

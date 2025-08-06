@@ -1,4 +1,3 @@
 export interface ArenaInterface {
-	//height
-	//width
+	containsCoordinates(x: number, y: number): boolean;
 }

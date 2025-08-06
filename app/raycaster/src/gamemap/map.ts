@@ -16,7 +16,9 @@ interface Intersection {
 
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
-	arena: ArenaInterface = {}
+	arena: ArenaInterface = {
+		containsCoordinates: (x: any, y: any) => { return false }
+	};
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
