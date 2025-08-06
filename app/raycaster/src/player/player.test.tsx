@@ -6,6 +6,7 @@ import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ColorName } from '../color/color_name';
 import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES } from '../geometry/constants';
+import { ArenaInterface } from '../arena/interface';
 
 function areCoordsEqual(a: Coordinates, b: Coordinates): boolean {
 	return a.x === b.x && a.y === b.y;
@@ -140,3 +141,15 @@ describe('Player.move - trail continuity', () => {
 	});
 });
 
+describe('Player.hasCollided', () => {
+	test("there is a collision when the player exits the arena", () => {
+		//mock the arena class with containsCoordinates set to false
+		const arena: ArenaInterface = {
+			containsCoordinates: jest.fn(() => false)
+		};
+		const player = new Player({ x: 100, y: 100 }, 5, ColorName.RED, new MockCamera());
+		const acutal = player.hasCollided(arena);
+		expect(acutal).toBe(true);
+
+	})
+})
