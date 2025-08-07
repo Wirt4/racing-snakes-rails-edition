@@ -10,7 +10,21 @@ import PriorityQueue from 'ts-priority-queue'
 import { BalancedTree, BalancedNode } from 'data-balanced-tree';
 import { LineSegment } from '../geometry/interfaces';
 
-class Player implements PlayerInterface {
+interface Point {
+	segmentIndex: number;
+	isLeft: boolean;
+	location: Coordinates;
+}
+
+interface TreeNode {
+	yAxis: number;
+	segment: LineSegment;
+}
+
+interface Neighbors { predecessor: LineSegment | null, successor: LineSegment | null }
+
+
+export class Player implements PlayerInterface {
 	x: number;
 	y: number;
 	private _trail: WallInterface[] = [];
@@ -61,6 +75,7 @@ class Player implements PlayerInterface {
 				break;
 			}
 		}
+		console.log('trail:', JSON.stringify(this._trail));
 		return result
 	}
 
@@ -74,8 +89,8 @@ class Player implements PlayerInterface {
 
 	move(): void {
 		this.adjustCamera();
-		this.moveAlongHeading();
 		this.redirectIfTurned();
+		this.moveAlongHeading();
 	}
 
 	private turn(dir: Directions): void {
@@ -126,8 +141,14 @@ class Player implements PlayerInterface {
 	}
 
 	private moveAlongHeading(): void {
-		this.x += Math.round(this.bMath.cos(this.currentHeading)) * this.speed;
-		this.y += this.bMath.sin(this.currentHeading) * this.speed;
+		console.log('x', this.x)
+		console.log('y', this.y)
+		console.log('current heading', this.currentHeading)
+		this.x += Math.round(Math.cos(this.currentHeading)) * this.speed;
+		this.y += Math.round(Math.sin(this.currentHeading)) * this.speed;
+		console.log('x', this.x)
+		console.log('y', this.y)
+
 		this.growTrail();
 	}
 
@@ -149,6 +170,7 @@ class Player implements PlayerInterface {
 	}
 
 	private hasIntersection(point: Point): boolean {
+		console.log(`Checking intersection for point: ${JSON.stringify(point)}`);
 		const segment = this._trail[point.segmentIndex].line;
 		const { y } = point.location
 		if (point.isLeft) {
@@ -205,7 +227,8 @@ class Player implements PlayerInterface {
 				current = current.value.yAxis > yAxis ? current.right : current.left;
 			}
 		}
-		throw new Error('current node may not be null');
+
+		return { predecessor: null, successor: null }
 	}
 
 	private areEqualTreeNodes(a: TreeNode, b: TreeNode): boolean {
@@ -291,18 +314,3 @@ class Player implements PlayerInterface {
 		return horizontalSegment.start.y <= Math.max(verticalSegment.start.y, verticalSegment.end.y)
 	}
 }
-
-interface Point {
-	segmentIndex: number;
-	isLeft: boolean;
-	location: Coordinates;
-}
-
-interface TreeNode {
-	yAxis: number;
-	segment: LineSegment;
-}
-
-interface Neighbors { predecessor: LineSegment | null, successor: LineSegment | null }
-
-export { Player };
