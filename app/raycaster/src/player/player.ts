@@ -6,7 +6,7 @@ import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ArenaInterface } from '../arena/interface'
-
+import PriorityQueue from 'ts-priority-queue'
 class Player implements PlayerInterface {
 	x: number;
 	y: number;
@@ -46,13 +46,14 @@ class Player implements PlayerInterface {
 			return true;
 		}
 
-		// 	create a minXCoord heap from all points in the trail
+		const heap = this.createMinXCoordHeap()
 		// 	create a BST for this.bst
 		// 	while the heap isn't empty
 		// 		remove a point from the heap
 		// 		if hasIntersection(point), then return true and break
 		return false
 	}
+
 
 	turnLeft(): void {
 		this.turn(Directions.LEFT);
@@ -110,6 +111,48 @@ class Player implements PlayerInterface {
 		this.y += this.bMath.sin(this.currentHeading) * this.speed;
 		this.growTrail();
 	}
+	private createMinXCoordHeap(): PriorityQueue<Point> {
+		//create a heap based on min x values
+		const heap = new PriorityQueue({ comparator: function(a: Point, b: Point) { return b.location.x - a.location.x; } })
+		//
+		//iterate through the trail
+		//	add deriveLeftPoint(segment, currentIndex) to heap
+		//	add deriveRightPoint(segment, currentIndex) to heap
+		return heap
+
+	}
+
+	//deriveLeftPoint(segment, index)
+	//	create pointFromIndex(index)
+	//	set point isLeft to true
+	//	if segment's start x preceeds segments's end x
+	//		set the point's coordinates to segment's start
+	//	otherwise
+	//		set the points's coordinates to segment's end
+	//	return the point
+
+	//deriveRightPoint(segment, index)
+	//	create pointFromIndex(index)
+	//	set point isLeft to false
+	//	if segment's start x preceeds segments's end x
+	//		set the point's coordinates to segment's end
+	//	otherwise
+	//		set the points's coordinates to segment's start
+	//	return the point
+
+
+
+	//pointFromIndex(index)
+	//	create a point object
+	//	set the points segment index to index
+	//	return the point
+
+}
+
+interface Point {
+	// 	segmentIndex number
+	// 	isLeft bool
+	location: Coordinates;
 }
 
 export { Player };
