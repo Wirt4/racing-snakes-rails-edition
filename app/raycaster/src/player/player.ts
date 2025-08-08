@@ -2,7 +2,6 @@ import { PlayerInterface } from './interface';
 import { ColorName } from '../color/color_name';
 import { Coordinates } from '../geometry/interfaces';
 import { WallInterface } from '../wall/interface';
-import { BMath } from '../boundedMath/bmath';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ArenaInterface } from '../arena/interface'
@@ -11,17 +10,17 @@ import { BalancedTree, BalancedNode } from 'data-balanced-tree';
 import { LineSegment } from '../geometry/interfaces';
 
 interface Point {
-	segmentIndex: number;
+	trailIndex: number;
 	isLeft: boolean;
 	location: Coordinates;
 }
 
 interface TreeNode {
 	yAxis: number;
-	segment: LineSegment;
+	trailIndex: number;
 }
 
-interface Neighbors { predecessor: LineSegment | null, successor: LineSegment | null }
+interface Neighbors { predecessor: TreeNode | null, successor: TreeNode | null }
 
 
 export class Player implements PlayerInterface {
@@ -31,7 +30,6 @@ export class Player implements PlayerInterface {
 	private currentHeading: number;
 	private lastPosition: Coordinates = { x: 0, y: 0 };
 	public color: ColorName;
-	private bMath: BMath = BMath.getInstance();
 	private isTurning: boolean = false;
 	private bst: BalancedTree<TreeNode> = this.intitiateTree();
 
@@ -67,15 +65,13 @@ export class Player implements PlayerInterface {
 		const heap = this.createMinXCoordHeap()
 		this.bst = this.intitiateTree();
 		//iterate through the line segments in a left-to-right sweep
-		let result = false
 		while (heap.length > 0) {
 			const point = heap.dequeue();
 			if (this.hasIntersection(point)) {
-				result = true;
-				break;
+				return true;
 			}
 		}
-		return result
+		return false
 	}
 
 	turnLeft(): void {
@@ -164,12 +160,11 @@ export class Player implements PlayerInterface {
 	}
 
 	private hasIntersection(point: Point): boolean {
-		const segment = this._trail[point.segmentIndex].line;
 		const { y } = point.location
 		if (point.isLeft) {
-			return this.hasLeftIntersection(segment, y)
+			return this.hasLeftIntersection(y, point.trailIndex)
 		} else {
-			return this.hasRightIntersection(segment, y)
+			return this.hasRightIntersection(y, point.trailIndex)
 		}
 	}
 
@@ -191,33 +186,34 @@ export class Player implements PlayerInterface {
 
 	private pointFromIndex(index: number): Point {
 		const point: Point = {
-			segmentIndex: index,
+			trailIndex: index,
 			location: { x: -1, y: -1 },
 			isLeft: false
 		}
 		return point
 	}
 
-	private hasLeftIntersection(segment: LineSegment, yAxis: number): boolean {
-		this.bst.insert({ yAxis, segment });
-		const { predecessor, successor } = this.getNeighbors(segment, yAxis);
+	private hasLeftIntersection(yAxis: number, trailIndex: number): boolean {
+		this.bst.insert({ yAxis, trailIndex });
+		const { predecessor, successor } = this.getNeighbors(yAxis, trailIndex);
 		//determine if the segment crosses the predecessor or successor
-		if (this.crosses(segment, predecessor)) {
+		if (this.crosses(trailIndex, predecessor?.trailIndex || null)) {
 			return true;
 		}
 
-		return this.crosses(segment, successor)
+		return this.crosses(trailIndex, successor?.trailIndex || null)
 	}
 
-	private hasRightIntersection(segment: LineSegment, yAxis: number): boolean {
-		const { predecessor, successor } = this.getNeighbors(segment, yAxis);
-		return this.crosses(predecessor, successor)
+	private hasRightIntersection(yAxis: number, trailIndex: number): boolean {
+		const { predecessor, successor } = this.getNeighbors(yAxis, trailIndex);
+		//remove the tree node
+		return this.crosses(predecessor?.trailIndex || null, successor?.trailIndex || null)
 	}
 
-	private getNeighbors(segment: LineSegment, yAxis: number): Neighbors {
+	private getNeighbors(yAxis: number, trailIndex: number): Neighbors {
 		let current = this.bst.root;
 		while (current !== null) {
-			if (this.areEqualTreeNodes(current.value, { yAxis, segment })) {
+			if (this.areEqualTreeNodes(current.value, { yAxis, trailIndex })) {
 				return {
 					predecessor: this.findPredecessor(current.left),
 					successor: this.findSucessor(current.right)
@@ -232,22 +228,10 @@ export class Player implements PlayerInterface {
 	}
 
 	private areEqualTreeNodes(a: TreeNode, b: TreeNode): boolean {
-		if (a.yAxis !== b.yAxis) {
-			return false
-		}
-		if (a.segment.start.x !== b.segment.start.x) {
-			return false
-		}
-		if (a.segment.start.y !== b.segment.start.y) {
-			return false
-		}
-		if (a.segment.end.x !== b.segment.end.x) {
-			return false
-		}
-		return a.segment.end.y === b.segment.end.y
+		return a.trailIndex === b.trailIndex
 	}
 
-	private findPredecessor(node: BalancedNode<TreeNode> | null): LineSegment | null {
+	private findPredecessor(node: BalancedNode<TreeNode> | null): TreeNode | null {
 		if (!node) {
 			return null
 		}
@@ -255,10 +239,10 @@ export class Player implements PlayerInterface {
 		while (cur.right !== null) {
 			cur = cur.right
 		}
-		return cur.value.segment
+		return cur.value
 	}
 
-	private findSucessor(node: BalancedNode<TreeNode> | null): LineSegment | null {
+	private findSucessor(node: BalancedNode<TreeNode> | null): TreeNode | null {
 		if (!node) {
 			return null
 		}
@@ -266,11 +250,23 @@ export class Player implements PlayerInterface {
 		while (cur.left !== null) {
 			cur = cur.left
 		}
-		return cur.value.segment
+		return cur.value
 	}
 
-	private crosses(segmentA: LineSegment | null, segmentB: LineSegment | null): boolean {
-		if (!segmentA || !segmentB || this.areParallel(segmentA, segmentB)) {
+	private crosses(indexA: number | null, indexB: number | null): boolean {
+		// if either node is null, then they can't cross
+		if (!indexA || !indexB) {
+			return false;
+		}
+		// if the segments are adjacent, then they can't cross
+		if (Math.abs(indexA - indexB) === 1) {
+			return false;
+		}
+		// get the segments from the trail
+		const segmentA = this._trail[indexA].line;
+		const segmentB = this._trail[indexB].line;
+		// if either segment is null, or they are parallel, then they can't cross
+		if (this.areParallel(segmentA, segmentB)) {
 			return false;
 		} else if (this.isVertical(segmentA)) {
 			return this.isInRange(segmentA, segmentB)
