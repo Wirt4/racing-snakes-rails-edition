@@ -151,7 +151,7 @@ describe('Player.move - trail continuity', () => {
 		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
 		player.move();
 		expect(player.x).toEqual(1)
-		// expect(player.y).toEqual(0)
+		expect(player.y).toEqual(0)
 	})
 
 });
@@ -172,14 +172,20 @@ describe('Player.hasCollided', () => {
 		const acutal = player.hasCollided(arena);
 		expect(acutal).toBe(true);
 	})
-	// test("the player runs into its own wall", () => {
-	// 	jest.spyOn(arena, 'containsCoordinates').mockReturnValue(true);
-	// 	player.move();
-	// 	player.move();
-	// 	player.turnRight();
-	// 	player.move();
-	// 	player.turnRight();
-	// 	player.move();
-	// 	expect(player.hasCollided(arena)).toBe(true);
-	// })
+	test("the player runs into its own wall", () => {
+		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(true);
+		player.move();
+		player.move();
+		player.turnRight();
+		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
+		player.move();
+		player.turnRight();
+		camera.angle = Math.PI;
+		player.move();
+		player.turnRight();
+		camera.angle = NINETY_DEGREES;
+		player.move();
+		//expect collision at 105 100
+		expect(player.hasCollided(arena)).toBe(true);
+	})
 })

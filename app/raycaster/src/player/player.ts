@@ -75,7 +75,6 @@ export class Player implements PlayerInterface {
 				break;
 			}
 		}
-		console.log('trail:', JSON.stringify(this._trail));
 		return result
 	}
 
@@ -141,13 +140,8 @@ export class Player implements PlayerInterface {
 	}
 
 	private moveAlongHeading(): void {
-		console.log('x', this.x)
-		console.log('y', this.y)
-		console.log('current heading', this.currentHeading)
 		this.x += Math.round(Math.cos(this.currentHeading)) * this.speed;
 		this.y += Math.round(Math.sin(this.currentHeading)) * this.speed;
-		console.log('x', this.x)
-		console.log('y', this.y)
 
 		this.growTrail();
 	}
@@ -170,7 +164,6 @@ export class Player implements PlayerInterface {
 	}
 
 	private hasIntersection(point: Point): boolean {
-		console.log(`Checking intersection for point: ${JSON.stringify(point)}`);
 		const segment = this._trail[point.segmentIndex].line;
 		const { y } = point.location
 		if (point.isLeft) {
@@ -209,7 +202,11 @@ export class Player implements PlayerInterface {
 		this.bst.insert({ yAxis, segment });
 		const { predecessor, successor } = this.getNeighbors(segment, yAxis);
 		//determine if the segment crosses the predecessor or successor
-		return this.crosses(segment, predecessor) || this.crosses(segment, successor)
+		if (this.crosses(segment, predecessor)) {
+			return true;
+		}
+
+		return this.crosses(segment, successor)
 	}
 
 	private hasRightIntersection(segment: LineSegment, yAxis: number): boolean {
@@ -221,7 +218,10 @@ export class Player implements PlayerInterface {
 		let current = this.bst.root;
 		while (current !== null) {
 			if (this.areEqualTreeNodes(current.value, { yAxis, segment })) {
-				return { predecessor: this.findPredecessor(current.left), successor: this.findSucessor(current.right) }
+				return {
+					predecessor: this.findPredecessor(current.left),
+					successor: this.findSucessor(current.right)
+				}
 			} else {
 				// continue the search
 				current = current.value.yAxis > yAxis ? current.right : current.left;
