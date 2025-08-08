@@ -159,7 +159,7 @@ export class Player implements PlayerInterface {
 
 	private newHeap(): PriorityQueue<Point> {
 		return new PriorityQueue(
-			{ comparator: function(a: Point, b: Point) { return b.location.x - a.location.x; } }
+			{ comparator: function(a: Point, b: Point) { return a.location.x - b.location.x } }
 		)
 	}
 
@@ -224,7 +224,7 @@ export class Player implements PlayerInterface {
 				}
 			} else {
 				// continue the search
-				current = current.value.yAxis > yAxis ? current.right : current.left;
+				current = current.value.yAxis > yAxis ? current.left : current.right;
 			}
 		}
 
