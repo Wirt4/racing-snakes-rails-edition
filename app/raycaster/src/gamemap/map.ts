@@ -16,31 +16,29 @@ interface Intersection {
 
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
-	arena: ArenaInterface = {
-		containsCoordinates: (x: any, y: any) => { return false }
-	};
 	player: PlayerInterface
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
+	arena: ArenaInterface;
 	private gridLines: LineSegment[];
 	private intersectionPool: Intersection[] = [];
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 
 	constructor(
-		private size: Dimensions,
+		arena: ArenaInterface,
 		boundaryColor: ColorName = ColorName.BLACK,
 		gridCell: number,
 		player: PlayerInterface
 	) {
 		this.player = player
-		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
-		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
+		this.gridLinesY = this.generateGridLines(gridCell, arena.height, arena.width, true);
+		this.gridLinesX = this.generateGridLines(gridCell, arena.width, arena.height, false);
 		this.gridLines = [...this.gridLinesX, ...this.gridLinesY];
 		const left_top = { x: 0, y: 0 };
-		const left_bottom = { x: 0, y: size.height };
-		const right_top = { x: size.width, y: 0 };
-		const right_bottom = { x: size.width, y: size.height };
+		const left_bottom = { x: 0, y: arena.height };
+		const right_top = { x: arena.width, y: 0 };
+		const right_bottom = { x: arena.width, y: arena.height };
 
 		this.walls = [
 			this.initializeWall(left_top, left_bottom, boundaryColor),
@@ -52,6 +50,8 @@ export class GameMap implements GameMapInterface {
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 		}
+
+		this.arena = arena;
 	}
 
 	get playerTrail(): WallInterface[] {
@@ -93,11 +93,6 @@ export class GameMap implements GameMapInterface {
 			return false;
 		}
 		return head.isVertical ? this.isCrossing(head, this.bodySegment) : this.isCrossing(this.bodySegment, head);
-	}
-
-	private hasHitArenaBoundary(): boolean {
-		const { x, y } = this.player;
-		return x <= 0 || x >= this.size.width || y <= 0 || y >= this.size.height;
 	}
 
 	private hasEnoughTailForSelfCollision(player: PlayerInterface) {

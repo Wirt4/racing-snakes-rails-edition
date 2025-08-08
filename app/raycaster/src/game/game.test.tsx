@@ -30,6 +30,8 @@ describe('isGameOver tests', () => {
 			walls: [],
 			gridLinesX: [],
 			arena: {
+				width: 100,
+				height: 100,
 				containsCoordinates: (x: number, y: number) => true,
 			},
 			gridLinesY: [],
@@ -75,6 +77,8 @@ describe('Draw condition tests', () => {
 			gridLinesX: [],
 			arena: {
 				containsCoordinates: (x: number, y: number) => true,
+				width: 100,
+				height: 100,
 			},
 			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
