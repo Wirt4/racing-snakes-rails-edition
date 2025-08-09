@@ -96,7 +96,58 @@ export class Player implements PlayerInterface {
 	}
 
 	private intitiateTree(): BalancedTree<TreeNode> {
-		return new BalancedTree<TreeNode>((a: TreeNode, b: TreeNode) => { return a.yAxis - b.yAxis })
+		return new BalancedTree<TreeNode>((nodeA, nodeB) => {
+			// get the segments from the trail
+			const segmentA = this._trail[nodeA.trailIndex].line
+			const segmentB = this._trail[nodeB.trailIndex].line
+
+			const minAY = this.minY(segmentA)
+			const minBY = this.minY(segmentB)
+			if (minAY !== minBY) {
+				return minAY - minBY
+			}
+
+			const maxAY = this.maxY(segmentA)
+			const maxBY = this.maxY(segmentB)
+			if (maxAY != maxBY) {
+				return maxAY - maxBY
+			}
+
+			const minAX = this.minX(segmentA)
+			const minBX = this.minX(segmentB)
+			if (minAX !== minBX) {
+				return minAX - minBX
+			}
+			// if maxAX != maxBX
+			//  -- reutrn maxAX - maxBX
+			throw new Error("can't compare a line segment against itself")
+		}
+		);
+		//		return new BalancedTree<TreeNode>((a: TreeNode, b: TreeNode) => { return a.yAxis - b.yAxis })
+	}
+
+	minY(segment: LineSegment): number {
+		return this.cmp(segment, false, Math.min)
+	}
+
+	maxY(segment: LineSegment): number {
+		return this.cmp(segment, false, Math.max)
+	}
+
+	minX(segment: LineSegment): number {
+		return this.cmp(segment, true, Math.min)
+	}
+
+	maxX(segment: LineSegment): number {
+		return this.cmp(segment, true, Math.max)
+	}
+	private cmp(
+		segment: LineSegment,
+		isXAxis: boolean,
+		cmpFunc: (a: number, b: number) => number
+	): number {
+		const { start, end } = segment
+		return isXAxis ? cmpFunc(start.x, end.x) : cmpFunc(start.y, end.y)
 	}
 
 	private redirectIfTurned(): void {
@@ -196,18 +247,24 @@ export class Player implements PlayerInterface {
 	private hasLeftIntersection(yAxis: number, trailIndex: number): boolean {
 		this.bst.insert({ yAxis, trailIndex });
 		const { predecessor, successor } = this.getNeighbors(yAxis, trailIndex);
+		const predIdx = predecessor?.trailIndex ?? null;
+		const succIdx = successor?.trailIndex ?? null;
 		//determine if the segment crosses the predecessor or successor
-		if (this.crosses(trailIndex, predecessor?.trailIndex || null)) {
+		if (this.crosses(trailIndex, predIdx)) {
 			return true;
 		}
 
-		return this.crosses(trailIndex, successor?.trailIndex || null)
+		return this.crosses(trailIndex, succIdx);
 	}
 
 	private hasRightIntersection(yAxis: number, trailIndex: number): boolean {
 		const { predecessor, successor } = this.getNeighbors(yAxis, trailIndex);
-		//remove the tree node
-		return this.crosses(predecessor?.trailIndex || null, successor?.trailIndex || null)
+		const predInx = predecessor?.trailIndex ?? null;
+		const succInx = successor?.trailIndex ?? null;
+		//remove the current node from the tree
+		this.bst.delete({ yAxis, trailIndex });
+
+		return this.crosses(predInx, succInx)
 	}
 
 	private getNeighbors(yAxis: number, trailIndex: number): Neighbors {
@@ -255,7 +312,7 @@ export class Player implements PlayerInterface {
 
 	private crosses(indexA: number | null, indexB: number | null): boolean {
 		// if either node is null, then they can't cross
-		if (!indexA || !indexB) {
+		if (indexA === null || indexB === null) {
 			return false;
 		}
 		// if the segments are adjacent, then they can't cross
