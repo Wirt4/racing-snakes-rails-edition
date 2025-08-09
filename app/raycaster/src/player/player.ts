@@ -61,17 +61,30 @@ export class Player implements PlayerInterface {
 		if (!arena.containsCoordinates(this.x, this.y)) {
 			return true;
 		}
-		//prepare for the sweep line algorithm
-		const heap = this.createMinXCoordHeap()
-		this.bst = this.intitiateTree();
-		//iterate through the line segments in a left-to-right sweep
-		while (heap.length > 0) {
-			const point = heap.dequeue();
-			if (this.hasIntersection(point)) {
-				return true;
-			}
+		// if there's less than 2 segments in the trail, then no collision
+		if (this._trail.length < 2) {
+			return false;
 		}
-		return false
+		// set the trailhead -- it's what is going to be compared
+		const trailHead = this._trail[this._trail.length - 1].line;
+		const headIsVertical = this.isVertical(trailHead);
+		// check every segment except last and penultimate
+		for (let i = 0; i < this._trail.length - 2; i++) {
+			// if the current  is perpendicular to the last segment, then check for an intersection
+			const curSegment = this._trail[i].line;
+			const curIsVertical = this.isVertical(curSegment);
+			if (headIsVertical !== curIsVertical) {
+				// then check for an intersection
+				if (headIsVertical && this.isInRange(trailHead, curSegment)
+				) {
+					return true;
+				} else if (!headIsVertical && this.isInRange(curSegment, trailHead)) {
+					return true
+				}
+			}
+
+		}
+		return false;
 	}
 
 	turnLeft(): void {
@@ -94,37 +107,35 @@ export class Player implements PlayerInterface {
 			this.isTurning = true;
 		}
 	}
+	private treeCompare(nodeA: TreeNode, nodeB: TreeNode): number {
+		const segmentA = this._trail[nodeA.trailIndex].line
+		const segmentB = this._trail[nodeB.trailIndex].line
+
+		const minAY = this.minY(segmentA)
+		const minBY = this.minY(segmentB)
+		if (minAY !== minBY) {
+			return minAY - minBY
+		}
+
+		const maxAY = this.maxY(segmentA)
+		const maxBY = this.maxY(segmentB)
+		if (maxAY !== maxBY) {
+			return maxAY - maxBY
+		}
+
+		const minAX = this.minX(segmentA)
+		const minBX = this.minX(segmentB)
+		if (minAX !== minBX) {
+			return minAX - minBX
+		}
+
+		const maxAX = this.maxX(segmentA)
+		const maxBX = this.maxX(segmentB)
+		return maxAX - maxBX
+	}
 
 	private intitiateTree(): BalancedTree<TreeNode> {
-		return new BalancedTree<TreeNode>((nodeA, nodeB) => {
-			// get the segments from the trail
-			const segmentA = this._trail[nodeA.trailIndex].line
-			const segmentB = this._trail[nodeB.trailIndex].line
-
-			const minAY = this.minY(segmentA)
-			const minBY = this.minY(segmentB)
-			if (minAY !== minBY) {
-				return minAY - minBY
-			}
-
-			const maxAY = this.maxY(segmentA)
-			const maxBY = this.maxY(segmentB)
-			if (maxAY != maxBY) {
-				return maxAY - maxBY
-			}
-
-			const minAX = this.minX(segmentA)
-			const minBX = this.minX(segmentB)
-			if (minAX !== minBX) {
-				return minAX - minBX
-			}
-			//after all tiebreakers, then 0 is an acceptable return value
-			const maxAX = this.maxX(segmentA)
-			const maxBX = this.maxX(segmentB)
-			return maxAX - maxBX
-		}
-		);
-		//		return new BalancedTree<TreeNode>((a: TreeNode, b: TreeNode) => { return a.yAxis - b.yAxis })
+		return new BalancedTree<TreeNode>(this.treeCompare.bind(this));
 	}
 
 	minY(segment: LineSegment): number {
@@ -207,7 +218,14 @@ export class Player implements PlayerInterface {
 
 	private newHeap(): PriorityQueue<Point> {
 		return new PriorityQueue(
-			{ comparator: function(a: Point, b: Point) { return a.location.x - b.location.x } }
+			{
+				comparator: function(a: Point, b: Point) {
+					if (a.location.x === b.location.x) {
+						return a.location.y - b.location.y;
+					}
+					return a.location.x - b.location.x
+				}
+			}
 		)
 	}
 
@@ -277,8 +295,9 @@ export class Player implements PlayerInterface {
 					successor: this.findSucessor(current.right)
 				}
 			} else {
+				const c = this.treeCompare(current.value, { yAxis, trailIndex });
 				// continue the search
-				current = current.value.yAxis > yAxis ? current.left : current.right;
+				current = c < 0 ? current.right : current.left;
 			}
 		}
 
