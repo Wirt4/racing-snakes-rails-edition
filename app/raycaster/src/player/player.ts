@@ -118,9 +118,10 @@ export class Player implements PlayerInterface {
 			if (minAX !== minBX) {
 				return minAX - minBX
 			}
-			// if maxAX != maxBX
-			//  -- reutrn maxAX - maxBX
-			throw new Error("can't compare a line segment against itself")
+			//after all tiebreakers, then 0 is an acceptable return value
+			const maxAX = this.maxX(segmentA)
+			const maxBX = this.maxX(segmentB)
+			return maxAX - maxBX
 		}
 		);
 		//		return new BalancedTree<TreeNode>((a: TreeNode, b: TreeNode) => { return a.yAxis - b.yAxis })
