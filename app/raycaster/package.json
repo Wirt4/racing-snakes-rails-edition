@@ -11,9 +11,7 @@
     "typescript-eslint": "^8.35.1"
   },
   "dependencies": {
-    "data-balanced-tree": "^0.1.0",
-    "esbuild": "^0.25.8",
-    "ts-priority-queue": "^0.1.1"
+    "esbuild": "^0.25.8"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
