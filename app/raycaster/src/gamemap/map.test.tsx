@@ -26,36 +26,6 @@ class MockPlayer implements PlayerInterface {
 	turnRight(): void { }
 }
 
-describe('GameMap basic map setup', () => {
-	let gameMap: GameMap;
-	let arena: ArenaInterface = { walls: [], gridLines: [], height: 10, containsCoordinates: () => true };
-	beforeEach(() => {
-		gameMap = new GameMap(
-			arena,
-			ColorName.BLACK,
-			1,
-			new MockPlayer({ x: 1, y: 1 }, 0, [])
-		);
-	});
-
-	test('should initialize with 4 boundary walls', () => {
-		expect(gameMap.walls.length).toBe(4);
-	});
-
-	test('should have correct boundary wall coordinates', () => {
-		const expectedLocations: LineSegment[] = [
-			{ start: { x: 0, y: 0 }, end: { x: 0, y: 10 } },
-			{ start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
-			{ start: { x: 10, y: 0 }, end: { x: 10, y: 10 } },
-			{ start: { x: 0, y: 10 }, end: { x: 10, y: 10 } }
-		];
-		expectedLocations.forEach(location => {
-			expect(gameMap.walls).toContainEqual(
-				expect.objectContaining({ line: location })
-			);
-		});
-	});
-});
 
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
@@ -93,7 +63,27 @@ describe('GameMap configuration options', () => {
 
 describe('castRay method', () => {
 	let gameMap: GameMap;
-	const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
+	const arena: ArenaInterface = {
+		walls: [
+			{
+				color: ColorName.RED,
+				line: { start: { x: 0, y: 0 }, end: { x: 10, y: 0 } }
+			},
+			{
+				color: ColorName.RED,
+				line: { start: { x: 10, y: 0 }, end: { x: 10, y: 11 } }
+			},
+			{
+				color: ColorName.RED,
+				line: { start: { x: 10, y: 11 }, end: { x: 0, y: 11 } }
+			},
+			{
+				color: ColorName.RED,
+				line: { start: { x: 0, y: 11 }, end: { x: 0, y: 0 } }
+			}
+		],
+		gridLines: [], height: 11, containsCoordinates: () => true
+	};
 	beforeEach(() => {
 		gameMap = new GameMap(
 			arena,

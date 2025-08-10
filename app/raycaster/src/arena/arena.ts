@@ -10,7 +10,10 @@ export class Arena implements ArenaInterface {
 	private lowerLeft: Coordinates
 	private lowerRight: Coordinates
 
-	constructor(private dimensions: Dimensions) {
+	constructor(
+		private dimensions: Dimensions,
+		private cellSize: number
+	) {
 		this._walls = new Array<WallInterface>()
 		this.upperRight = { x: this.dimensions.width, y: 0 }
 		this.lowerLeft = { x: 0, y: this.dimensions.height }
@@ -30,7 +33,7 @@ export class Arena implements ArenaInterface {
 	}
 
 	get gridLines(): Array<LineSegment> {
-		throw new Error('Method not implemented.');
+		return []
 	}
 
 	containsCoordinates(x: number, y: number): boolean {

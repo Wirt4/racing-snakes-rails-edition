@@ -1,5 +1,15 @@
 have width and height...
-create a new line of start 0,0, end 0,width
-create a new line of start 0,0, end height,0
-create a new line of start width,0, end width,height
-create a new line of start 0,height, end width,height
+// initialize the arr
+//draw the vertical lines
+//draw the horizontal lines
+
+// drawVertical(height)
+// leftbound <- 0,height - 0,0
+// rightbound <- width, height - width,0
+// push leftbound and rightbound to array
+
+// drawHorizontalLines
+// upperbound <-0,0 height - width, height
+// lowerbount <- 0,height - width, 0
+// push upperbound and lowerbound to array
+

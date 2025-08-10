@@ -37,7 +37,8 @@ onmessage = (e) => {
 
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
-		const arena = new Arena({ width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT });
+		const arenaSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
+		const arena = new Arena(arenaSize, msg.settings.GRID_CELL_SIZE);
 		const map = new GameMap(arena, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 
 		raycaster = new Raycaster(
