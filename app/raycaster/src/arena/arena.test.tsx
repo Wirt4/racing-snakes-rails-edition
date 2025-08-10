@@ -60,11 +60,16 @@ describe('Arena grid lines', () => {
 	test('should contain two grid lines', () => {
 		expect(arena.gridLines.length).toBe(2);
 	});
-	test('one grid line should be vertical, the other should be horizontal', () => {
+	test('should contain one vertical grid line', () => {
 		// create the 10x10 grid with cell size 5
-		expect(containsOnlyOne(arena.gridLines, isVertical)).toBe(true);
-		// arena.gridLines should contain one horizontalline
+		expect(containsExactAmount(arena.gridLines, isVertical, 1)).toBe(true);
 	})
+	test('should contain 2 vertical grid lines', () => {
+		dimensions = { width: 15, height: 15 };
+		arena = new Arena(dimensions, cellSize);
+		expect(containsExactAmount(arena.gridLines, isVertical, 2)).toBe(true);
+	})
+
 })
 
 function isVertical(line: LineSegment): boolean {
@@ -75,17 +80,12 @@ function isVertical(line: LineSegment): boolean {
 //isHorizontal
 ////line.start.y === line.end.y
 
-function containsOnlyOne(gridLines: Array<LineSegment>, lambda: (line: LineSegment) => boolean): boolean {
-	let result = false
+function containsExactAmount(gridLines: Array<LineSegment>, lambda: (line: LineSegment) => boolean, targetTotal: number): boolean {
+	let matchedCount = 0;
 	for (const line of gridLines) {
 		if (lambda(line)) {
-			// if we find a second line that matches the condition, return false
-			if (result === true) {
-				return false;
-			} else {
-				result = true;
-			}
+			matchedCount++;
 		}
 	}
-	return result
+	return matchedCount === targetTotal;
 }
