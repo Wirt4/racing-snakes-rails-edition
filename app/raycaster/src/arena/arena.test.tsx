@@ -42,16 +42,26 @@ describe('Arena Tests', () => {
 
 describe('Arena grid lines', () => {
 	let arena: Arena;
+	let cellSize: number;
+	let dimensions: { width: number, height: number };
+
 	beforeEach(() => {
 		// create an area with size 10x10 and cell size 10
-		const cellSize = 10;
-		const size = { width: 10, height: 10 };
-		arena = new Arena(size, cellSize);
+		cellSize = 10;
+		dimensions = { width: 10, height: 10 };
+		arena = new Arena(dimensions, cellSize);
 	});
 
 	test('should be 0 gridlines', () => {
 		expect(arena.gridLines.length).toBe(0);
 	});
+	test('should contain two grid lines', () => {
+		// create an area with size 10x10 and cell size 5
+		cellSize = 5;
+		arena = new Arena(dimensions, cellSize);
+		//should contain one vertical and one horizontal line
+		expect(arena.gridLines.length).toBe(2);
+	})
 })
 
 
