@@ -4,23 +4,24 @@ import { LineSegment, Dimensions, Coordinates } from '../geometry/interfaces'
 import { ColorName } from '../color/color_name'
 
 export class Arena implements ArenaInterface {
-	private _walls: Array<WallInterface>;
+	private _walls: Array<WallInterface> = []
 	private upperLeft: Coordinates = { x: 0, y: 0 }
 	private upperRight: Coordinates
 	private lowerLeft: Coordinates
 	private lowerRight: Coordinates
+	private _gridLines: Array<LineSegment> = []
 
 	constructor(
 		private dimensions: Dimensions,
 		private cellSize: number
 	) {
-		this._walls = new Array<WallInterface>()
 		this.upperRight = { x: this.dimensions.width, y: 0 }
 		this.lowerLeft = { x: 0, y: this.dimensions.height }
 		this.lowerRight = { x: this.dimensions.width, y: this.dimensions.height }
 
 		this.drawVerticalLines()
 		this.drawHorizontalLines()
+		this.drawGridLines(cellSize)
 	}
 
 	get height(): number {
@@ -33,7 +34,7 @@ export class Arena implements ArenaInterface {
 	}
 
 	get gridLines(): Array<LineSegment> {
-		return []
+		return this._gridLines
 	}
 
 	containsCoordinates(x: number, y: number): boolean {
@@ -74,5 +75,13 @@ export class Arena implements ArenaInterface {
 
 	private newWall(start: Coordinates, end: Coordinates): WallInterface {
 		return { line: { start, end }, color: ColorName.RED }
+	}
+
+	private drawGridLines(cellSize: number): void {
+		// if the cell size is larger or equal to than the arena dimensions, no grid lines can be drawn
+		if (cellSize >= this.dimensions.width || cellSize >= this.dimensions.height) {
+			return;
+		}
+		this._gridLines = [{ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }];
 	}
 }
