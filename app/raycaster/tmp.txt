@@ -1,0 +1,5 @@
+have width and height...
+create a new line of start 0,0, end 0,width
+create a new line of start 0,0, end height,0
+create a new line of start width,0, end width,height
+create a new line of start 0,height, end width,height

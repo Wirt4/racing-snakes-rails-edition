@@ -35,10 +35,9 @@ onmessage = (e) => {
 			msg.settings.CANVAS_HEIGHT,
 			ColorName.BLUE);
 
-		const mapSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
-		const arena = new Arena(msg.settings.ARENA_WIDTH, msg.settings.ARENA_HEIGHT);
+		const arena = new Arena({ width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT });
 		const map = new GameMap(arena, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
 
 		raycaster = new Raycaster(

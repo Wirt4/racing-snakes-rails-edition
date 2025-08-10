@@ -17,10 +17,31 @@ describe('Arena Tests', () => {
 			{ start: { x: 10, y: 0 }, end: { x: 10, y: 10 } },
 			{ start: { x: 0, y: 10 }, end: { x: 10, y: 10 } }
 		];
-		expectedLocations.forEach(location => {
-			expect(arena.walls).toContainEqual(
-				expect.objectContaining({ line: location })
-			);
-		});
+		expect(arena.walls)
+			.toContainEqual(
+				expect.objectContaining(
+					{ line: { start: { x: 0, y: 0 }, end: { x: 0, y: 10 } } }
+				)
+			)
+		expect(arena.walls)
+			.toContainEqual(
+				expect.objectContaining(
+					{ line: { start: { x: 0, y: 0 }, end: { x: 10, y: 0 } } }
+				)
+			)
+		expect(arena.walls)
+			.toContainEqual(
+				expect.objectContaining(
+					{ line: { start: { x: 10, y: 0 }, end: { x: 10, y: 10 } } }
+				)
+			)
+		expect(arena.walls)
+			.toContainEqual(
+				expect.objectContaining(
+					{ line: { start: { x: 0, y: 10 }, end: { x: 10, y: 10 } } }
+				)
+			)
+
+
 	});
 })
