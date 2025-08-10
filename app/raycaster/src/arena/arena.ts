@@ -82,6 +82,12 @@ export class Arena implements ArenaInterface {
 		if (cellSize >= this.dimensions.width || cellSize >= this.dimensions.height) {
 			return;
 		}
-		this._gridLines = [{ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }, { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }];
+		this._gridLines = [
+			{
+				start: { x: 0, y: 0 },
+				end: { x: 0, y: 0 }
+			},
+			{ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }
+		];
 	}
 }

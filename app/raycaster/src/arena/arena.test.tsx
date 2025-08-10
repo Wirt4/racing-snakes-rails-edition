@@ -47,22 +47,45 @@ describe('Arena grid lines', () => {
 
 	beforeEach(() => {
 		// create an area with size 10x10 and cell size 10
-		cellSize = 10;
+		cellSize = 5;
 		dimensions = { width: 10, height: 10 };
 		arena = new Arena(dimensions, cellSize);
 	});
 
 	test('should be 0 gridlines', () => {
+		cellSize = 10;
+		arena = new Arena(dimensions, cellSize);
 		expect(arena.gridLines.length).toBe(0);
 	});
 	test('should contain two grid lines', () => {
-		// create an area with size 10x10 and cell size 5
-		cellSize = 5;
-		arena = new Arena(dimensions, cellSize);
-		//should contain one vertical and one horizontal line
 		expect(arena.gridLines.length).toBe(2);
+	});
+	test('one grid line should be vertical, the other should be horizontal', () => {
+		// create the 10x10 grid with cell size 5
+		expect(containsOnlyOne(arena.gridLines, isVertical)).toBe(true);
+		// arena.gridLines should contain one horizontalline
 	})
 })
 
+function isVertical(line: LineSegment): boolean {
+	return line.start.x === line.end.x;
+}
+//
+//
+//isHorizontal
+////line.start.y === line.end.y
 
-
+function containsOnlyOne(gridLines: Array<LineSegment>, lambda: (line: LineSegment) => boolean): boolean {
+	let result = false
+	for (const line of gridLines) {
+		if (lambda(line)) {
+			// if we find a second line that matches the condition, return false
+			if (result === true) {
+				return false;
+			} else {
+				result = true;
+			}
+		}
+	}
+	return result
+}
