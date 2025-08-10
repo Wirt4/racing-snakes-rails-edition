@@ -162,7 +162,6 @@ describe('Player.hasCollided', () => {
 	let camera: CameraInterface;
 	beforeEach(() => {
 		arena = {
-			height: 500,
 			containsCoordinates: jest.fn(() => true),
 			gridLines: [],
 			walls: [],

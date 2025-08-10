@@ -29,7 +29,7 @@ class MockPlayer implements PlayerInterface {
 
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
-		const arena: ArenaInterface = { gridLines: [], walls: [], height: 10, containsCoordinates: () => true };
+		const arena: ArenaInterface = { gridLines: [], walls: [], containsCoordinates: () => true };
 		const gameMap = new GameMap(arena, ColorName.RED, 1,
 			new MockPlayer({ x: 1, y: 1 }, 0, [])
 		);
@@ -61,7 +61,7 @@ describe('castRay method', () => {
 				line: { start: { x: 0, y: 11 }, end: { x: 0, y: 0 } }
 			}
 		],
-		gridLines: [], height: 11, containsCoordinates: () => true
+		gridLines: [], containsCoordinates: () => true
 	};
 	beforeEach(() => {
 		gameMap = new GameMap(
@@ -85,7 +85,7 @@ describe('castRay method', () => {
 	});
 
 	test('should return max distance if ray hits nothing (looking away from all walls)', () => {
-		const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
+		const arena: ArenaInterface = { walls: [], gridLines: [], containsCoordinates: () => true };
 		gameMap = new GameMap(arena, ColorName.GREEN, 1,
 			new MockPlayer({ x: 16, y: 5 }, 0, [])
 		);
@@ -107,7 +107,7 @@ describe('castRay method', () => {
 	});
 
 	test('should handle grazing corner case gracefully', () => {
-		const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
+		const arena: ArenaInterface = { walls: [], gridLines: [], containsCoordinates: () => true };
 		gameMap = new GameMap(
 			arena,
 			ColorName.GREEN,
@@ -134,7 +134,7 @@ describe("Player tests", () => {
 			trail: [],
 			hasCollided: jest.fn(() => false)
 		};
-		arena = { walls: [], gridLines: [], height: 20, containsCoordinates: () => true };
+		arena = { walls: [], gridLines: [], containsCoordinates: () => true };
 	});
 
 	test("angle should be passed to player class", () => {
@@ -153,7 +153,7 @@ describe("Player tests", () => {
 describe('GameMap.castRay()', () => {
 	let arena: ArenaInterface;
 	beforeEach(() => {
-		arena = { walls: [], gridLines: [], height: 50, containsCoordinates: () => true };
+		arena = { walls: [], gridLines: [], containsCoordinates: () => true };
 	});
 
 
