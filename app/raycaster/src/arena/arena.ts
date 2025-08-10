@@ -1,21 +1,17 @@
 import { ArenaInterface } from './interface'
 import { WallInterface } from '../wall/interface'
 import { LineSegment } from '../geometry/interfaces'
+import { Dimensions } from '../geometry/interfaces';
 
 export class Arena implements ArenaInterface {
-	private _height: number;
-	private _width: number;
 
-	constructor(height: number, width: number) {
-		this._height = height;
-		this._width = width;
+	constructor(private dimensions: Dimensions) {
 	}
 
 	get height(): number {
 		//TODO: remove
-		return this._height;
+		return this.dimensions.height;
 	}
-
 
 	get walls(): Array<WallInterface> {
 		const walls: Array<WallInterface> = [
@@ -31,8 +27,8 @@ export class Arena implements ArenaInterface {
 	}
 
 	containsCoordinates(x: number, y: number): boolean {
-		if (this.inRange(x, this._width)) {
-			return this.inRange(y, this._height)
+		if (this.inRange(x, this.dimensions.width)) {
+			return this.inRange(y, this.dimensions.height)
 		} else {
 			return false
 		}
