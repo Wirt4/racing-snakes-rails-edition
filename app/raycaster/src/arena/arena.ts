@@ -5,9 +5,17 @@ import { ColorName } from '../color/color_name'
 
 export class Arena implements ArenaInterface {
 	private _walls: Array<WallInterface>;
+	private upperLeft: Coordinates = { x: 0, y: 0 }
+	private upperRight: Coordinates
+	private lowerLeft: Coordinates
+	private lowerRight: Coordinates
 
 	constructor(private dimensions: Dimensions) {
 		this._walls = new Array<WallInterface>()
+		this.upperRight = { x: this.dimensions.width, y: 0 }
+		this.lowerLeft = { x: 0, y: this.dimensions.height }
+		this.lowerRight = { x: this.dimensions.width, y: this.dimensions.height }
+
 		this.drawVerticalLines()
 		this.drawHorizontalLines()
 	}
@@ -38,25 +46,25 @@ export class Arena implements ArenaInterface {
 	}
 
 	private drawVerticalLines() {
-		const leftStart = { x: 0, y: this.dimensions.height }
-		const leftEnd = { x: 0, y: 0 }
-		const leftBoundary = this.newWall(leftEnd, leftStart)
+		const leftEnd = this.lowerLeft
+		const leftStart = this.upperLeft
+		const leftBoundary = this.newWall(leftStart, leftEnd)
 		this._walls.push(leftBoundary)
 
-		const rightStart = { x: this.dimensions.width, y: this.dimensions.height }
-		const rightEnd = { x: this.dimensions.width, y: 0 }
-		const rightBoundary = this.newWall(rightEnd, rightStart)
+		const rightStart = this.upperRight
+		const rightEnd = this.lowerRight
+		const rightBoundary = this.newWall(rightStart, rightEnd)
 		this._walls.push(rightBoundary)
 	}
 
 	private drawHorizontalLines() {
-		const upperStart = { x: 0, y: this.dimensions.height }
-		const upperEnd = { x: this.dimensions.width, y: this.dimensions.height }
+		const upperStart = this.upperLeft
+		const upperEnd = this.upperRight
 		const upperBoundary = this.newWall(upperStart, upperEnd)
 		this._walls.push(upperBoundary)
 
-		const lowerStart = { x: 0, y: 0 }
-		const lowerEnd = { x: this.dimensions.width, y: 0 }
+		const lowerStart = this.lowerLeft
+		const lowerEnd = this.lowerRight
 		const lowerBoundary = this.newWall(lowerStart, lowerEnd)
 		this._walls.push(lowerBoundary)
 	}
