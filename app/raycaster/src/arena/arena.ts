@@ -13,7 +13,7 @@ export class Arena implements ArenaInterface {
 
 	constructor(
 		private dimensions: Dimensions,
-		private cellSize: number
+		cellSize: number
 	) {
 		this.upperRight = { x: this.dimensions.width, y: 0 }
 		this.lowerLeft = { x: 0, y: this.dimensions.height }
@@ -79,18 +79,40 @@ export class Arena implements ArenaInterface {
 
 	private drawGridLines(cellSize: number): void {
 		// if the cell size is larger or equal to than the arena dimensions, no grid lines can be drawn
-		if (cellSize >= this.dimensions.width || cellSize >= this.dimensions.height) {
+		if (cellSize >= this.dimensions.width && cellSize >= this.dimensions.height) {
 			return;
 		}
-		this._gridLines = [
-			{
-				start: { x: 0, y: 0 },
-				end: { x: 0, y: 0 }
-			},
-			{
-				start: { x: 10, y: 0 },
-				end: { x: 0, y: 0 }
-			}
-		];
+		this.addVerticalGridLines(cellSize)
+		this.addHorizontalGridLines(cellSize)
+	}
+
+	private addVerticalGridLines(cellSize: number): void {
+		let step = cellSize;
+		while (step < this.dimensions.width) {
+			this._gridLines.push(this.verticalLine(step));
+			step += cellSize;
+		}
+	}
+
+	private addHorizontalGridLines(cellSize: number): void {
+		let step = cellSize;
+		while (step < this.dimensions.height) {
+			this._gridLines.push(this.horizontalLine(step));
+			step += cellSize;
+		}
+	}
+
+	private verticalLine(x: number): LineSegment {
+		return {
+			start: { x, y: 0 },
+			end: { x, y: this.dimensions.height }
+		}
+	}
+
+	private horizontalLine(y: number): LineSegment {
+		return {
+			start: { x: 0, y },
+			end: { x: this.dimensions.width, y }
+		}
 	}
 }
