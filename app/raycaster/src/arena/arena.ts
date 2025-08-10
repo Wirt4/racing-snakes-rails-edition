@@ -87,7 +87,10 @@ export class Arena implements ArenaInterface {
 				start: { x: 0, y: 0 },
 				end: { x: 0, y: 0 }
 			},
-			{ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } }
+			{
+				start: { x: 10, y: 0 },
+				end: { x: 0, y: 0 }
+			}
 		];
 	}
 }
