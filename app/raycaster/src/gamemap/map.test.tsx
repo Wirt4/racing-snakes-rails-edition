@@ -28,7 +28,7 @@ class MockPlayer implements PlayerInterface {
 
 describe('GameMap basic map setup', () => {
 	let gameMap: GameMap;
-	let arena: ArenaInterface = { width: 10, height: 10, containsCoordinates: () => true };
+	let arena: ArenaInterface = { walls: [], gridLines: [], height: 10, containsCoordinates: () => true };
 	beforeEach(() => {
 		gameMap = new GameMap(
 			arena,
@@ -59,7 +59,7 @@ describe('GameMap basic map setup', () => {
 
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
-		const arena: ArenaInterface = { width: 10, height: 10, containsCoordinates: () => true };
+		const arena: ArenaInterface = { gridLines: [], walls: [], height: 10, containsCoordinates: () => true };
 		const gameMap = new GameMap(arena, ColorName.RED, 1,
 			new MockPlayer({ x: 1, y: 1 }, 0, [])
 		);
@@ -71,7 +71,7 @@ describe('GameMap configuration options', () => {
 
 	describe('gridline generation', () => {
 		let gameMap: GameMap;
-		const arena: ArenaInterface = { width: 10, height: 20, containsCoordinates: () => true };
+		const arena: ArenaInterface = { walls: [], gridLines: [], height: 20, containsCoordinates: () => true };
 		beforeEach(() => {
 			gameMap = new GameMap(
 				arena,
@@ -93,7 +93,7 @@ describe('GameMap configuration options', () => {
 
 describe('castRay method', () => {
 	let gameMap: GameMap;
-	const arena: ArenaInterface = { width: 10, height: 11, containsCoordinates: () => true };
+	const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
 	beforeEach(() => {
 		gameMap = new GameMap(
 			arena,
@@ -116,7 +116,7 @@ describe('castRay method', () => {
 	});
 
 	test('should return max distance if ray hits nothing (looking away from all walls)', () => {
-		const arena: ArenaInterface = { width: 32, height: 11, containsCoordinates: () => true };
+		const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
 		gameMap = new GameMap(arena, ColorName.GREEN, 1,
 			new MockPlayer({ x: 16, y: 5 }, 0, [])
 		);
@@ -138,7 +138,7 @@ describe('castRay method', () => {
 	});
 
 	test('should handle grazing corner case gracefully', () => {
-		const arena: ArenaInterface = { width: 32, height: 11, containsCoordinates: () => true };
+		const arena: ArenaInterface = { walls: [], gridLines: [], height: 11, containsCoordinates: () => true };
 		gameMap = new GameMap(
 			arena,
 			ColorName.GREEN,
@@ -158,23 +158,23 @@ describe('castRay method', () => {
 
 describe("Player tests", () => {
 	let player: PlayerInterface;
+	let arena: ArenaInterface;
 	beforeEach(() => {
 		player = {
 			turnLeft: jest.fn(() => { }), turnRight: jest.fn(), move: jest.fn(() => { }), x: 1, y: 1, angle: 0, color: ColorName.GREEN,
 			trail: [],
 			hasCollided: jest.fn(() => false)
 		};
+		arena = { walls: [], gridLines: [], height: 20, containsCoordinates: () => true };
 	});
 
 	test("angle should be passed to player class", () => {
-		const arena: ArenaInterface = { width: 10, height: 20, containsCoordinates: () => true };
 		const gameMap = new GameMap(arena, ColorName.RED, 1, player);
 		gameMap.turnPlayer(Math.PI / 2)
 		expect(player.turnLeft).toHaveBeenLastCalledWith()
 	});
 
 	test("movePlayer should call player.move", () => {
-		const arena: ArenaInterface = { width: 10, height: 20, containsCoordinates: () => true };
 		const gameMap = new GameMap(arena, ColorName.RED, 1, player);
 		gameMap.movePlayer()
 		expect(player.move).toHaveBeenCalled()
@@ -182,6 +182,11 @@ describe("Player tests", () => {
 });
 
 describe('GameMap.castRay()', () => {
+	let arena: ArenaInterface;
+	beforeEach(() => {
+		arena = { walls: [], gridLines: [], height: 50, containsCoordinates: () => true };
+	});
+
 
 	test("should not return a hit for the trail segment currently being drawn (trail head)", () => {
 		const position = { x: 5, y: 5 };
@@ -196,7 +201,6 @@ describe('GameMap.castRay()', () => {
 		};
 
 		const player = new MockPlayer(position, directionAngle, [mockTrailHead]);
-		const arena: ArenaInterface = { width: 50, height: 50, containsCoordinates: () => true };
 		const map = new GameMap(arena, ColorName.BLACK, 10, player);
 
 		const slice = map.castRay(directionAngle, 50);
@@ -230,7 +234,6 @@ describe('GameMap.castRay()', () => {
 			color: ColorName.RED,
 		}));
 		const player = new MockPlayer(position, directionAngle, mockTrail);
-		const arena: ArenaInterface = { width: 50, height: 50, containsCoordinates: () => true };
 		const map = new GameMap(arena, ColorName.BLACK, 10, player);
 
 		const slice = map.castRay(directionAngle, 50);

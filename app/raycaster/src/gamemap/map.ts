@@ -1,6 +1,6 @@
 import { GameMapInterface } from './interface';
 import { WallInterface } from '../wall/interface'
-import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
 import { Slice } from '../slice/interface';
@@ -32,20 +32,20 @@ export class GameMap implements GameMapInterface {
 		player: PlayerInterface
 	) {
 		this.player = player
-		this.gridLinesY = this.generateGridLines(gridCell, arena.height, arena.width, true);
-		this.gridLinesX = this.generateGridLines(gridCell, arena.width, arena.height, false);
-		this.gridLines = [...this.gridLinesX, ...this.gridLinesY];
-		const left_top = { x: 0, y: 0 };
-		const left_bottom = { x: 0, y: arena.height };
-		const right_top = { x: arena.width, y: 0 };
-		const right_bottom = { x: arena.width, y: arena.height };
-
-		this.walls = [
-			this.initializeWall(left_top, left_bottom, boundaryColor),
-			this.initializeWall(left_top, right_top, boundaryColor),
-			this.initializeWall(right_top, right_bottom, boundaryColor),
-			this.initializeWall(left_bottom, right_bottom, boundaryColor),
-		];
+		// this.gridLinesY = this.generateGridLines(gridCell, arena.height, arena.width, true);
+		// this.gridLinesX = this.generateGridLines(gridCell, arena.width, arena.height, false);
+		this.gridLines = arena.gridLines;
+		// const left_top = { x: 0, y: 0 };
+		// const left_bottom = { x: 0, y: arena.height };
+		// const right_top = { x: arena.width, y: 0 };
+		// const right_bottom = { x: arena.width, y: arena.height };
+		this.walls = arena.walls;
+		// this.walls = [
+		// 	this.initializeWall(left_top, left_bottom, boundaryColor),
+		// 	this.initializeWall(left_top, right_top, boundaryColor),
+		// 	this.initializeWall(right_top, right_bottom, boundaryColor),
+		// 	this.initializeWall(left_bottom, right_bottom, boundaryColor),
+		// ];
 
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
@@ -67,37 +67,6 @@ export class GameMap implements GameMapInterface {
 		return this.player.angle;
 	}
 
-	private head: TrailSegment | undefined;
-
-	private hasIntersectedOwnTrail(trail: WallInterface[]): boolean {
-		if (trail.length < 2) {
-			return false;
-		}
-		this.head = new TrailSegment(trail[trail.length - 1].line);
-		return this.findIntersection(trail.slice(0, trail.length - 2), this.head)
-	}
-
-	private findIntersection(trail: WallInterface[], head: TrailSegment): boolean {
-		for (const { line } of trail) {
-			if (this.selfIntersecst(head, line)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private bodySegment: TrailSegment | undefined;
-	private selfIntersecst(head: TrailSegment, segment: LineSegment): boolean {
-		this.bodySegment = new TrailSegment(segment);
-		if (head.isVertical === this.bodySegment.isVertical) {
-			return false;
-		}
-		return head.isVertical ? this.isCrossing(head, this.bodySegment) : this.isCrossing(this.bodySegment, head);
-	}
-
-	private hasEnoughTailForSelfCollision(player: PlayerInterface) {
-		return player.trail.length > 2;
-	}
 
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
 		if (verticalSegment.hStart < horizontalSegment.hStart || verticalSegment.hStart > horizontalSegment.hEnd) {

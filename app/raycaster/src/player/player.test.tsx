@@ -162,9 +162,10 @@ describe('Player.hasCollided', () => {
 	let camera: CameraInterface;
 	beforeEach(() => {
 		arena = {
-			width: 500,
 			height: 500,
-			containsCoordinates: jest.fn(() => true)
+			containsCoordinates: jest.fn(() => true),
+			gridLines: [],
+			walls: [],
 		};
 		camera = new MockCamera();
 		camera.isRotating = false;

@@ -1,4 +1,6 @@
 import { ArenaInterface } from './interface'
+import { WallInterface } from '../wall/interface'
+import { LineSegment } from '../geometry/interfaces'
 
 export class Arena implements ArenaInterface {
 	private _height: number;
@@ -12,8 +14,13 @@ export class Arena implements ArenaInterface {
 		return this._height;
 	}
 
-	get width(): number {
-		return this._width;
+
+	get walls(): Array<WallInterface> {
+		throw new Error('Method not implemented.');
+	}
+
+	get gridLines(): Array<LineSegment> {
+		throw new Error('Method not implemented.');
 	}
 
 	containsCoordinates(x: number, y: number): boolean {
