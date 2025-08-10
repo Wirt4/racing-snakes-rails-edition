@@ -78,10 +78,6 @@ export class Arena implements ArenaInterface {
 	}
 
 	private drawGridLines(cellSize: number): void {
-		// if the cell size is larger or equal to than the arena dimensions, no grid lines can be drawn
-		if (cellSize >= this.dimensions.width && cellSize >= this.dimensions.height) {
-			return;
-		}
 		this.addVerticalGridLines(cellSize)
 		this.addHorizontalGridLines(cellSize)
 	}
