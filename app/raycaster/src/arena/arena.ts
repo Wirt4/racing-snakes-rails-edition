@@ -10,13 +10,20 @@ export class Arena implements ArenaInterface {
 		this._height = height;
 		this._width = width;
 	}
+
 	get height(): number {
+		//TODO: remove
 		return this._height;
 	}
 
 
 	get walls(): Array<WallInterface> {
-		throw new Error('Method not implemented.');
+		const walls: Array<WallInterface> = [
+			{} as WallInterface,
+			{} as WallInterface,
+			{} as WallInterface,
+			{} as WallInterface];
+		return walls;
 	}
 
 	get gridLines(): Array<LineSegment> {
