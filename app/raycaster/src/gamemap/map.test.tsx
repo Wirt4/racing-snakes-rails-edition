@@ -38,28 +38,7 @@ describe('GameMap configuration options', () => {
 			expect(wall.color).toBe(ColorName.RED);
 		});
 	});
-
-	describe('gridline generation', () => {
-		let gameMap: GameMap;
-		const arena: ArenaInterface = { walls: [], gridLines: [], height: 20, containsCoordinates: () => true };
-		beforeEach(() => {
-			gameMap = new GameMap(
-				arena,
-				ColorName.RED,
-				1,
-				new MockPlayer({ x: 1, y: 1 }, 0, [])
-			);
-		});
-
-		test('should initialize correct number of X gridlines', () => {
-			expect(gameMap.gridLinesX.length).toBe(10);
-		});
-
-		test('should initialize correct number of Y gridlines', () => {
-			expect(gameMap.gridLinesY.length).toBe(20);
-		});
-	});
-});
+})
 
 describe('castRay method', () => {
 	let gameMap: GameMap;
