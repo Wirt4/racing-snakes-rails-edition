@@ -14,6 +14,7 @@ export interface GameMapInterface {
 	playerPosition: Coordinates;
 	playerAngle: number;
 	playerTrail: WallInterface[];
+	player: PlayerInterface;
 	//castRay should be in it's own class -- gameMap interface should have no knowlege of it
 	castRay(angle: number, distance: number): Slice;
 	resetIntersections(): void;

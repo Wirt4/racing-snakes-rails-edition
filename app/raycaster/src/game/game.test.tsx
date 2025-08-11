@@ -26,6 +26,18 @@ describe('isGameOver tests', () => {
 	let game: Game
 
 	beforeEach(() => {
+		player = {
+			hasCollided: (arena: any) => { return false; },
+			x: 0,
+			y: 0,
+			angle: 0,
+			trail: [],
+			turnLeft: () => { },
+			turnRight: () => { },
+			color: ColorName.BLUE,
+			move: () => { },
+
+		} as PlayerInterface;
 		map = {
 			walls: [],
 			arena: {
@@ -33,6 +45,7 @@ describe('isGameOver tests', () => {
 				gridLines: [],
 				containsCoordinates: (x: number, y: number) => true,
 			},
+			player,
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
 			playerTrail: [],
@@ -41,9 +54,7 @@ describe('isGameOver tests', () => {
 			appendWall: (wall: WallInterface) => { },
 		}
 
-		player = {
-			hasCollided: (arena: any) => { return false; },
-		} as PlayerInterface;
+
 		renderer = {
 			renderHUD: () => { },
 			renderSlices: () => { },
@@ -77,6 +88,17 @@ describe('Draw condition tests', () => {
 				walls: [],
 				gridLines: [],
 			},
+			player: {
+				x: 0,
+				y: 0,
+				angle: 0,
+				trail: [],
+				turnLeft: () => { },
+				turnRight: () => { },
+				color: ColorName.BLUE,
+				move: () => { },
+				hasCollided: (arena: any) => { return false; },
+			} as PlayerInterface,
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
 			playerTrail: [],
