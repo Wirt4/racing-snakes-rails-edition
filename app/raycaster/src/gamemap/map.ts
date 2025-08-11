@@ -38,10 +38,6 @@ export class GameMap implements GameMapInterface {
 		this.arena = arena;
 	}
 
-	get playerTrail(): WallInterface[] {
-		return this.player.trail
-	}
-
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
 		if (verticalSegment.hStart < horizontalSegment.hStart || verticalSegment.hStart > horizontalSegment.hEnd) {
 			return false;
@@ -84,8 +80,8 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		for (let i = 0; i < this.playerTrail.length - 1; i++) {
-			const wall = this.playerTrail[i].line;
+		for (let i = 0; i < this.player.trail.length - 1; i++) {
+			const wall = this.player.trail[i].line;
 			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
