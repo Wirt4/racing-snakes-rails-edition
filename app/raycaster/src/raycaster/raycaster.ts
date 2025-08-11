@@ -2,6 +2,8 @@ import { RaycasterInterface } from './interface';
 import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils/utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
+import { Slice } from '../slice/interface';
+
 class Raycaster implements RaycasterInterface {
 
 	public focalLength: number;
@@ -41,6 +43,10 @@ class Raycaster implements RaycasterInterface {
 		const verticalFOV = 2 * Math.atan(Math.tan(this.fieldOfView / 2) / aspectRatio);
 
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
+	}
+
+	castRay(angle: number, distance: number): Slice {
+		throw new Error("Method not implemented.");
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
