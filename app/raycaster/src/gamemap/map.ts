@@ -42,11 +42,6 @@ export class GameMap implements GameMapInterface {
 		return this.player.trail
 	}
 
-	get playerPosition(): Coordinates {
-		const { x, y } = this.player;
-		return { x, y };
-	}
-
 	get playerAngle(): number {
 		return this.player.angle;
 	}

@@ -97,7 +97,8 @@ describe('castRay method', () => {
 	test('should return same point for zero-length ray', () => {
 		const slice = gameMap.castRay(0, 0);
 		expect(slice.distance).toEqual(0);
-		expect(slice.intersection).toEqual(gameMap.playerPosition);
+		expect(slice.intersection.x).toEqual(gameMap.player.x);
+		expect(slice.intersection.y).toEqual(gameMap.player.y);
 	});
 
 	test('should return correct intersection for vertical ray', () => {
