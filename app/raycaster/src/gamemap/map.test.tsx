@@ -30,7 +30,7 @@ class MockPlayer implements PlayerInterface {
 describe('GameMap configuration options', () => {
 	test('walls should be configurable by color', () => {
 		const arena: ArenaInterface = { gridLines: [], walls: [], containsCoordinates: () => true };
-		const gameMap = new GameMap(arena, ColorName.RED, 1,
+		const gameMap = new GameMap(arena,
 			new MockPlayer({ x: 1, y: 1 }, 0, [])
 		);
 
@@ -66,8 +66,6 @@ describe('castRay method', () => {
 	beforeEach(() => {
 		gameMap = new GameMap(
 			arena,
-			ColorName.GREEN,
-			1,
 			new MockPlayer({ x: 1, y: 1 }, 0, [])
 		);
 	});
@@ -86,7 +84,7 @@ describe('castRay method', () => {
 
 	test('should return max distance if ray hits nothing (looking away from all walls)', () => {
 		const arena: ArenaInterface = { walls: [], gridLines: [], containsCoordinates: () => true };
-		gameMap = new GameMap(arena, ColorName.GREEN, 1,
+		gameMap = new GameMap(arena,
 			new MockPlayer({ x: 16, y: 5 }, 0, [])
 		);
 		const slice = gameMap.castRay(Math.PI, 15); // Facing negative x direction
@@ -111,8 +109,6 @@ describe('castRay method', () => {
 		const arena: ArenaInterface = { walls: [], gridLines: [], containsCoordinates: () => true };
 		gameMap = new GameMap(
 			arena,
-			ColorName.GREEN,
-			1,
 			new MockPlayer({ x: 0.001, y: 0.001 }, 0, [])
 		);
 		const slice = gameMap.castRay(Math.PI, 11);
@@ -139,13 +135,13 @@ describe("Player tests", () => {
 	});
 
 	test("angle should be passed to player class", () => {
-		const gameMap = new GameMap(arena, ColorName.RED, 1, player);
+		const gameMap = new GameMap(arena, player);
 		gameMap.turnPlayer(Math.PI / 2)
 		expect(player.turnLeft).toHaveBeenLastCalledWith()
 	});
 
 	test("movePlayer should call player.move", () => {
-		const gameMap = new GameMap(arena, ColorName.RED, 1, player);
+		const gameMap = new GameMap(arena, player);
 		gameMap.movePlayer()
 		expect(player.move).toHaveBeenCalled()
 	});
@@ -171,7 +167,7 @@ describe('GameMap.castRay()', () => {
 		};
 
 		const player = new MockPlayer(position, directionAngle, [mockTrailHead]);
-		const map = new GameMap(arena, ColorName.BLACK, 10, player);
+		const map = new GameMap(arena, player);
 
 		const slice = map.castRay(directionAngle, 50);
 
@@ -204,7 +200,7 @@ describe('GameMap.castRay()', () => {
 			color: ColorName.RED,
 		}));
 		const player = new MockPlayer(position, directionAngle, mockTrail);
-		const map = new GameMap(arena, ColorName.BLACK, 10, player);
+		const map = new GameMap(arena, player);
 
 		const slice = map.castRay(directionAngle, 50);
 

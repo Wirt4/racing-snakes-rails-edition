@@ -24,8 +24,6 @@ export class GameMap implements GameMapInterface {
 
 	constructor(
 		arena: ArenaInterface,
-		boundaryColor: ColorName = ColorName.BLACK,
-		gridCell: number,
 		player: PlayerInterface
 	) {
 		this.player = player
