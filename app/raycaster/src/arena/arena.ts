@@ -24,11 +24,6 @@ export class Arena implements ArenaInterface {
 		this.drawGridLines(cellSize)
 	}
 
-	get height(): number {
-		//TODO: remove
-		return this.dimensions.height;
-	}
-
 	get walls(): Array<WallInterface> {
 		return this._walls
 	}
