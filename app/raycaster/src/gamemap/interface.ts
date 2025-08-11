@@ -11,7 +11,6 @@ export interface GameMapInterface {
 	walls: WallInterface[];
 
 	//player should own it's own position, angle and trail
-	playerPosition: Coordinates;
 	playerAngle: number;
 	playerTrail: WallInterface[];
 	player: PlayerInterface;
