@@ -17,8 +17,6 @@ interface Intersection {
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	player: PlayerInterface
-	gridLinesX: LineSegment[] = [];
-	gridLinesY: LineSegment[] = [];
 	arena: ArenaInterface;
 	private intersectionPool: Intersection[] = [];
 	private rayPoint: Coordinates = { x: 0, y: 0 };
