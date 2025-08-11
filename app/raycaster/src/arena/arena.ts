@@ -13,7 +13,8 @@ export class Arena implements ArenaInterface {
 
 	constructor(
 		private dimensions: Dimensions,
-		cellSize: number
+		cellSize: number,
+		private readonly wallColor: ColorName,
 	) {
 		this.upperRight = { x: this.dimensions.width, y: 0 }
 		this.lowerLeft = { x: 0, y: this.dimensions.height }
@@ -69,7 +70,7 @@ export class Arena implements ArenaInterface {
 	}
 
 	private newWall(start: Coordinates, end: Coordinates): WallInterface {
-		return { line: { start, end }, color: ColorName.RED }
+		return { line: { start, end }, color: this.wallColor }
 	}
 
 	private drawGridLines(cellSize: number): void {

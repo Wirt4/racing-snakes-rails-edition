@@ -1,13 +1,14 @@
 import { beforeEach, describe, test, expect } from '@jest/globals';
 import { Arena } from './arena';
 import { LineSegment } from '../geometry/interfaces';
-
+import { ColorName } from '../color/color_name';
 describe('Arena Tests', () => {
 	let arena: Arena;
 	beforeEach(() => {
 		const dimensions = { width: 10, height: 10 };
 		const cellSize = 10;
-		arena = new Arena(dimensions, cellSize);
+		const color = ColorName.BLACK;
+		arena = new Arena(dimensions, cellSize, color);
 	});
 	test('initializes with walls', () => {
 		expect(arena.walls.length).toBe(4);
@@ -44,17 +45,17 @@ describe('Arena grid lines', () => {
 	let arena: Arena;
 	let cellSize: number;
 	let dimensions: { width: number, height: number };
-
+	let color = ColorName.BLACK;
 	beforeEach(() => {
 		// create an area with size 10x10 and cell size 10
 		cellSize = 5;
 		dimensions = { width: 10, height: 10 };
-		arena = new Arena(dimensions, cellSize);
+		arena = new Arena(dimensions, cellSize, color);
 	});
 
 	test('should be 0 gridlines', () => {
 		cellSize = 10;
-		arena = new Arena(dimensions, cellSize);
+		arena = new Arena(dimensions, cellSize, color);
 		expect(arena.gridLines.length).toBe(0);
 	});
 	test('should contain two grid lines', () => {
@@ -66,7 +67,7 @@ describe('Arena grid lines', () => {
 	})
 	test('should contain 2 vertical grid lines', () => {
 		dimensions = { width: 15, height: 15 };
-		arena = new Arena(dimensions, cellSize);
+		arena = new Arena(dimensions, cellSize, color);
 		expect(containsExactAmount(arena.gridLines, isVertical, 2)).toBe(true);
 	})
 
@@ -75,10 +76,6 @@ describe('Arena grid lines', () => {
 function isVertical(line: LineSegment): boolean {
 	return line.start.x === line.end.x;
 }
-//
-//
-//isHorizontal
-////line.start.y === line.end.y
 
 function containsExactAmount(gridLines: Array<LineSegment>, lambda: (line: LineSegment) => boolean, targetTotal: number): boolean {
 	let matchedCount = 0;
