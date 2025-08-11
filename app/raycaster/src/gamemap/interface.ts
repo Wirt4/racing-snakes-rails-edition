@@ -11,7 +11,6 @@ export interface GameMapInterface {
 	walls: WallInterface[];
 
 	//player should own it's own position, angle and trail
-	playerAngle: number;
 	playerTrail: WallInterface[];
 	player: PlayerInterface;
 	//castRay should be in it's own class -- gameMap interface should have no knowlege of it
