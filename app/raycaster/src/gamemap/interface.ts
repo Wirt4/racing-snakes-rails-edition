@@ -10,8 +10,6 @@ export interface GameMapInterface {
 	// trails should belong to each player
 	walls: WallInterface[];
 
-	//player should own it's own position, angle and trail
-	playerTrail: WallInterface[];
 	player: PlayerInterface;
 	//castRay should be in it's own class -- gameMap interface should have no knowlege of it
 	castRay(angle: number, distance: number): Slice;
