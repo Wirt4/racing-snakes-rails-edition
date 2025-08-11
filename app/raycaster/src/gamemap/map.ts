@@ -1,9 +1,11 @@
-import { GameMapInterface, WallInterface } from './interface';
-import { Coordinates, LineSegment, Dimensions } from '../geometry/interfaces';
+import { GameMapInterface } from './interface';
+import { WallInterface } from '../wall/interface'
+import { Coordinates, LineSegment } from '../geometry/interfaces';
 import { ColorName } from '../color/color_name';
 import { PlayerInterface } from '../player/interface';
-import { Slice } from '../gamemap/interface';
+import { Slice } from '../slice/interface';
 import { BMath } from '../boundedMath/bmath';
+import { ArenaInterface } from '../arena/interface';
 
 interface Intersection {
 	isValid: boolean;
@@ -15,98 +17,23 @@ interface Intersection {
 export class GameMap implements GameMapInterface {
 	walls: WallInterface[] = [];
 	player: PlayerInterface
-	gridLinesX: LineSegment[] = [];
-	gridLinesY: LineSegment[] = [];
-	private gridLines: LineSegment[];
+	arena: ArenaInterface;
 	private intersectionPool: Intersection[] = [];
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
 
 	constructor(
-		private size: Dimensions,
-		boundaryColor: ColorName = ColorName.BLACK,
-		gridCell: number,
+		arena: ArenaInterface,
 		player: PlayerInterface
 	) {
 		this.player = player
-		this.gridLinesY = this.generateGridLines(gridCell, size.height, size.width, true);
-		this.gridLinesX = this.generateGridLines(gridCell, size.width, size.height, false);
-		this.gridLines = [...this.gridLinesX, ...this.gridLinesY];
-		const left_top = { x: 0, y: 0 };
-		const left_bottom = { x: 0, y: size.height };
-		const right_top = { x: size.width, y: 0 };
-		const right_bottom = { x: size.width, y: size.height };
-
-		this.walls = [
-			this.initializeWall(left_top, left_bottom, boundaryColor),
-			this.initializeWall(left_top, right_top, boundaryColor),
-			this.initializeWall(right_top, right_bottom, boundaryColor),
-			this.initializeWall(left_bottom, right_bottom, boundaryColor),
-		];
+		this.walls = arena.walls;
 
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 		}
-	}
 
-	get playerTrail(): WallInterface[] {
-		return this.player.trail
-	}
-
-	get playerPosition(): Coordinates {
-		const { x, y } = this.player;
-		return { x, y };
-	}
-
-	get playerAngle(): number {
-		return this.player.angle;
-	}
-
-	hasCollidedWithWall(player: PlayerInterface): boolean {
-		if (this.hasHitArenaBoundary()) {
-			return true;
-		}
-		if (!this.hasEnoughTailForSelfCollision(player)) {
-			return false
-		}
-		return this.hasIntersectedOwnTrail(player.trail);
-	}
-
-	private head: TrailSegment | undefined;
-
-	private hasIntersectedOwnTrail(trail: WallInterface[]): boolean {
-		if (trail.length < 2) {
-			return false;
-		}
-		this.head = new TrailSegment(trail[trail.length - 1].line);
-		return this.findIntersection(trail.slice(0, trail.length - 2), this.head)
-	}
-
-	private findIntersection(trail: WallInterface[], head: TrailSegment): boolean {
-		for (const { line } of trail) {
-			if (this.selfIntersecst(head, line)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private bodySegment: TrailSegment | undefined;
-	private selfIntersecst(head: TrailSegment, segment: LineSegment): boolean {
-		this.bodySegment = new TrailSegment(segment);
-		if (head.isVertical === this.bodySegment.isVertical) {
-			return false;
-		}
-		return head.isVertical ? this.isCrossing(head, this.bodySegment) : this.isCrossing(this.bodySegment, head);
-	}
-
-	private hasHitArenaBoundary(): boolean {
-		const { x, y } = this.player;
-		return x <= 0 || x >= this.size.width || y <= 0 || y >= this.size.height;
-	}
-
-	private hasEnoughTailForSelfCollision(player: PlayerInterface) {
-		return player.trail.length > 2;
+		this.arena = arena;
 	}
 
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
@@ -151,8 +78,8 @@ export class GameMap implements GameMapInterface {
 			}
 		}
 
-		for (let i = 0; i < this.playerTrail.length - 1; i++) {
-			const wall = this.playerTrail[i].line;
+		for (let i = 0; i < this.player.trail.length - 1; i++) {
+			const wall = this.player.trail[i].line;
 			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
 			if (hit.isValid && hit.distance < closest.distance) {
 				closest = hit;
@@ -173,7 +100,7 @@ export class GameMap implements GameMapInterface {
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
 		const gridHits: number[] = [];
-		for (const grid of this.gridLines) {
+		for (const grid of this.arena.gridLines) {
 			const hit = this.rayIntersectsWall(origin, rayDirection, grid);
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);

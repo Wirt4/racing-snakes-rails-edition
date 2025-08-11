@@ -38,14 +38,14 @@ class BatchCorrelator {
 
 	private appendAllMapWalls(): void {
 		this.batches.addMapWalls(this.gameMap.walls);
-		this.batches.addMapWalls(this.gameMap.playerTrail);
+		this.batches.addMapWalls(this.gameMap.player.trail);
 	}
 
 	private setRays(): void {
 		if (!this.rays) {
 			this.rays = new Float32Array(this.resolution);
 		}
-		this.raycaster.fillRaysInto(this.rays, this.gameMap.playerAngle);
+		this.raycaster.fillRaysInto(this.rays, this.gameMap.player.angle);
 	}
 
 	private appendAllSlices(): void {
@@ -83,7 +83,7 @@ class BatchCorrelator {
 	}
 
 	private removeFishEye(distance: number): number {
-		return this.raycaster.removeFishEye(distance, this.currentAngle, this.gameMap.playerAngle);
+		return this.raycaster.removeFishEye(distance, this.currentAngle, this.gameMap.player.angle);
 	}
 
 	private sliceHeight(

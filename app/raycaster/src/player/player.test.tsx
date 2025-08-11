@@ -1,11 +1,12 @@
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import { Player } from './player'
 import { Coordinates, } from '../geometry/interfaces';
-import { WallInterface } from '../gamemap/interface';
+import { WallInterface } from '../wall/interface';
 import { CameraInterface } from '../camera/interface';
 import { Directions } from '../controls/directions';
 import { ColorName } from '../color/color_name';
 import { NINETY_DEGREES, TWO_HUNDRED_SEVENTY_DEGREES } from '../geometry/constants';
+import { ArenaInterface } from '../arena/interface';
 
 function areCoordsEqual(a: Coordinates, b: Coordinates): boolean {
 	return a.x === b.x && a.y === b.y;
@@ -138,5 +139,57 @@ describe('Player.move - trail continuity', () => {
 		expect(trail.length).toBeGreaterThan(2);
 		expect(isTrailContinuous(trail)).toBe(true);
 	});
+	test("the player changes direction after turned", () => {
+		const speed = 1;
+		const camera = new MockCamera();
+		const player = new Player({ x: 0, y: 1 }, speed, ColorName.RED, camera);
+
+		player.move();
+		expect(player.x).toEqual(1)
+		expect(player.y).toEqual(1)
+		player.turnRight();
+		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
+		player.move();
+		expect(player.x).toEqual(1)
+		expect(player.y).toEqual(0)
+	})
+
 });
 
+describe('Player.hasCollided', () => {
+	let player: Player;
+	let arena: ArenaInterface;
+	let camera: CameraInterface;
+	beforeEach(() => {
+		arena = {
+			containsCoordinates: jest.fn(() => true),
+			gridLines: [],
+			walls: [],
+		};
+		camera = new MockCamera();
+		camera.isRotating = false;
+		player = new Player({ x: 100, y: 100 }, 5, ColorName.RED, camera);
+	});
+	test("there is a collision when the player exits the arena", () => {
+		//mock the arena class with containsCoordinates set to false
+		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(false);
+		const actual = player.hasCollided(arena);
+		expect(actual).toBe(true);
+	})
+	test("the player runs into its own wall", () => {
+		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(true);
+		player.move();
+		player.move();
+		player.turnRight();
+		camera.angle = TWO_HUNDRED_SEVENTY_DEGREES;
+		player.move();
+		player.turnRight();
+		camera.angle = Math.PI;
+		player.move();
+		player.turnRight();
+		camera.angle = NINETY_DEGREES;
+		player.move();
+		//expect collision at 105 100
+		expect(player.hasCollided(arena)).toBe(true);
+	})
+})

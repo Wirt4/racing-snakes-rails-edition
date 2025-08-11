@@ -9,6 +9,7 @@ import { Camera } from '../camera/camera';
 import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
 import { sleep } from '../sleep';
+import { Arena } from '../arena/arena';
 
 let game: Game;
 let player: Player;
@@ -34,10 +35,14 @@ onmessage = (e) => {
 			msg.settings.CANVAS_HEIGHT,
 			ColorName.BLUE);
 
-		const mapSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
 		const camera = new Camera(msg.settings.TURN_TIME, msg.settings.CAMERA_ANGLE);
 		player = new Player({ x: 10, y: 10 }, msg.settings.PLAYER_SPEED, msg.settings.PLAYER_COLOR, camera);
-		const map = new GameMap(mapSize, msg.settings.MAP_COLOR, msg.settings.GRID_CELL_SIZE, player);
+		const arenaSize = { width: msg.settings.ARENA_WIDTH, height: msg.settings.ARENA_HEIGHT };
+		const arena = new Arena(arenaSize,
+			msg.settings.GRID_CELL_SIZE,
+			ColorName.BLACK,
+		);
+		const map = new GameMap(arena, player);
 
 		raycaster = new Raycaster(
 			msg.settings.RESOLUTION,
