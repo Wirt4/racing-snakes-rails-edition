@@ -174,8 +174,8 @@ describe('Player.hasCollided', () => {
 	test("there is a collision when the player exits the arena", () => {
 		//mock the arena class with containsCoordinates set to false
 		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(false);
-		const acutal = player.hasCollided(arena);
-		expect(acutal).toBe(true);
+		const actual = player.hasCollided(arena);
+		expect(actual).toBe(true);
 	})
 	test("the player runs into its own wall", () => {
 		jest.spyOn(arena, 'containsCoordinates').mockReturnValue(true);
