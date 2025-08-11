@@ -28,13 +28,11 @@ describe('isGameOver tests', () => {
 	beforeEach(() => {
 		map = {
 			walls: [],
-			gridLinesX: [],
 			arena: {
 				walls: [],
 				gridLines: [],
 				containsCoordinates: (x: number, y: number) => true,
 			},
-			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
 			playerTrail: [],
@@ -74,13 +72,11 @@ describe('Draw condition tests', () => {
 	beforeEach(() => {
 		map = {
 			walls: [],
-			gridLinesX: [],
 			arena: {
 				containsCoordinates: (x: number, y: number) => true,
 				walls: [],
 				gridLines: [],
 			},
-			gridLinesY: [],
 			playerPosition: { x: 0, y: 0 },
 			playerAngle: 0,
 			playerTrail: [],

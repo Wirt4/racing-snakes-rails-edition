@@ -6,8 +6,6 @@ import { ArenaInterface } from '../arena/interface';
 
 export interface GameMapInterface {
 	//gridlines and boundarys should belong to arena
-	gridLinesX: LineSegment[];
-	gridLinesY: LineSegment[];
 	arena: ArenaInterface;
 	// trails should belong to each player
 	walls: WallInterface[];
