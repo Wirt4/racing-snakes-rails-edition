@@ -42,11 +42,6 @@ export class GameMap implements GameMapInterface {
 		return this.player.trail
 	}
 
-	get playerAngle(): number {
-		return this.player.angle;
-	}
-
-
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
 		if (verticalSegment.hStart < horizontalSegment.hStart || verticalSegment.hStart > horizontalSegment.hEnd) {
 			return false;
