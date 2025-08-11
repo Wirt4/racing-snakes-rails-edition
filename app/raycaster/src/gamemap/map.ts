@@ -20,7 +20,6 @@ export class GameMap implements GameMapInterface {
 	gridLinesX: LineSegment[] = [];
 	gridLinesY: LineSegment[] = [];
 	arena: ArenaInterface;
-	private gridLines: LineSegment[];
 	private intersectionPool: Intersection[] = [];
 	private rayPoint: Coordinates = { x: 0, y: 0 };
 	private bMath = BMath.getInstance();
@@ -32,20 +31,7 @@ export class GameMap implements GameMapInterface {
 		player: PlayerInterface
 	) {
 		this.player = player
-		// this.gridLinesY = this.generateGridLines(gridCell, arena.height, arena.width, true);
-		// this.gridLinesX = this.generateGridLines(gridCell, arena.width, arena.height, false);
-		this.gridLines = arena.gridLines;
-		// const left_top = { x: 0, y: 0 };
-		// const left_bottom = { x: 0, y: arena.height };
-		// const right_top = { x: arena.width, y: 0 };
-		// const right_bottom = { x: arena.width, y: arena.height };
 		this.walls = arena.walls;
-		// this.walls = [
-		// 	this.initializeWall(left_top, left_bottom, boundaryColor),
-		// 	this.initializeWall(left_top, right_top, boundaryColor),
-		// 	this.initializeWall(right_top, right_bottom, boundaryColor),
-		// 	this.initializeWall(left_bottom, right_bottom, boundaryColor),
-		// ];
 
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
@@ -132,7 +118,7 @@ export class GameMap implements GameMapInterface {
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
 		const gridHits: number[] = [];
-		for (const grid of this.gridLines) {
+		for (const grid of this.arena.gridLines) {
 			const hit = this.rayIntersectsWall(origin, rayDirection, grid);
 			if (hit.isValid && hit.distance < maxDistance) {
 				gridHits.push(hit.distance);
