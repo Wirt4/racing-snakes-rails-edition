@@ -1,6 +1,9 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '../geometry/constants';
 import { Raycaster } from './raycaster';
+import { WallInterface } from '../wall/interface'
+import { ColorName } from '../color/color_name'
+
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
 const TEST_RESOLUTION = 640;
@@ -188,3 +191,39 @@ describe('FillRaysInto', () => {
 		expect(shell).toEqual(expected);
 	})
 })
+
+describe('castRay', () => {
+	let raycaster: Raycaster;
+	beforeEach(() => {
+		// instantiate a  raycaster with the defaults
+
+		raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT
+		);
+
+	})
+	test('stub', () => {
+		// create a map interface with one wall that runs from (50, 0) to (50, 100)
+		const start = { x: 50, y: 0 }
+		const end = { x: 50, y: 100 }
+		const walls: WallInterface[] = [{ color: ColorName.RED, line: { start, end } }]
+
+		// call raycaster.castRay with position 5, 5 and direction 0
+		const position = { x: 5, y: 5 }
+		const expectedDistance = 45
+		const angle = 0
+		const slice = raycaster.castRay(position, angle)
+		expect(slice.distance).toEqual(expectedDistance)
+	})
+
+})
+
+
+

@@ -3,6 +3,7 @@ import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
+import { Coordinates } from '../geometry/interfaces'
 
 class Raycaster implements RaycasterInterface {
 
@@ -45,7 +46,7 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
-	castRay(angle: number, distance: number): Slice {
+	castRay(position: Coordinates, angle: number): Slice {
 		throw new Error("Method not implemented.");
 	}
 
