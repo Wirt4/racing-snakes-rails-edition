@@ -1,5 +1,6 @@
 import { Slice } from '../slice/interface'
 import { Coordinates } from '../geometry/interfaces'
+import { WallInterface } from '../wall/interface'
 
 export interface RaycasterInterface {
 	getViewRays(viewerAngle: number): Float32Array;
@@ -7,5 +8,5 @@ export interface RaycasterInterface {
 	calculateBrightness(distance: number): number;
 	focalLength: number;
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void;
-	castRay(position: Coordinates, angle: number): Slice;
+	castRay(position: Coordinates, angle: number, walls: WallInterface[]): Slice | null;
 }

@@ -3,6 +3,7 @@ import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '
 import { Raycaster } from './raycaster';
 import { WallInterface } from '../wall/interface'
 import { ColorName } from '../color/color_name'
+import { Coordinates } from '../geometry/interfaces'
 
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
@@ -194,6 +195,8 @@ describe('FillRaysInto', () => {
 
 describe('castRay', () => {
 	let raycaster: Raycaster;
+	let walls: WallInterface[];
+	let position: Coordinates
 	beforeEach(() => {
 		// instantiate a  raycaster with the defaults
 
@@ -207,22 +210,26 @@ describe('castRay', () => {
 			TEST_WALL_HEIGHT,
 			TEST_CAMERA_HEIGHT
 		);
-
-	})
-	test('stub', () => {
 		// create a map interface with one wall that runs from (50, 0) to (50, 100)
 		const start = { x: 50, y: 0 }
 		const end = { x: 50, y: 100 }
-		const walls: WallInterface[] = [{ color: ColorName.RED, line: { start, end } }]
-
-		// call raycaster.castRay with position 5, 5 and direction 0
-		const position = { x: 5, y: 5 }
+		position = { x: 5, y: 5 }
+		walls = [{ color: ColorName.RED, line: { start, end } }]
+	})
+	test('horizontal cast ray', () => {
 		const expectedDistance = 45
 		const angle = 0
-		const slice = raycaster.castRay(position, angle)
+		const slice = raycaster.castRay(position, angle, walls)
 		expect(slice.distance).toEqual(expectedDistance)
 	})
-
+	test('cast ray at angle', () => {
+		// for forty-five degrees, length of hypotenuse is square root of 2 times the adjacent
+		const angle = FORTY_FIVE_DEGREES
+		const expected = Math.SQRT2 * 45
+		const slice = raycaster.castRay(position, angle, walls)
+		const margin = Math.abs(slice.distance - expected)
+		expect(margin).toBeLessThan(1e-6)
+	})
 })
 
 
