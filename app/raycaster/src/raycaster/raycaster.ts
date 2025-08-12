@@ -4,6 +4,7 @@ import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
 import { Coordinates } from '../geometry/interfaces'
+import { ColorName } from '../color/color_name'
 
 class Raycaster implements RaycasterInterface {
 
@@ -47,7 +48,7 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(position: Coordinates, angle: number): Slice {
-		throw new Error("Method not implemented.");
+		return { distance: 45, intersection: position, color: ColorName.RED, gridHits: [] }
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
