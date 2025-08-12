@@ -230,6 +230,12 @@ describe('castRay', () => {
 		const margin = Math.abs(slice.distance - expected)
 		expect(margin).toBeLessThan(1e-6)
 	})
+	test('casting a ray that intersects no wall returns a distance of the "max distance"', () => {
+		//use the same set up as before
+		const angle = Math.PI
+		const actual = raycaster.castRay(position, angle, walls)
+		expect(actual.distance).toEqual(TEST_DISTANCE)
+	})
 })
 
 
