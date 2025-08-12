@@ -53,7 +53,6 @@ class Raycaster implements RaycasterInterface {
 		// use the wall intersection to find the distance
 		const lineA = this.toLineSegment(position, angle)
 		const intersection = this.getIntersection(lineA, wall.line)
-		console.log('intersection', intersection)
 		const distance = this.getDistance(position, intersection as Coordinates)
 		return { distance, intersection: position, color: ColorName.RED, gridHits: [] }
 	}
@@ -167,7 +166,6 @@ class Raycaster implements RaycasterInterface {
 			return { x, y }
 
 		} else {
-			console.log('intersection exists evaluated to false')
 			return null
 		}
 	}
@@ -199,17 +197,8 @@ class EquationTemplate {
 	//avoid divide-by-zero errors
 	intersectionExists(): boolean {
 		// (x1 - x2)(y3 - y4) = (y1 - y2)(x3 - x4)
-		const x1MinusX2 = this.x1 - this.x2
-		const y3MinusY4 = this.y3 - this.y4
-		//avoid negative signed zeroes for neatness here
-		const sideA = x1MinusX2 * y3MinusY4 + 0
-		const y1MinusY2 = this.y1 - this.y2
-		const x3MinusX4 = this.x3 - this.x4
-		const sideB = y1MinusY2 * x3MinusX4 + 0
-		// if both sides are the same, we'd divide by zero
-		return sideA !== sideB
+		return (this.x1 - this.x2) * (this.y3 - this.y4) === (this.y1 - this.y2) * (this.x3 - this.x4)
 	}
-
 	// p may be the series for either Xs or Ys
 	calculateIntersectionCoordinate(p1: number, p2: number, p3: number, p4: number): number {
 		const variableA = p3 - p4
@@ -222,7 +211,6 @@ class EquationTemplate {
 		const segmentC = (this.x1 - this.x2) * (this.y3 - this.y4)
 		const segmentD = (this.y1 - this.y2) * (this.x3 - this.x4)
 		const denominator = segmentC - segmentD
-		console.log('denominator', denominator)
 		return numerator / denominator
 	}
 }
