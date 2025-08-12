@@ -182,6 +182,7 @@ class EquationTemplate {
 	private y2: number
 	private y3: number
 	private y4: number
+	private denominator: number
 
 	constructor(lineA: LineSegment, lineB: LineSegment) {
 		//Xs
@@ -194,20 +195,16 @@ class EquationTemplate {
 		this.y2 = lineA.end.y
 		this.y3 = lineB.start.y
 		this.y4 = lineB.end.y
+		// denominator = (x1-x2)(y3-y4)-(y1-y2)(x3-x4)
+		const segmentA = (this.x1 - this.x2) * (this.y3 - this.y4)
+		const segmentB = (this.y1 - this.y2) * (this.x3 - this.x4)
+		this.denominator = segmentA - segmentB
+
 	}
 
 	//avoid divide-by-zero errors
 	intersectionExists(): boolean {
-		// (x1 - x2)(y3 - y4) = (y1 - y2)(x3 - x4)
-		const x1MinusX2 = this.x1 - this.x2
-		const y3MinusY4 = this.y3 - this.y4
-		//avoid negative signed zeroes for neatness here
-		const sideA = x1MinusX2 * y3MinusY4 + 0
-		const y1MinusY2 = this.y1 - this.y2
-		const x3MinusX4 = this.x3 - this.x4
-		const sideB = y1MinusY2 * x3MinusX4 + 0
-		// if both sides are the same, we'd divide by zero
-		return sideA !== sideB
+		return this.denominator !== 0
 	}
 
 	// p may be the series for either Xs or Ys
@@ -218,12 +215,7 @@ class EquationTemplate {
 		const segmentA = (this.x1 * this.y2 - this.y1 * this.x2) * variableA
 		const segmentB = variableB * (this.x3 * this.y4 - this.y3 * this.x4)
 		const numerator = segmentA - segmentB
-		// denominator = (x1-x2)(y3-y4)-(y1-y2)(x3-x4)
-		const segmentC = (this.x1 - this.x2) * (this.y3 - this.y4)
-		const segmentD = (this.y1 - this.y2) * (this.x3 - this.x4)
-		const denominator = segmentC - segmentD
-		console.log('denominator', denominator)
-		return numerator / denominator
+		return numerator / this.denominator
 	}
 }
 export { Raycaster };
