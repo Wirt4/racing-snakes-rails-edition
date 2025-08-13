@@ -3,8 +3,8 @@ import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
-import { Coordinates, LineSegment } from '../geometry/interfaces'
 import { ColorName } from '../color/color_name'
+import { Coordinates, LineSegment } from '../geometry/interfaces'
 import { WallInterface } from '../wall/interface'
 
 class Raycaster implements RaycasterInterface {
@@ -49,6 +49,15 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
+		if (walls.length == 0) {
+			return {
+				distance: 0,
+				intersection: { x: -1, y: -1 },
+				color: ColorName.NONE,
+				gridHits: [1, 2]
+			}
+
+		}
 		const wall = walls[0]
 		const rayPoint = this.getRayPoint(origin, angle)
 		const intersection = this.getIntersection({ start: origin, end: rayPoint }, wall.line)
