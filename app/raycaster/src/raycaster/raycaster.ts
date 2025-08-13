@@ -53,10 +53,11 @@ class Raycaster implements RaycasterInterface {
 		const rayPoint = this.getRayPoint(origin, angle)
 		const intersection = this.getIntersection({ start: origin, end: rayPoint }, wall.line)
 		let distance: number
-		if (intersection === null || this.isBehind(intersection, origin, rayPoint)) {
-			distance = this.maxDistance
-		} else {
+		//if there's no intersection, or it's behind the ray or it's not inside the wall:
+		if (this.isValidIntersection(intersection, origin, rayPoint, wall.line)) {
 			distance = this.getDistance(origin, intersection as Coordinates)
+		} else {
+			distance = this.maxDistance
 		}
 		return { distance, intersection: origin, color: ColorName.RED, gridHits: [] }
 	}
@@ -122,6 +123,29 @@ class Raycaster implements RaycasterInterface {
 		return 100 * (1 - (distance / this.maxDistance));
 	}
 
+	private isValidIntersection(
+		intersection: Coordinates | null,
+		rayOrigin: Coordinates,
+		rayPoint: Coordinates,
+		wallLine: LineSegment
+	): boolean {
+		let result = false
+		if (intersection == null) {
+			return result
+		}
+		//  intersection must be in front of the ray
+		if (this.isBehind(intersection, rayOrigin, rayPoint)) {
+			return result
+		}
+		// the line segment must contain the intersection
+		if (!this.lineContains(wallLine, intersection)) {
+			return result
+		}
+
+		result = true
+		return result
+	}
+
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
 			return angle + FULL_CIRCLE;
@@ -153,8 +177,30 @@ class Raycaster implements RaycasterInterface {
 		return result
 	}
 
-	private isVertical(rayOrigin: Coordinates, rayPoint: Coordinates): boolean {
-		return rayOrigin.x === rayPoint.x
+	private isVertical(pointA: Coordinates, pointB: Coordinates): boolean {
+		return pointA.x === pointB.x
+	}
+
+	private lineContains(line: LineSegment, coordinates: Coordinates): boolean {
+		let result = false
+		const { start, end } = line
+		if (this.isVertical(start, end)) {
+			result = this.inRange(coordinates.y, start.y, end.y)
+		} else {
+			result = this.inRange(coordinates.x, start.y, end.y)
+		}
+		return result
+	}
+
+	private inRange(coordinatePoint: number, startRange: number, endRange: number): boolean {
+		let result = false
+		// if min(start,end) <= coordinatePoint <= max(start, end) , result is true
+		if (Math.min(startRange, endRange) <= coordinatePoint) {
+			if (coordinatePoint <= Math.max(startRange, endRange)) {
+				result = true
+			}
+		}
+		return result
 	}
 
 	private pointPrecedes(coordinatePoint: number, rayOrigin: number, rayPoint: number): boolean {
@@ -171,7 +217,6 @@ class Raycaster implements RaycasterInterface {
 	private getRayPoint(position: Coordinates, angle: number): Coordinates {
 		//Offset is arbitrary, just there because I'm superstitious about really small numbers
 		const offset = 10
-		const start = position
 		const x = position.x + (offset * Math.cos(angle))
 		const y = position.y + (offset * Math.sin(angle))
 		return { x, y }
@@ -197,6 +242,7 @@ class Raycaster implements RaycasterInterface {
 		return { x, y }
 	}
 }
+
 class EquationTemplate {
 	private x1: number
 	private x2: number
