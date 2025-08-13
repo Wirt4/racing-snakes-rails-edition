@@ -56,14 +56,16 @@ class Raycaster implements RaycasterInterface {
 		const rayPoint = this.getRayPoint(origin, angle)
 
 		for (let i = 0; i < walls.length; i++) {
-			const currentIntersection = this.getIntersection({ start: origin, end: rayPoint }, walls[i].line)
+			const currentIntersection = this.getIntersection(
+				{ start: origin, end: rayPoint },
+				walls[i].line
+			)
 			if (this.isValidIntersection(currentIntersection, origin, rayPoint, walls[i].line)) {
 				distance = this.getDistance(origin, currentIntersection as Coordinates)
 				intersection = currentIntersection as Coordinates
 				color = walls[i].color
 			}
 		}
-
 
 		return {
 			distance,

@@ -267,7 +267,7 @@ describe('castRay', () => {
 		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.color).toEqual(ColorName.GREEN)
 	})
-	test('first gridHits', () => {
+	test('gridHits returns a count of 2', () => {
 		// draw a 2 by 2 grid with no walls
 		walls = []
 		const gridLines: Array<LineSegment> = [
@@ -283,6 +283,24 @@ describe('castRay', () => {
 		const result = raycaster.castRay(position, angle, walls)
 		// the length of the gridHits array should be 2
 		expect(result.gridHits.length).toBe(2)
+	})
+	test('gridHits returns a count of 6', () => {
+		//draw a 3 by 3 grid with no walls
+		walls = []
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 25, y: 0 }, end: { x: 25, y: 100 } },
+			{ start: { x: 50, y: 0 }, end: { x: 50, y: 100 } },
+			{ start: { x: 75, y: 0 }, end: { x: 75, y: 100 } },
+			{ start: { x: 0, y: 25 }, end: { x: 100, y: 3 } },
+			{ start: { x: 0, y: 50 }, end: { x: 100, y: 50 } },
+			{ start: { x: 0, y: 75 }, end: { x: 100, y: 75 } },
+		]
+		// set the view point in lower left cell
+		// offset it so the ray doesn't intersect the crosses exactly
+		position = { x: 1, y: 0 }
+		angle = FORTY_FIVE_DEGREES
+		const actual = raycaster.castRay(position, angle, walls)
+		expect(actual.gridHits.length).toBe(6)
 	})
 })
 
