@@ -48,14 +48,17 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
-	castRay(position: Coordinates, angle: number, walls: WallInterface[]): Slice {
+	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
 		const wall = walls[0]
-		// use the wall intersection to find the distance
-		const lineA = this.toLineSegment(position, angle)
-		const intersection = this.getIntersection(lineA, wall.line)
-		console.log('intersection', intersection)
-		const distance = this.getDistance(position, intersection as Coordinates)
-		return { distance, intersection: position, color: ColorName.RED, gridHits: [] }
+		const rayPoint = this.getRayPoint(origin, angle)
+		const intersection = this.getIntersection({ start: origin, end: rayPoint }, wall.line)
+		let distance: number
+		if (intersection === null || this.isBehind(intersection, origin, rayPoint)) {
+			distance = this.maxDistance
+		} else {
+			distance = this.getDistance(origin, intersection as Coordinates)
+		}
+		return { distance, intersection: origin, color: ColorName.RED, gridHits: [] }
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
@@ -138,40 +141,61 @@ class Raycaster implements RaycasterInterface {
 		return Math.sqrt(cSquared)
 	}
 
+	private isBehind(intersection: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): boolean {
+		let result = false
+		if (this.isVertical(rayOrigin, rayPoint)) {
+			//check the y axis
+			result = this.pointPrecedes(intersection.y, rayOrigin.y, rayPoint.y)
+		} else {
+			//check the x axis
+			result = this.pointPrecedes(intersection.x, rayOrigin.x, rayPoint.x)
+		}
+		return result
+	}
 
-	private toLineSegment(position: Coordinates, angle: number): LineSegment {
+	private isVertical(rayOrigin: Coordinates, rayPoint: Coordinates): boolean {
+		return rayOrigin.x === rayPoint.x
+	}
+
+	private pointPrecedes(coordinatePoint: number, rayOrigin: number, rayPoint: number): boolean {
+		let result = false
+		if (coordinatePoint <= rayOrigin && rayOrigin < rayPoint) {
+			result = true
+		}
+		if (coordinatePoint >= rayOrigin && rayOrigin > rayPoint) {
+			result = true
+		}
+		return result
+	}
+
+	private getRayPoint(position: Coordinates, angle: number): Coordinates {
 		//Offset is arbitrary, just there because I'm superstitious about really small numbers
 		const offset = 10
 		const start = position
 		const x = position.x + (offset * Math.cos(angle))
 		const y = position.y + (offset * Math.sin(angle))
-		const end = { x, y }
-		return { start, end }
+		return { x, y }
 	}
 
 	private getIntersection(lineA: LineSegment, lineB: LineSegment): Coordinates | null {
 		const equationTemplate = new EquationTemplate(lineA, lineB)
-		if (equationTemplate.intersectionExists()) {
-			const x = equationTemplate.calculateIntersectionCoordinate(
-				lineA.start.x,
-				lineA.end.x,
-				lineB.start.x,
-				lineB.end.x
-			)
-			const y = equationTemplate.calculateIntersectionCoordinate(
-				lineA.start.y,
-				lineA.end.y,
-				lineB.start.y,
-				lineB.end.y
-			)
-			return { x, y }
-
-		} else {
-			console.log('intersection exists evaluated to false')
+		if (!equationTemplate.intersectionExists()) {
 			return null
 		}
+		const x = equationTemplate.calculateIntersectionCoordinate(
+			lineA.start.x,
+			lineA.end.x,
+			lineB.start.x,
+			lineB.end.x
+		)
+		const y = equationTemplate.calculateIntersectionCoordinate(
+			lineA.start.y,
+			lineA.end.y,
+			lineB.start.y,
+			lineB.end.y
+		)
+		return { x, y }
 	}
-
 }
 class EquationTemplate {
 	private x1: number
@@ -185,7 +209,7 @@ class EquationTemplate {
 	private denominator: number
 
 	constructor(lineA: LineSegment, lineB: LineSegment) {
-		//Xs
+		// Xs
 		this.x1 = lineA.start.x
 		this.x2 = lineA.end.x
 		this.x3 = lineB.start.x
