@@ -216,12 +216,14 @@ describe('castRay', () => {
 		position = { x: 5, y: 5 }
 		walls = [{ color: ColorName.RED, line: { start, end } }]
 	})
+
 	test('horizontal cast ray', () => {
 		const expectedDistance = 45
 		const angle = 0
 		const slice = raycaster.castRay(position, angle, walls)
 		expect(slice.distance).toEqual(expectedDistance)
 	})
+
 	test('cast ray at angle', () => {
 		// for forty-five degrees, length of hypotenuse is square root of 2 times the adjacent
 		const angle = FORTY_FIVE_DEGREES
@@ -230,11 +232,25 @@ describe('castRay', () => {
 		const margin = Math.abs(slice.distance - expected)
 		expect(margin).toBeLessThan(1e-6)
 	})
-	test('casting a ray that intersects no wall returns a distance of the "max distance"', () => {
+
+	test('casting a ray that projects away from the  wall returns a distance of the "max distance"', () => {
 		//use the same set up as before
 		const angle = Math.PI
 		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.distance).toEqual(TEST_DISTANCE)
+	})
+
+	test('casting a ray that misses the wall defaults to "max distance', () => {
+		//create a very short wall
+		const start = { x: 50, y: 0 }
+		const end = { x: 50, y: 1 }
+		position = { x: 5, y: 5 }
+		walls = [{ color: ColorName.RED, line: { start, end } }]
+
+		const angle = FORTY_FIVE_DEGREES
+		const actual = raycaster.castRay(position, angle, walls)
+		expect(actual.distance).toEqual(TEST_DISTANCE)
+
 	})
 })
 
