@@ -250,9 +250,14 @@ describe('castRay', () => {
 		const angle = FORTY_FIVE_DEGREES
 		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.distance).toEqual(TEST_DISTANCE)
-
 	})
+	test('should return the correct intersection position', () => {
+		// instantiate a  raycaster with the defaults, angle 0, position (5,5)
+		const angle = 0
+		const actual = raycaster.castRay(position, angle, walls)
+		expect(actual.intersection.x).toBe(50)
+		expect(actual.intersection.y).toBe(5)
+	})
+
 })
-
-
 
