@@ -60,7 +60,7 @@ class Raycaster implements RaycasterInterface {
 			distance = this.maxDistance
 		}
 		const resultingIntersection = intersection || { x: -1, y: -1 }
-		return { distance, intersection: resultingIntersection, color: ColorName.RED, gridHits: [] }
+		return { distance, intersection: resultingIntersection, color: wall.color, gridHits: [] }
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
