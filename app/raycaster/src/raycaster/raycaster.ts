@@ -3,7 +3,7 @@ import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
-import { Coordinates, GeneralForm, LineSegment } from '../geometry/interfaces'
+import { Coordinates, LineSegment } from '../geometry/interfaces'
 import { ColorName } from '../color/color_name'
 import { WallInterface } from '../wall/interface'
 

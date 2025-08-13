@@ -18,12 +18,5 @@ interface Ray {
 	angle: number; //in radians -- todo: refactor all angles to radians, then reduce the angle object
 	magnitude: number;
 }
-//General Form
-//if y = mx + b
-//then ax +by +c =0
-interface GeneralForm {
-	a: number;
-	b: number;
-	c: number;
-}
-export { Dimensions, Coordinates, LineSegment, Ray, GeneralForm };
+
+export { Dimensions, Coordinates, LineSegment, Ray };
