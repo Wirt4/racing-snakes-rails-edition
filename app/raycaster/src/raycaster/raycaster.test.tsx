@@ -3,7 +3,7 @@ import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '
 import { Raycaster } from './raycaster';
 import { WallInterface } from '../wall/interface'
 import { ColorName } from '../color/color_name'
-import { Coordinates } from '../geometry/interfaces'
+import { Coordinates, LineSegment } from '../geometry/interfaces'
 
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
@@ -266,6 +266,23 @@ describe('castRay', () => {
 		}
 		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.color).toEqual(ColorName.GREEN)
+	})
+	test('first gridHits', () => {
+		// draw a 2 by 2 grid with no walls
+		walls = []
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 3, y: 0 }, end: { x: 3, y: 10 } },
+			{ start: { x: 7, y: 0 }, end: { x: 7, y: 10 } },
+			{ start: { x: 0, y: 3 }, end: { x: 10, y: 3 } },
+			{ start: { x: 0, y: 7 }, end: { x: 10, y: 7 } }
+		]
+		// set the view point in the center
+		position = { x: 5, y: 5 }
+		angle = 0
+		// cast ray at 0 degrees
+		const result = raycaster.castRay(position, angle, walls)
+		// the length of the gridHits array should be 2
+		expect(result.gridHits.length).toBe(2)
 	})
 })
 
