@@ -49,27 +49,28 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
-		if (walls.length == 0) {
-			return {
-				distance: 0,
-				intersection: { x: -1, y: -1 },
-				color: ColorName.NONE,
-				gridHits: [1, 2]
-			}
-
-		}
-		const wall = walls[0]
+		let distance: number = this.maxDistance
+		let intersection: Coordinates | null = { x: -1, y: -1 }
+		let color: ColorName = ColorName.NONE
+		const gridHits: Array<number> = [1, 2]
 		const rayPoint = this.getRayPoint(origin, angle)
-		const intersection = this.getIntersection({ start: origin, end: rayPoint }, wall.line)
-		let distance: number
-		//if there's no intersection, or it's behind the ray or it's not inside the wall:
-		if (this.isValidIntersection(intersection, origin, rayPoint, wall.line)) {
-			distance = this.getDistance(origin, intersection as Coordinates)
-		} else {
-			distance = this.maxDistance
+
+		for (let i = 0; i < walls.length; i++) {
+			const currentIntersection = this.getIntersection({ start: origin, end: rayPoint }, walls[i].line)
+			if (this.isValidIntersection(currentIntersection, origin, rayPoint, walls[i].line)) {
+				distance = this.getDistance(origin, currentIntersection as Coordinates)
+				intersection = currentIntersection as Coordinates
+				color = walls[i].color
+			}
 		}
-		const resultingIntersection = intersection || { x: -1, y: -1 }
-		return { distance, intersection: resultingIntersection, color: wall.color, gridHits: [] }
+
+
+		return {
+			distance,
+			intersection,
+			color,
+			gridHits
+		}
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
