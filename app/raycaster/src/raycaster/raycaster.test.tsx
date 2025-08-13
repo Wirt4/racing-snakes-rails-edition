@@ -258,9 +258,14 @@ describe('castRay', () => {
 		expect(actual.intersection.x).toBe(50)
 		expect(actual.intersection.y).toBe(5)
 	})
-	// create the default test case
-	// set the walls to green
-	// castRay
-	// expect the slice to be green
+	test('should detect the correct color', () => {
+		// use the default test case
+		// set the walls to green
+		for (let i = 0; i < walls.length; i++) {
+			walls[i].color = ColorName.GREEN
+		}
+		const actual = raycaster.castRay(position, angle, walls)
+		expect(actual.color).toEqual(ColorName.GREEN)
+	})
 })
 
