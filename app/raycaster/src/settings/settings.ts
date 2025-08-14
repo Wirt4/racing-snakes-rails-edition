@@ -11,7 +11,7 @@ export class Settings implements SettingsInterface {
 	PLAYER_SPEED = 0.375 //in units per frame
 	CAMERA_HEIGHT = 2
 	FRAMES_PER_SECOND = 60
-	FIELD_OF_VISION = Math.PI / 2 //try wider angle for greater illusion of speed
+	FIELD_OF_VISION = Math.PI / 3 //try wider angle for greater illusion of speed
 	MAX_DISTANCE = 100
 	MAX_PERCENT_BRIGHTNESS = 60
 	MIN_PERCENT_BRIGHTNESS = 10

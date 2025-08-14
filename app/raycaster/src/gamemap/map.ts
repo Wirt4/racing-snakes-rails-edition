@@ -38,7 +38,7 @@ export class GameMap implements GameMapInterface {
 
 
 	get walls(): Array<WallInterface> {
-		return [...this.arena.walls, ...this.player.trail]
+		return [...this.arena.walls, ...this.player.trail.slice(0, -1)]
 	}
 
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
