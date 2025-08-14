@@ -68,41 +68,6 @@ export class GameMap implements GameMapInterface {
 		}
 	}
 
-	castRay(angle: number, maximumAllowableDistance: number): Slice {
-		const rayDirection = this.rayDirecton(angle);
-		let closest = this.deafaultIntersection(maximumAllowableDistance);
-		let color = ColorName.NONE;
-		const { x, y } = this.player;
-		const rayOrigin: Coordinates = { x, y };
-
-		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall.line);
-			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = wall.color;
-			}
-		}
-
-		for (let i = 0; i < this.player.trail.length - 1; i++) {
-			const wall = this.player.trail[i].line;
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
-			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = this.player.color;
-			}
-		}
-
-		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
-		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
-
-		return {
-			distance: closest.distance,
-			color,
-			gridHits,
-			intersection: rayEnd
-		};
-	}
-
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {
 		const gridHits: number[] = [];
 		for (const grid of this.arena.gridLines) {
