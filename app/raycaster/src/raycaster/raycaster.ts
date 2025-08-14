@@ -53,7 +53,7 @@ class Raycaster implements RaycasterInterface {
 		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance
 		const intersection = ray.wallIntersection
 		const color = ray.wallColor
-		const gridHits = ray.gridHits(gridLines)
+		const gridHits = ray.gridHits(gridLines, distance)
 		return {
 			distance,
 			intersection,
@@ -182,11 +182,11 @@ class Ray {
 		return this._wallColor
 	}
 
-	gridHits(gridLines: Array<LineSegment>): Array<number> {
+	gridHits(gridLines: Array<LineSegment>, maxDistance: number): Array<number> {
 		const result: Array<number> = new Array<number>()
 		for (let i = 0; i < gridLines.length; i++) {
 			const intersection = this.findIntersection(gridLines[i])
-			if (intersection !== null) {
+			if (intersection !== null && intersection.distance < maxDistance) {
 				result.push(intersection.distance)
 			}
 		}
