@@ -7,6 +7,7 @@ import { RaycasterInterface } from '../raycaster/interface';
 import { WallInterface } from '../wall/interface';
 import { ColorName } from '../color/color_name';
 import { BatchRendererInterface } from '../batchRenderer/interface';
+import { LineSegment, Coordinates } from '../geometry/interfaces'
 
 function mockCastRay(angle: number, distance: number) {
 	return {
@@ -57,7 +58,8 @@ describe('isGameOver tests', () => {
 		} as BatchRendererInterface;
 		brightness = {} as BrightnessInterface;
 		raycaster = {
-			fillRaysInto: (rays: any, angle: any) => { }
+			fillRaysInto: (rays: any, angle: any) => { },
+			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null
 		} as RaycasterInterface;
 		game = new Game(map, renderer, raycaster, brightness, player)
 
@@ -112,6 +114,7 @@ describe('Draw condition tests', () => {
 		} as BrightnessInterface;
 		raycaster = {
 			fillRaysInto: (rays: any, angle: any) => { },
+			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null,
 			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
 		} as RaycasterInterface;
 
@@ -146,7 +149,6 @@ describe('Draw condition tests', () => {
 	test('if the game continuting, then the slices should  be rendered', () => {
 		jest.spyOn(player, 'hasCollided').mockReturnValue(false);
 		const spy = jest.spyOn(renderer, 'renderSlices');
-
 		game.draw();
 		expect(spy).toHaveBeenCalled();
 	});

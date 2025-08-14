@@ -72,7 +72,7 @@ class BatchCorrelator {
 	private appendGridSlice(): void {
 		const slice = this.raycaster.castRay(
 			{ x: this.gameMap.player.x, y: this.gameMap.player.y },
-			this.gameMap.player.angle, this.gameMap.walls,
+			this.currentAngle, this.gameMap.walls,
 			this.gameMap.arena.gridLines
 		)
 		if (slice !== null) {
@@ -84,9 +84,10 @@ class BatchCorrelator {
 	}
 
 	private getAdjustedDistance(): { distance: number, color: ColorName } {
+		//don't use the player angle, ??
 		const slice = this.raycaster.castRay(
 			{ x: this.gameMap.player.x, y: this.gameMap.player.y },
-			this.gameMap.player.angle, this.gameMap.walls,
+			this.currentAngle, this.gameMap.walls,
 			this.gameMap.arena.gridLines
 		)
 		if (slice !== null) {

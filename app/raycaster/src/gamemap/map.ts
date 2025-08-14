@@ -15,7 +15,7 @@ interface Intersection {
 }
 
 export class GameMap implements GameMapInterface {
-	walls: WallInterface[] = [];
+	private _walls: WallInterface[] = [];
 	player: PlayerInterface
 	arena: ArenaInterface;
 	private intersectionPool: Intersection[] = [];
@@ -27,13 +27,18 @@ export class GameMap implements GameMapInterface {
 		player: PlayerInterface
 	) {
 		this.player = player
-		this.walls = arena.walls;
+		this._walls = arena.walls;
 
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 		}
 
 		this.arena = arena;
+	}
+
+
+	get walls(): Array<WallInterface> {
+		return [...this.arena.walls, ...this.player.trail]
 	}
 
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
