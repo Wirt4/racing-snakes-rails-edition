@@ -46,7 +46,6 @@ describe('isGameOver tests', () => {
 				containsCoordinates: (x: number, y: number) => true,
 			},
 			player,
-			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
 		}
@@ -96,7 +95,6 @@ describe('Draw condition tests', () => {
 				move: () => { },
 				hasCollided: (arena: any) => { return false; },
 			} as PlayerInterface,
-			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
 		}
