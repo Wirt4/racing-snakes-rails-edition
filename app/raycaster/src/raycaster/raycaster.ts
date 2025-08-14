@@ -48,11 +48,10 @@ class Raycaster implements RaycasterInterface {
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
 	}
 
-	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
+	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
 		let distance: number = this.maxDistance
 		let intersection: Coordinates | null = { x: -1, y: -1 }
 		let color: ColorName = ColorName.NONE
-		const gridHits: Array<number> = [1, 2]
 		const rayPoint = this.getRayPoint(origin, angle)
 
 		for (let i = 0; i < walls.length; i++) {
@@ -64,6 +63,20 @@ class Raycaster implements RaycasterInterface {
 				distance = this.getDistance(origin, currentIntersection as Coordinates)
 				intersection = currentIntersection as Coordinates
 				color = walls[i].color
+			}
+		}
+
+		const gridHits: Array<number> = new Array<number>()
+		for (let i = 0; i < gridLines.length; i++) {
+			const currentIntersection = this.getIntersection(
+				{ start: origin, end: rayPoint },
+				gridLines[i]
+			)
+			console.log('checking line', gridLines[i])
+			console.log('intersection:', currentIntersection)
+			if (this.isValidIntersection(currentIntersection, origin, rayPoint, gridLines[i])) {
+				distance = this.getDistance(origin, currentIntersection as Coordinates)
+				gridHits.push(distance)
 			}
 		}
 
@@ -148,10 +161,12 @@ class Raycaster implements RaycasterInterface {
 		}
 		//  intersection must be in front of the ray
 		if (this.isBehind(intersection, rayOrigin, rayPoint)) {
+			console.log('logging intersection as behind origin')
 			return result
 		}
 		// the line segment must contain the intersection
 		if (!this.lineContains(wallLine, intersection)) {
+			console.log('logging linesegment as not containing the intersection')
 			return result
 		}
 
@@ -200,7 +215,7 @@ class Raycaster implements RaycasterInterface {
 		if (this.isVertical(start, end)) {
 			result = this.inRange(coordinates.y, start.y, end.y)
 		} else {
-			result = this.inRange(coordinates.x, start.y, end.y)
+			result = this.inRange(coordinates.y, start.y, end.y)
 		}
 		return result
 	}

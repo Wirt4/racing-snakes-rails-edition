@@ -221,7 +221,7 @@ describe('castRay', () => {
 
 	test('horizontal cast ray', () => {
 		const expectedDistance = 45
-		const slice = raycaster.castRay(position, angle, walls)
+		const slice = raycaster.castRay(position, angle, walls, [])
 		expect(slice.distance).toEqual(expectedDistance)
 	})
 
@@ -229,7 +229,7 @@ describe('castRay', () => {
 		// for forty-five degrees, length of hypotenuse is square root of 2 times the adjacent
 		angle = FORTY_FIVE_DEGREES
 		const expected = Math.SQRT2 * 45
-		const slice = raycaster.castRay(position, angle, walls)
+		const slice = raycaster.castRay(position, angle, walls, [])
 		const margin = Math.abs(slice.distance - expected)
 		expect(margin).toBeLessThan(1e-6)
 	})
@@ -237,7 +237,7 @@ describe('castRay', () => {
 	test('casting a ray that projects away from the  wall returns a distance of the "max distance"', () => {
 		//use the same set up as before
 		angle = Math.PI
-		const actual = raycaster.castRay(position, angle, walls)
+		const actual = raycaster.castRay(position, angle, walls, [])
 		expect(actual.distance).toEqual(TEST_DISTANCE)
 	})
 
@@ -249,24 +249,27 @@ describe('castRay', () => {
 		walls = [{ color: ColorName.RED, line: { start, end } }]
 
 		angle = FORTY_FIVE_DEGREES
-		const actual = raycaster.castRay(position, angle, walls)
+		const actual = raycaster.castRay(position, angle, walls, [])
 		expect(actual.distance).toEqual(TEST_DISTANCE)
 	})
+
 	test('should return the correct intersection position', () => {
 		// instantiate a  raycaster with the defaults, angle 0, position (5,5)
-		const actual = raycaster.castRay(position, angle, walls)
+		const actual = raycaster.castRay(position, angle, walls, [])
 		expect(actual.intersection.x).toBe(50)
 		expect(actual.intersection.y).toBe(5)
 	})
+
 	test('should detect the correct color', () => {
 		// use the default test case
 		// set the walls to green
 		for (let i = 0; i < walls.length; i++) {
 			walls[i].color = ColorName.GREEN
 		}
-		const actual = raycaster.castRay(position, angle, walls)
+		const actual = raycaster.castRay(position, angle, walls, [])
 		expect(actual.color).toEqual(ColorName.GREEN)
 	})
+
 	test('gridHits returns a count of 2', () => {
 		// draw a 2 by 2 grid with no walls
 		walls = []
@@ -277,13 +280,14 @@ describe('castRay', () => {
 			{ start: { x: 0, y: 7 }, end: { x: 10, y: 7 } }
 		]
 		// set the view point in the center
-		position = { x: 5, y: 5 }
+		position = { x: 0, y: 5 }
 		angle = 0
 		// cast ray at 0 degrees
-		const result = raycaster.castRay(position, angle, walls)
+		const result = raycaster.castRay(position, angle, walls, gridLines)
 		// the length of the gridHits array should be 2
 		expect(result.gridHits.length).toBe(2)
 	})
+
 	test('gridHits returns a count of 6', () => {
 		//draw a 3 by 3 grid with no walls
 		walls = []
@@ -297,9 +301,9 @@ describe('castRay', () => {
 		]
 		// set the view point in lower left cell
 		// offset it so the ray doesn't intersect the crosses exactly
-		position = { x: 1, y: 0 }
+		position = { x: 12, y: 0 }
 		angle = FORTY_FIVE_DEGREES
-		const actual = raycaster.castRay(position, angle, walls)
+		const actual = raycaster.castRay(position, angle, walls, gridLines)
 		expect(actual.gridHits.length).toBe(6)
 	})
 })
