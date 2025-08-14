@@ -306,5 +306,26 @@ describe('castRay', () => {
 		const actual = raycaster.castRay(position, angle, walls, gridLines)
 		expect(actual.gridHits.length).toBe(6)
 	})
+	test('do not overdraw grid lines', () => {
+		// draw the 3 by 3 grid with a vertical wall straight down the middle
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 25, y: 0 }, end: { x: 25, y: 100 } },
+			{ start: { x: 50, y: 0 }, end: { x: 50, y: 100 } },
+			{ start: { x: 75, y: 0 }, end: { x: 75, y: 100 } },
+			{ start: { x: 0, y: 25 }, end: { x: 100, y: 3 } },
+			{ start: { x: 0, y: 50 }, end: { x: 100, y: 50 } },
+			{ start: { x: 0, y: 75 }, end: { x: 100, y: 75 } },
+		]
+		walls = [{ color: ColorName.RED, line: { start: { x: 50, y: 0 }, end: { x: 50, y: 100 } } }]
+		position = { x: 0, y: 0 }
+		angle = SIXTY_DEGREES
+		const actual = raycaster.castRay(position, angle, walls, gridLines)
+		// grid hits may not be empty
+		expect(actual.gridHits.length > 0)
+		// no value in grid hits may be greater or equal to the slice distance
+		actual.gridHits.forEach(gridDistance => {
+			expect(gridDistance).toBeLessThan(actual.distance)
+		})
+	})
 })
 
