@@ -8,7 +8,6 @@ import { Coordinates, LineSegment } from '../geometry/interfaces'
 import { WallInterface } from '../wall/interface'
 
 class Raycaster implements RaycasterInterface {
-
 	public focalLength: number;
 	private offsets: Array<number>;
 	private fovOffset: number;
@@ -49,37 +48,12 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
-		let distance: number = this.maxDistance
-		let intersection: Coordinates | null = { x: -1, y: -1 }
-		let color: ColorName = ColorName.NONE
-		const rayPoint = this.getRayPoint(origin, angle)
-
-		for (let i = 0; i < walls.length; i++) {
-			const currentIntersection = this.getIntersection(
-				{ start: origin, end: rayPoint },
-				walls[i].line
-			)
-			if (this.isValidIntersection(currentIntersection, origin, rayPoint, walls[i].line)) {
-				distance = this.getDistance(origin, currentIntersection as Coordinates)
-				intersection = currentIntersection as Coordinates
-				color = walls[i].color
-			}
-		}
-
-		const gridHits: Array<number> = new Array<number>()
-		for (let i = 0; i < gridLines.length; i++) {
-			const currentIntersection = this.getIntersection(
-				{ start: origin, end: rayPoint },
-				gridLines[i]
-			)
-			console.log('checking line', gridLines[i])
-			console.log('intersection:', currentIntersection)
-			if (this.isValidIntersection(currentIntersection, origin, rayPoint, gridLines[i])) {
-				distance = this.getDistance(origin, currentIntersection as Coordinates)
-				gridHits.push(distance)
-			}
-		}
-
+		const ray = new Ray(origin, angle)
+		ray.findClosestHit(walls)
+		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance
+		const intersection = ray.wallIntersection
+		const color = ray.wallColor
+		const gridHits = ray.gridHits(gridLines)
 		return {
 			distance,
 			intersection,
@@ -149,31 +123,6 @@ class Raycaster implements RaycasterInterface {
 		return 100 * (1 - (distance / this.maxDistance));
 	}
 
-	private isValidIntersection(
-		intersection: Coordinates | null,
-		rayOrigin: Coordinates,
-		rayPoint: Coordinates,
-		wallLine: LineSegment
-	): boolean {
-		let result = false
-		if (intersection == null) {
-			return result
-		}
-		//  intersection must be in front of the ray
-		if (this.isBehind(intersection, rayOrigin, rayPoint)) {
-			console.log('logging intersection as behind origin')
-			return result
-		}
-		// the line segment must contain the intersection
-		if (!this.lineContains(wallLine, intersection)) {
-			console.log('logging linesegment as not containing the intersection')
-			return result
-		}
-
-		result = true
-		return result
-	}
-
 	private normalizeAngle(angle: number): number {
 		if (angle < 0) {
 			return angle + FULL_CIRCLE;
@@ -183,50 +132,136 @@ class Raycaster implements RaycasterInterface {
 		}
 		return angle;
 	}
+}
 
-	private getDistance(pointA: Coordinates, pointB: Coordinates): number {
-		const a = Math.abs(pointA.x - pointB.x)
-		const b = Math.abs(pointA.y - pointB.y)
-		const aSquared = Math.pow(a, 2)
-		const bSquared = Math.pow(b, 2)
-		const cSquared = aSquared + bSquared
-		return Math.sqrt(cSquared)
+class Ray {
+	private x1: number
+	private x2: number
+	private x3: number = -1
+	private x4: number = -1
+	private y1: number = -1
+	private y2: number = -1
+	private y3: number = -1
+	private y4: number = -1
+	private denominator: number = -1
+	private _wallDistance: number = -1
+	private _wallColor: ColorName = ColorName.NONE
+	private _wallIntersection: Coordinates = { x: -1, y: -1 }
+
+	constructor(position: Coordinates, angle: number) {
+		const { x, y } = position
+		this.x1 = x
+		this.y1 = y
+		const offset = 10
+		this.x2 = this.x1 + (offset * Math.cos(angle))
+		this.y2 = this.y1 + (offset * Math.sin(angle))
 	}
 
-	private isBehind(intersection: Coordinates, rayOrigin: Coordinates, rayPoint: Coordinates): boolean {
+	findClosestHit(walls: Array<WallInterface>): void {
+		let distance: number | null = null
+		for (let i = 0; i < walls.length; i++) {
+			const wall = walls[i]
+			const intersection: Intersection | null = this.findIntersection(wall.line)
+			if (intersection !== null) {
+				if (distance === null || intersection.distance < distance) {
+					this.setValues(intersection, wall.color)
+				}
+			}
+		}
+	}
+
+	get wallIntersection(): Coordinates {
+		return this._wallIntersection
+	}
+
+	get wallDistance(): number {
+		return this._wallDistance
+	}
+
+	get wallColor(): ColorName {
+		return this._wallColor
+	}
+
+	gridHits(gridLines: Array<LineSegment>): Array<number> {
+		const result: Array<number> = new Array<number>()
+		for (let i = 0; i < gridLines.length; i++) {
+			const intersection = this.findIntersection(gridLines[i])
+			if (intersection !== null) {
+				result.push(intersection.distance)
+			}
+		}
+		return result
+	}
+
+	private findIntersection(lineSegment: LineSegment): Intersection | null {
+		this.x3 = lineSegment.start.x
+		this.x4 = lineSegment.end.x
+		this.y3 = lineSegment.start.y
+		this.y4 = lineSegment.end.y
+		//denominator is (x1-x2)(y3-y4)-(y1-y2)(x3-x4)
+		this.denominator = (this.x1 - this.x2) * (this.y3 - this.y4) - (this.y1 - this.y2) * (this.x3 - this.x4)
+
+		if (this.denominator === 0) {
+			return null;
+		}
+
+		const x = this.calculateIntersectionCoordinate(this.x1, this.x2, this.x3, this.x4)
+		const y = this.calculateIntersectionCoordinate(this.y1, this.y2, this.y3, this.y4)
+
+		if (!this.isValidIntersection(x, y)) {
+			return null;
+		}
+
+		const distance = this.calculateDistance(x, y)
+
+		return { coordinates: { x, y }, distance }
+	}
+
+	private calculateDistance(x: number, y: number): number {
+		//pythagorean theorem
+		const sum = Math.pow(x - this.x1, 2) + Math.pow(y - this.y1, 2)
+		return Math.sqrt(sum)
+	}
+
+	private calculateIntersectionCoordinate(p1: number, p2: number, p3: number, p4: number): number {
+		const variableA = p3 - p4
+		const variableB = p1 - p2
+		//numerator = (x1*y2 - y1*x2)variableA-variableB(x3*y4- y3*x4)
+		const segmentA = (this.x1 * this.y2 - this.y1 * this.x2) * variableA
+		const segmentB = variableB * (this.x3 * this.y4 - this.y3 * this.x4)
+		const numerator = segmentA - segmentB
+		return numerator / this.denominator
+	}
+
+	private setValues(intersection: Intersection, color: ColorName): void {
+		this._wallDistance = intersection.distance
+		this._wallColor = color
+		this._wallIntersection = intersection.coordinates
+	}
+
+	private isValidIntersection(x: number, y: number): boolean {
 		let result = false
-		if (this.isVertical(rayOrigin, rayPoint)) {
+		//  intersection must be in front of the ray
+		if (this.isBehind(x, y)) {
+			return result
+		}
+		// the line segment must contain the intersection
+		if (!this.targetContains(x, y)) {
+			return result
+		}
+
+		result = true
+		return result
+	}
+
+	private isBehind(x: number, y: number): boolean {
+		let result = false
+		if (this.x1 === this.x2) {
 			//check the y axis
-			result = this.pointPrecedes(intersection.y, rayOrigin.y, rayPoint.y)
+			result = this.pointPrecedes(y, this.y1, this.y2)
 		} else {
 			//check the x axis
-			result = this.pointPrecedes(intersection.x, rayOrigin.x, rayPoint.x)
-		}
-		return result
-	}
-
-	private isVertical(pointA: Coordinates, pointB: Coordinates): boolean {
-		return pointA.x === pointB.x
-	}
-
-	private lineContains(line: LineSegment, coordinates: Coordinates): boolean {
-		let result = false
-		const { start, end } = line
-		if (this.isVertical(start, end)) {
-			result = this.inRange(coordinates.y, start.y, end.y)
-		} else {
-			result = this.inRange(coordinates.y, start.y, end.y)
-		}
-		return result
-	}
-
-	private inRange(coordinatePoint: number, startRange: number, endRange: number): boolean {
-		let result = false
-		// if min(start,end) <= coordinatePoint <= max(start, end) , result is true
-		if (Math.min(startRange, endRange) <= coordinatePoint) {
-			if (coordinatePoint <= Math.max(startRange, endRange)) {
-				result = true
-			}
+			result = this.pointPrecedes(x, this.x1, this.x2)
 		}
 		return result
 	}
@@ -242,78 +277,31 @@ class Raycaster implements RaycasterInterface {
 		return result
 	}
 
-	private getRayPoint(position: Coordinates, angle: number): Coordinates {
-		//Offset is arbitrary, just there because I'm superstitious about really small numbers
-		const offset = 10
-		const x = position.x + (offset * Math.cos(angle))
-		const y = position.y + (offset * Math.sin(angle))
-		return { x, y }
-	}
-
-	private getIntersection(lineA: LineSegment, lineB: LineSegment): Coordinates | null {
-		const equationTemplate = new EquationTemplate(lineA, lineB)
-		if (!equationTemplate.intersectionExists()) {
-			return null
+	private targetContains(x: number, y: number): boolean {
+		let result = false
+		if (this.x3 === this.x4) {
+			result = this.inRange(y, this.y3, this.y4)
+		} else {
+			result = this.inRange(x, this.x3, this.x4)
 		}
-		const x = equationTemplate.calculateIntersectionCoordinate(
-			lineA.start.x,
-			lineA.end.x,
-			lineB.start.x,
-			lineB.end.x
-		)
-		const y = equationTemplate.calculateIntersectionCoordinate(
-			lineA.start.y,
-			lineA.end.y,
-			lineB.start.y,
-			lineB.end.y
-		)
-		return { x, y }
+		return result
+	}
+
+	private inRange(coordinatePoint: number, startRange: number, endRange: number): boolean {
+		let result = false
+		// if min(start,end) <= coordinatePoint <= max(start, end) , result is true
+		if (Math.min(startRange, endRange) <= coordinatePoint) {
+			if (coordinatePoint <= Math.max(startRange, endRange)) {
+				result = true
+			}
+		}
+		return result
 	}
 }
 
-class EquationTemplate {
-	private x1: number
-	private x2: number
-	private x3: number
-	private x4: number
-	private y1: number
-	private y2: number
-	private y3: number
-	private y4: number
-	private denominator: number
-
-	constructor(lineA: LineSegment, lineB: LineSegment) {
-		// Xs
-		this.x1 = lineA.start.x
-		this.x2 = lineA.end.x
-		this.x3 = lineB.start.x
-		this.x4 = lineB.end.x
-		//and Ys
-		this.y1 = lineA.start.y
-		this.y2 = lineA.end.y
-		this.y3 = lineB.start.y
-		this.y4 = lineB.end.y
-		// denominator = (x1-x2)(y3-y4)-(y1-y2)(x3-x4)
-		const segmentA = (this.x1 - this.x2) * (this.y3 - this.y4)
-		const segmentB = (this.y1 - this.y2) * (this.x3 - this.x4)
-		this.denominator = segmentA - segmentB
-
-	}
-
-	//avoid divide-by-zero errors
-	intersectionExists(): boolean {
-		return this.denominator !== 0
-	}
-
-	// p may be the series for either Xs or Ys
-	calculateIntersectionCoordinate(p1: number, p2: number, p3: number, p4: number): number {
-		const variableA = p3 - p4
-		const variableB = p1 - p2
-		// numerator = (x1*y2 - y1*x2)variableA-variableB(x3*y4- y3*x4)
-		const segmentA = (this.x1 * this.y2 - this.y1 * this.x2) * variableA
-		const segmentB = variableB * (this.x3 * this.y4 - this.y3 * this.x4)
-		const numerator = segmentA - segmentB
-		return numerator / this.denominator
-	}
+interface Intersection {
+	distance: number;
+	coordinates: Coordinates;
 }
+
 export { Raycaster };
