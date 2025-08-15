@@ -200,7 +200,6 @@ describe('castRay', () => {
 	let angle: number;
 	beforeEach(() => {
 		// instantiate a  raycaster with the defaults
-
 		raycaster = new Raycaster(
 			TEST_RESOLUTION,
 			SIXTY_DEGREES,
