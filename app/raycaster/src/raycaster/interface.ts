@@ -8,5 +8,5 @@ export interface RaycasterInterface {
 	calculateBrightness(distance: number): number;
 	focalLength: number;
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void;
-	castRay(position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice | null;
+	castRay(position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice;
 }
