@@ -311,7 +311,7 @@ describe('castRay', () => {
 			{ start: { x: 25, y: 0 }, end: { x: 25, y: 100 } },
 			{ start: { x: 50, y: 0 }, end: { x: 50, y: 100 } },
 			{ start: { x: 75, y: 0 }, end: { x: 75, y: 100 } },
-			{ start: { x: 0, y: 25 }, end: { x: 100, y: 3 } },
+			{ start: { x: 0, y: 25 }, end: { x: 100, y: 25 } },
 			{ start: { x: 0, y: 50 }, end: { x: 100, y: 50 } },
 			{ start: { x: 0, y: 75 }, end: { x: 100, y: 75 } },
 		]
