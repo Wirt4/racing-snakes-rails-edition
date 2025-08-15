@@ -84,7 +84,6 @@ class BatchCorrelator {
 	}
 
 	private getAdjustedDistance(): { distance: number, color: ColorName } {
-		//don't use the player angle, ??
 		const slice = this.raycaster.castRay(
 			{ x: this.gameMap.player.x, y: this.gameMap.player.y },
 			this.currentAngle, this.gameMap.walls,
