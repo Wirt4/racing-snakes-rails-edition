@@ -11,7 +11,7 @@ export class Settings implements SettingsInterface {
 	PLAYER_SPEED = 0.375 //in units per frame
 	CAMERA_HEIGHT = 2
 	FRAMES_PER_SECOND = 60
-	FIELD_OF_VISION = 5 * Math.PI / 12 //try wider angle for greater illusion of speed
+	FIELD_OF_VISION = Math.PI / 3 //try wider angle for greater illusion of speed
 	MAX_DISTANCE = 100
 	MAX_PERCENT_BRIGHTNESS = 60
 	MIN_PERCENT_BRIGHTNESS = 10
@@ -22,5 +22,5 @@ export class Settings implements SettingsInterface {
 	HORIZON_Y = 200
 	GRID_CELL_SIZE = 4
 	CANVAS_HEIGHT = 640
-	RESOLUTION = 400 //TODO: fix game implementation so that display isn't squashed when this is smaller than CANVAS_WIDTH
+	RESOLUTION = 400
 }

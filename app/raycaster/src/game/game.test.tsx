@@ -7,6 +7,7 @@ import { RaycasterInterface } from '../raycaster/interface';
 import { WallInterface } from '../wall/interface';
 import { ColorName } from '../color/color_name';
 import { BatchRendererInterface } from '../batchRenderer/interface';
+import { LineSegment, Coordinates } from '../geometry/interfaces'
 
 function mockCastRay(angle: number, distance: number) {
 	return {
@@ -46,7 +47,6 @@ describe('isGameOver tests', () => {
 				containsCoordinates: (x: number, y: number) => true,
 			},
 			player,
-			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
 		}
@@ -58,8 +58,9 @@ describe('isGameOver tests', () => {
 		} as BatchRendererInterface;
 		brightness = {} as BrightnessInterface;
 		raycaster = {
-			fillRaysInto: (rays: any, angle: any) => { }
-		} as RaycasterInterface;
+			fillRaysInto: (rays: any, angle: any) => { },
+			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null
+		} as unknown as RaycasterInterface;
 		game = new Game(map, renderer, raycaster, brightness, player)
 
 	})
@@ -96,7 +97,6 @@ describe('Draw condition tests', () => {
 				move: () => { },
 				hasCollided: (arena: any) => { return false; },
 			} as PlayerInterface,
-			castRay: mockCastRay,
 			resetIntersections: () => { },
 			appendWall: (wall: WallInterface) => { },
 		}
@@ -114,8 +114,9 @@ describe('Draw condition tests', () => {
 		} as BrightnessInterface;
 		raycaster = {
 			fillRaysInto: (rays: any, angle: any) => { },
+			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null,
 			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
-		} as RaycasterInterface;
+		} as unknown as RaycasterInterface;
 
 		game = new Game(map, renderer, raycaster, brightness, player)
 
@@ -148,7 +149,6 @@ describe('Draw condition tests', () => {
 	test('if the game continuting, then the slices should  be rendered', () => {
 		jest.spyOn(player, 'hasCollided').mockReturnValue(false);
 		const spy = jest.spyOn(renderer, 'renderSlices');
-
 		game.draw();
 		expect(spy).toHaveBeenCalled();
 	});

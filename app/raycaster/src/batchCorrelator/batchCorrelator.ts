@@ -70,16 +70,33 @@ class BatchCorrelator {
 	}
 
 	private appendGridSlice(): void {
-		const { gridHits } = this.gameMap.castRay(this.currentAngle, this.maxDistance);
-		for (let j = 0; j < gridHits.length; j++) {
-			this.appendGridPoint(gridHits[j]);
+		const slice = this.raycaster.castRay(
+			{ x: this.gameMap.player.x, y: this.gameMap.player.y },
+			this.currentAngle, this.gameMap.walls,
+			this.gameMap.arena.gridLines
+		)
+		if (slice !== null) {
+			const { gridHits } = slice;
+			for (let j = 0; j < gridHits.length; j++) {
+				this.appendGridPoint(gridHits[j]);
+			}
 		}
 	}
 
 	private getAdjustedDistance(): { distance: number, color: ColorName } {
-		const { distance, color } = this.gameMap.castRay(this.currentAngle, this.maxDistance);
-		const correctedDistance = this.removeFishEye(distance);
-		return { distance: correctedDistance, color };
+		const slice = this.raycaster.castRay(
+			{ x: this.gameMap.player.x, y: this.gameMap.player.y },
+			this.currentAngle, this.gameMap.walls,
+			this.gameMap.arena.gridLines
+		)
+		if (slice !== null) {
+			const { distance, color } = slice;
+			const correctedDistance = this.removeFishEye(distance);
+			return { distance: correctedDistance, color };
+
+		}
+		return { distance: -1, color: ColorName.NONE }
+
 	}
 
 	private removeFishEye(distance: number): number {

@@ -15,7 +15,7 @@ interface Intersection {
 }
 
 export class GameMap implements GameMapInterface {
-	walls: WallInterface[] = [];
+	private _walls: WallInterface[] = [];
 	player: PlayerInterface
 	arena: ArenaInterface;
 	private intersectionPool: Intersection[] = [];
@@ -27,13 +27,18 @@ export class GameMap implements GameMapInterface {
 		player: PlayerInterface
 	) {
 		this.player = player
-		this.walls = arena.walls;
+		this._walls = arena.walls;
 
 		for (let i = 0; i < 1000; i++) {
 			this.intersectionPool.push({ isValid: false, x: -1, y: -1, distance: Infinity });
 		}
 
 		this.arena = arena;
+	}
+
+
+	get walls(): Array<WallInterface> {
+		return [...this.arena.walls, ...this.player.trail.slice(0, -1)]
 	}
 
 	private isCrossing(verticalSegment: TrailSegment, horizontalSegment: TrailSegment): boolean {
@@ -61,41 +66,6 @@ export class GameMap implements GameMapInterface {
 		} else if (angle > 0) {
 			this.player.turnLeft()
 		}
-	}
-
-	castRay(angle: number, maximumAllowableDistance: number): Slice {
-		const rayDirection = this.rayDirecton(angle);
-		let closest = this.deafaultIntersection(maximumAllowableDistance);
-		let color = ColorName.NONE;
-		const { x, y } = this.player;
-		const rayOrigin: Coordinates = { x, y };
-
-		for (const wall of this.walls) {
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall.line);
-			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = wall.color;
-			}
-		}
-
-		for (let i = 0; i < this.player.trail.length - 1; i++) {
-			const wall = this.player.trail[i].line;
-			const hit = this.rayIntersectsWall(rayOrigin, rayDirection, wall);
-			if (hit.isValid && hit.distance < closest.distance) {
-				closest = hit;
-				color = this.player.color;
-			}
-		}
-
-		const rayEnd = this.getRayEnd(rayDirection, closest.distance);
-		const gridHits = this.getGridHits(rayOrigin, rayDirection, closest.distance);
-
-		return {
-			distance: closest.distance,
-			color,
-			gridHits,
-			intersection: rayEnd
-		};
 	}
 
 	private getGridHits(origin: Coordinates, rayDirection: Coordinates, maxDistance: number): number[] {

@@ -1,6 +1,10 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '../geometry/constants';
 import { Raycaster } from './raycaster';
+import { WallInterface } from '../wall/interface'
+import { ColorName } from '../color/color_name'
+import { Coordinates, LineSegment } from '../geometry/interfaces'
+
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
 const TEST_RESOLUTION = 640;
@@ -188,3 +192,139 @@ describe('FillRaysInto', () => {
 		expect(shell).toEqual(expected);
 	})
 })
+
+describe('castRay', () => {
+	let raycaster: Raycaster;
+	let walls: WallInterface[];
+	let position: Coordinates;
+	let angle: number;
+	beforeEach(() => {
+		// instantiate a  raycaster with the defaults
+		raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT
+		);
+		// create a map interface with one wall that runs from (50, 0) to (50, 100)
+		const start = { x: 50, y: 0 }
+		const end = { x: 50, y: 100 }
+		position = { x: 5, y: 5 }
+		walls = [{ color: ColorName.RED, line: { start, end } }]
+		angle = 0
+	})
+
+	test('horizontal cast ray', () => {
+		const expectedDistance = 45
+		const slice = raycaster.castRay(position, angle, walls, [])
+		expect(slice.distance).toEqual(expectedDistance)
+	})
+
+	test('cast ray at angle', () => {
+		// for forty-five degrees, length of hypotenuse is square root of 2 times the adjacent
+		angle = FORTY_FIVE_DEGREES
+		const expected = Math.SQRT2 * 45
+		const slice = raycaster.castRay(position, angle, walls, [])
+		const margin = Math.abs(slice.distance - expected)
+		expect(margin).toBeLessThan(1e-6)
+	})
+
+	test('casting a ray that projects away from the  wall returns a distance of the "max distance"', () => {
+		//use the same set up as before
+		angle = Math.PI
+		const actual = raycaster.castRay(position, angle, walls, [])
+		expect(actual.distance).toEqual(TEST_DISTANCE)
+	})
+
+	test('casting a ray that misses the wall defaults to "max distance', () => {
+		//create a very short wall
+		const start = { x: 50, y: 0 }
+		const end = { x: 50, y: 1 }
+		position = { x: 5, y: 5 }
+		walls = [{ color: ColorName.RED, line: { start, end } }]
+
+		angle = FORTY_FIVE_DEGREES
+		const actual = raycaster.castRay(position, angle, walls, [])
+		expect(actual.distance).toEqual(TEST_DISTANCE)
+	})
+
+	test('should return the correct intersection position', () => {
+		// instantiate a  raycaster with the defaults, angle 0, position (5,5)
+		const actual = raycaster.castRay(position, angle, walls, [])
+		expect(actual.intersection.x).toBe(50)
+		expect(actual.intersection.y).toBe(5)
+	})
+
+	test('should detect the correct color', () => {
+		// use the default test case
+		// set the walls to green
+		for (let i = 0; i < walls.length; i++) {
+			walls[i].color = ColorName.GREEN
+		}
+		const actual = raycaster.castRay(position, angle, walls, [])
+		expect(actual.color).toEqual(ColorName.GREEN)
+	})
+
+	test('gridHits returns a count of 2', () => {
+		// draw a 2 by 2 grid with no walls
+		walls = []
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 3, y: 0 }, end: { x: 3, y: 10 } },
+			{ start: { x: 7, y: 0 }, end: { x: 7, y: 10 } },
+			{ start: { x: 0, y: 3 }, end: { x: 10, y: 3 } },
+			{ start: { x: 0, y: 7 }, end: { x: 10, y: 7 } }
+		]
+		// set the view point in the center
+		position = { x: 0, y: 5 }
+		angle = 0
+		// cast ray at 0 degrees
+		const result = raycaster.castRay(position, angle, walls, gridLines)
+		// the length of the gridHits array should be 2
+		expect(result.gridHits.length).toBe(2)
+	})
+
+	test('gridHits returns a count of 6', () => {
+		//draw a 3 by 3 grid with no walls
+		walls = []
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 25, y: 0 }, end: { x: 25, y: 100 } },
+			{ start: { x: 50, y: 0 }, end: { x: 50, y: 100 } },
+			{ start: { x: 75, y: 0 }, end: { x: 75, y: 100 } },
+			{ start: { x: 0, y: 25 }, end: { x: 100, y: 25 } },
+			{ start: { x: 0, y: 50 }, end: { x: 100, y: 50 } },
+			{ start: { x: 0, y: 75 }, end: { x: 100, y: 75 } },
+		]
+		// set the view point in lower left cell
+		// offset it so the ray doesn't intersect the crosses exactly
+		position = { x: 12, y: 0 }
+		angle = FORTY_FIVE_DEGREES
+		const actual = raycaster.castRay(position, angle, walls, gridLines)
+		expect(actual.gridHits.length).toBe(6)
+	})
+	test('do not overdraw grid lines', () => {
+		// draw the 3 by 3 grid with a vertical wall straight down the middle
+		const gridLines: Array<LineSegment> = [
+			{ start: { x: 25, y: 0 }, end: { x: 25, y: 100 } },
+			{ start: { x: 50, y: 0 }, end: { x: 50, y: 100 } },
+			{ start: { x: 75, y: 0 }, end: { x: 75, y: 100 } },
+			{ start: { x: 0, y: 25 }, end: { x: 100, y: 25 } },
+			{ start: { x: 0, y: 50 }, end: { x: 100, y: 50 } },
+			{ start: { x: 0, y: 75 }, end: { x: 100, y: 75 } },
+		]
+		walls = [{ color: ColorName.RED, line: { start: { x: 50, y: 0 }, end: { x: 50, y: 100 } } }]
+		position = { x: 0, y: 0 }
+		angle = SIXTY_DEGREES
+		const actual = raycaster.castRay(position, angle, walls, gridLines)
+		// grid hits may not be empty
+		expect(actual.gridHits.length > 0)
+		// no value in grid hits may be greater or equal to the slice distance
+		actual.gridHits.forEach(gridDistance => {
+			expect(gridDistance).toBeLessThan(actual.distance)
+		})
+	})
+})
+
