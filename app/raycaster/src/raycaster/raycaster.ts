@@ -144,7 +144,7 @@ class Ray {
 	private y3: number = -1
 	private y4: number = -1
 	private denominator: number = -1
-	private _wallDistance: number = -1
+	private _wallDistance: number | null = -1
 	private _wallColor: ColorName = ColorName.NONE
 	private _wallIntersection: Coordinates = { x: -1, y: -1 }
 
@@ -158,12 +158,12 @@ class Ray {
 	}
 
 	findClosestHit(walls: Array<WallInterface>): void {
-		let distance: number | null = null
+		this._wallDistance = null
 		for (let i = 0; i < walls.length; i++) {
 			const wall = walls[i]
 			const intersection: Intersection | null = this.findIntersection(wall.line)
 			if (intersection !== null) {
-				if (distance === null || intersection.distance < distance) {
+				if (this._wallDistance === null || intersection.distance < this._wallDistance) {
 					this.setValues(intersection, wall.color)
 				}
 			}
@@ -175,7 +175,7 @@ class Ray {
 	}
 
 	get wallDistance(): number {
-		return this._wallDistance
+		return this._wallDistance || -1
 	}
 
 	get wallColor(): ColorName {

@@ -60,7 +60,7 @@ describe('isGameOver tests', () => {
 		raycaster = {
 			fillRaysInto: (rays: any, angle: any) => { },
 			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null
-		} as RaycasterInterface;
+		} as unknown as RaycasterInterface;
 		game = new Game(map, renderer, raycaster, brightness, player)
 
 	})
@@ -116,7 +116,7 @@ describe('Draw condition tests', () => {
 			fillRaysInto: (rays: any, angle: any) => { },
 			castRay: (position: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>) => null,
 			removeFishEye: (distance: number, centerAngle: number, relativeAngle: number) => 0,
-		} as RaycasterInterface;
+		} as unknown as RaycasterInterface;
 
 		game = new Game(map, renderer, raycaster, brightness, player)
 
