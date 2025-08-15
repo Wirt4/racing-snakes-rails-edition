@@ -48,18 +48,18 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
-		const ray = new Ray(origin, angle)
-		ray.findClosestHit(walls)
-		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance
-		const intersection = ray.wallIntersection
-		const color = ray.wallColor
-		const gridHits = ray.gridHits(gridLines, distance)
+		const ray = new Ray(origin, angle);
+		ray.findClosestHit(walls);
+		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance;
+		const intersection = ray.wallIntersection;
+		const color = ray.wallColor;
+		const gridHits = ray.gridHits(gridLines, distance)l
 		return {
 			distance,
 			intersection,
 			color,
 			gridHits
-		}
+		};
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
