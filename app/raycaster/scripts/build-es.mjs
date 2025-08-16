@@ -1,5 +1,6 @@
 import * as esbuild from 'esbuild';
-
+//buildMode may be single or watch
+//
 class Builder {
 	async initContext(entryPoint, outfile) {
 		this.context = await esbuild.context({
@@ -8,7 +9,9 @@ class Builder {
 			bundle: true,
 			format: 'esm',
 			target: 'es2020',
-			sourcemap: true,
+			sourcemap: 'inline',
+			//embed the original TypeScript
+			sourcesContent: true,
 		})
 	}
 }

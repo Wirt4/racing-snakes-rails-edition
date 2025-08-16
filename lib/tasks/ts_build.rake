@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lib/tasks/ts_build.rake
 namespace :ts do
   desc 'Build TypeScript frontend'

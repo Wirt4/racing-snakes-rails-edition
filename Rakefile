@@ -22,10 +22,29 @@ task :lint do
   sh 'bundle exec rubocop'
 end
 
-desc 'Run Rails server locally'
-task :localhost do
+def local_host_server
+  # navigate to the TS codebase and build
   Dir.chdir('app/raycaster') do
     system('npm run build:all') || abort('❌ Failed to build raycaster assets')
   end
+  # run 'bin/dev' from root to run rails app
   sh 'bin/dev'
+end
+
+desc 'Run Rails server locally'
+task :localhost do
+  local_host_server
+end
+
+desc 'Profile TypeScript Performance Locally'
+task :profile do
+  dir = 'tmp/node-profiles'
+  FileUtils.mkdir_p(dir)
+  # add cpu-prof flag to node options and output to the profiles directory
+  ENV['NODE_OPTIONS'] = [
+    ENV['NODE_OPTIONS'],
+    '--cpu-prof',
+    '--cpu-prof-dir=' + dir
+  ].compact.join(' ')
+  local_host_server
 end
