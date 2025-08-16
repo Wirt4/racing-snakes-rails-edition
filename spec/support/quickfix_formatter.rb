@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/core/formatters/base_text_formatter'
 
 class QuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
