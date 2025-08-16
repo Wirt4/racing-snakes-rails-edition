@@ -39,6 +39,11 @@ or
 ```bash
 rake test
 ```
+To profile the TypeScript raycaster, run
+```bash
+rake profile
+```
+This runs the app with the cpu-profile flag. Outputs are stored in app/raycaster/tmp and can be opened with Chrome DevTools.
 
 In development, you can also run rubocop for linting and style checks:
 bundler exec rubocop

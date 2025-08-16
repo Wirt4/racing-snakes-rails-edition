@@ -36,7 +36,14 @@ task :localhost do
   local_host_server
 end
 
-# description: profile typescript locally
-# make a temporay directory for profiles
-# set NODE_OPTIONS equal to NODE_OPTIONS plus: cpu-prof flag and output to the profiles directory
-#  build the directory normally
+desc 'Profile TypeScript Performance Locally'
+task :profile do
+  FileUtils.mkdir_p('tmp/node-profiles')
+  # add cpu-prof flag to node options and output to the profiles directory
+  ENV['NODE_OPTIONS'] = [
+    ENV['NODE_OPTIONS'],
+    '--cpu-prof',
+    '--cpu-prof-dir=tmp/node-profiles'
+  ].compact.join(' ')
+  local_host_server
+end
