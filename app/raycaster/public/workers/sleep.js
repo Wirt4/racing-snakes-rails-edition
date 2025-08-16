@@ -1,4 +1,4 @@
-const ONE_SECOND_IN_MS = 100;
+const ONE_SECOND_IN_MS = 1000;
 export async function sleep(fps) {
     /** precondition: fps must be a positive integer
     * postcondition: suspends execution for the duration of one frame at the specified fps
