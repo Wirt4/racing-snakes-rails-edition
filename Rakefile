@@ -38,12 +38,13 @@ end
 
 desc 'Profile TypeScript Performance Locally'
 task :profile do
-  FileUtils.mkdir_p('tmp/node-profiles')
+  dir = 'tmp/node-profiles'
+  FileUtils.mkdir_p(dir)
   # add cpu-prof flag to node options and output to the profiles directory
   ENV['NODE_OPTIONS'] = [
     ENV['NODE_OPTIONS'],
     '--cpu-prof',
-    '--cpu-prof-dir=tmp/node-profiles'
+    '--cpu-prof-dir=' + dir
   ].compact.join(' ')
   local_host_server
 end
