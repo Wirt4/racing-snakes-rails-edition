@@ -12,6 +12,8 @@ class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
 	private bMath: BMath = BMath.getInstance();
+	private currentSlice: Slice
+	private currentRay: Ray
 
 	constructor(
 		private resolution: number,
@@ -22,7 +24,7 @@ class Raycaster implements RaycasterInterface {
 		private horizonY: number,
 		private wallHeight: number,
 		private cameraHeight: number,
-		private rays: Float32Array = new Float32Array(resolution),
+		private rays: Float32Array = new Float32Array(resolution)
 
 	) {
 		/**
@@ -45,21 +47,28 @@ class Raycaster implements RaycasterInterface {
 		const verticalFOV = 2 * Math.atan(Math.tan(this.fieldOfView / 2) / aspectRatio);
 
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
+		this.currentRay = new Ray()
+		this.currentSlice = {
+			distance: -1,
+			intersection: { x: -1, y: -1 },
+			color: ColorName.NONE,
+			gridHits: []
+		}
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
-		const ray = new Ray(origin, angle);
-		ray.findClosestHit(walls);
-		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance;
-		const intersection = ray.wallIntersection;
-		const color = ray.wallColor;
-		const gridHits = ray.gridHits(gridLines, distance);
-		return {
-			distance,
-			intersection,
-			color,
-			gridHits
-		};
+		this.currentRay.setUp(origin, angle)
+		this.currentRay.findClosestHit(walls);
+		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
+		const intersection = this.currentRay.wallIntersection;
+		const color = this.currentRay.wallColor;
+		const gridHits = this.currentRay.gridHits(gridLines, distance);
+		// don't allocate a whole new slice
+		this.currentSlice.distance = distance
+		this.currentSlice.intersection = intersection
+		this.currentSlice.gridHits = gridHits
+		this.currentSlice.color = color
+		return this.currentSlice
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
@@ -135,8 +144,8 @@ class Raycaster implements RaycasterInterface {
 }
 
 class Ray {
-	private x1: number
-	private x2: number
+	private x1: number = -1
+	private x2: number = -1
 	private x3: number = -1
 	private x4: number = -1
 	private y1: number = -1
@@ -147,14 +156,21 @@ class Ray {
 	private _wallDistance: number | null = -1
 	private _wallColor: ColorName = ColorName.NONE
 	private _wallIntersection: Coordinates = { x: -1, y: -1 }
+	private offset: number = 10
+	private gridDistances: Array<number> = new Array<number>()
 
-	constructor(position: Coordinates, angle: number) {
-		const { x, y } = position
-		this.x1 = x
-		this.y1 = y
-		const offset = 10
-		this.x2 = this.x1 + (offset * Math.cos(angle))
-		this.y2 = this.y1 + (offset * Math.sin(angle))
+	/**
+	 * this method calculates the values of x1, y1, x2, and y2 based on position and angle passed here.
+	 * It's an alternative to instantiating a whole new class on every tick.
+	 * **/
+	setUp(origin: Coordinates, angle: number): void {
+		// set x1 and y1 to the origin coordinates (argument)
+		this.x1 = origin.x
+		this.y1 = origin.y
+		// use the offset and angle to determine x2 and x3
+		// TODO: test with bMath or some caching to squeeze some performance
+		this.x2 = this.x1 + (this.offset * Math.cos(angle))
+		this.y2 = this.y1 + (this.offset * Math.sin(angle))
 	}
 
 	findClosestHit(walls: Array<WallInterface>): void {
@@ -183,14 +199,16 @@ class Ray {
 	}
 
 	gridHits(gridLines: Array<LineSegment>, maxDistance: number): Array<number> {
-		const result: Array<number> = new Array<number>()
+		//truncate the gridDistances array 
+		// Not initiating a new one so not putting heap pressure on Spidermonkey
+		this.gridDistances.length = 0
 		for (let i = 0; i < gridLines.length; i++) {
 			const intersection = this.findIntersection(gridLines[i])
 			if (intersection !== null && intersection.distance < maxDistance) {
-				result.push(intersection.distance)
+				this.gridDistances.push(intersection.distance)
 			}
 		}
-		return result
+		return this.gridDistances
 	}
 
 	private findIntersection(lineSegment: LineSegment): Intersection | null {

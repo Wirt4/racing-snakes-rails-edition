@@ -326,5 +326,12 @@ describe('castRay', () => {
 			expect(gridDistance).toBeLessThan(actual.distance)
 		})
 	})
+
+	//do not draw grid lines past max distance
+	// draw a  4 by 4 grid with no walls
+	// set the max distance that would only intersect two walls
+	// using a viewing angle of 0, set the origin at 0,1
+	// there should be exactly two gridHits
+	// the distance of each grid git should be less than the maximum distance
 })
 
