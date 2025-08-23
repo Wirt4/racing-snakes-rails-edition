@@ -14,6 +14,9 @@ class Raycaster implements RaycasterInterface {
 	private bMath: BMath = BMath.getInstance();
 	private currentSlice: Slice
 	private currentRay: Ray
+	private currentGridDistances: Array<number>;
+	private xGridStepCounter: GridStepCounter;
+	private yGridStepCounter: GridStepCounter;
 
 	constructor(
 		private resolution: number,
@@ -54,33 +57,79 @@ class Raycaster implements RaycasterInterface {
 			color: ColorName.NONE,
 			gridHits: []
 		}
+		this.currentGridDistances = new Array<number>
+		//TODO: take this argument out of hard coding
+		const cellSize: number = 2
+		this.xGridStepCounter = new GridStepCounter(cellSize)
+		this.yGridStepCounter = new GridStepCounter(cellSize)
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
 		this.currentRay.setUp(origin, angle)
 		this.currentRay.findClosestHit(walls);
 		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
-		const intersection = this.currentRay.wallIntersection;
-		const color = this.currentRay.wallColor;
-		const gridHits = this.currentRay.gridHits(gridLines, distance);
-		// don't allocate a whole new slice
 		this.currentSlice.distance = distance
-		this.currentSlice.intersection = intersection
-		this.currentSlice.gridHits = gridHits
-		this.currentSlice.color = color
+		this.currentSlice.intersection = this.currentRay.wallIntersection;
+		this.currentSlice.gridHits = this.getGrid(origin, angle, distance)
+		this.currentSlice.color = this.currentRay.wallColor;
 		return this.currentSlice
 	}
+	/**
+	 * This routine takes in the origin and angle for the point of view as well as a maximum distance
+	 * and returns an array of numbers which are the distances of the floor grid lines visible from that slice
+	 * **/
+	private getGrid(origin: Coordinates, angle: number, maxDistance: number): Array<number> {
+		/**
+		 * preconditions
+		 * angle is between 0 and 2pi inclusive
+		 * maximum distance is positive
+		 * both the x and y coordinates are non-negative
+		 **/
+		if (angle < 0 || angle > 2 * Math.PI) {
+			throw new Error("Invalid input: angle must be between 0 and 2*Pi inclusive")
+		}
+		if (maxDistance <= 0) {
+			throw new Error("maxDistance must be positive")
+		}
+		if (origin.x < 0 || origin.y < 0) {
+			throw new Error("invalid input: coordinates must be nonnegative")
+		}
+		// get the x and y directional components of the angle
+		this.xGridStepCounter.reset(origin.x, this.bMath.cos(angle))
+		this.yGridStepCounter.reset(origin.y, this.bMath.sin(angle))
+		//reset the griddistances array
+		this.currentGridDistances.length = 0
 
-	//information hidden
-	// -- the routine hides how it knows the distance to each grid line distance
-	// //inputs the origin coordinates, angle and maximum distance
-	//outputs an array of numbers, all visible grid thingies
-	//preconditions
-	// --angle is between 0 and 2pi inclusive
-	// -- maximum distance is positive
-	// --both the x and y coordinates are positive
-	//postconditions
-	// --returned array has 0 or more items, all numbers representing the distance to the gridline
+		while (true) {
+			// currentDistance is the minimum of currentX and currentY
+			const currentDistance = Math.min(this.xGridStepCounter.getCurrentStep(), this.yGridStepCounter.getCurrentStep())
+			// check for the break condition
+			// is not valid (such as exceeding maxDistance), go straight to end of method
+			if (currentDistance <= 0 || currentDistance > maxDistance) {
+				break;
+			}
+			// otherwise append currentDistance to the grid distances
+			this.currentGridDistances.push(currentDistance)
+			// if currentX = currentY, then it's a corner, and advance both
+			if (
+				this.xGridStepCounter.getCurrentStep() === this.yGridStepCounter.getCurrentStep()
+			) {
+				this.xGridStepCounter.advanceToNextStep();
+				this.yGridStepCounter.advanceToNextStep();
+				continue;
+			}
+			if (
+				// if currentX is less than currentY, advance currentX
+				this.xGridStepCounter.getCurrentStep() < this.yGridStepCounter.getCurrentStep()
+			) {
+				this.xGridStepCounter.advanceToNextStep();
+				continue;
+			}
+			// if currentY is less than currentX, advance currentY
+			this.yGridStepCounter.advanceToNextStep();
+		}
+		return this.currentGridDistances
+	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
 		for (let i = 0; i < this.resolution; i++) {
@@ -181,7 +230,6 @@ class Ray {
 		this.x1 = origin.x
 		this.y1 = origin.y
 		// use the offset and angle to determine x2 and x3
-		// TODO: test with bMath or some caching to squeeze some performance
 		this.x2 = this.x1 + (this.offset * this.bMath.cos(angle))
 		this.y2 = this.y1 + (this.offset * this.bMath.sin(angle))
 	}
@@ -327,6 +375,70 @@ class Ray {
 			}
 		}
 		return result
+	}
+}
+
+class GridStepCounter {
+	private _cellSize: number
+	private _gridLocation: number
+	private _step: number
+
+	constructor(cellSize: number) {
+		if (Math.floor(cellSize) !== cellSize || cellSize <= 0) {
+			throw new Error("cellSize must be a positive integer")
+		}
+		this._cellSize = cellSize
+		//gridlocation and step are set by the reset() function
+		this._gridLocation = -1
+		this._step = -1
+	}
+	// preconditions: cell size is a positive integer
+	/** The state of coordinate step are derived from an origin and ratio **/
+	reset(origin: number, ratio: number): void {
+		if (origin < 0) {
+			throw new Error("origin may not be negative");
+		}
+		// ratio is the output of either a sin or cos function
+		if (ratio < -1 || ratio > 1) {
+			throw new Error("ratio must be be between -1 and 1 inclusive");
+		}
+
+		// set step and currentLocation to infinity
+		this._step = Number.POSITIVE_INFINITY;
+		this._gridLocation = Number.POSITIVE_INFINITY;
+		// if ratio is 0, then return
+		if (ratio == 0) {
+			return;
+		}
+		// create a temporary variable cellIndx, which is the floor of origin/ cellSize
+		let cellIndx = Math.floor(origin / this._cellSize);
+		// we need to determine nextGridLocation
+		// if ratio is positive increase cellIndex by one
+		if (ratio > 0) {
+			cellIndx++;
+		}
+		//If there's a verical line decrement cellIndex by one
+		if (ratio < 0 && origin % this._cellSize === 0) {
+			cellIndx--;
+		}
+		// nextGridLocation is the cellIndex times the cell size
+		const nextGridLocation = cellIndx * this._cellSize;
+		// step is the absolute value of cell/directionx
+		this._step = Math.abs(this._cellSize / ratio)
+		// finally, current is (nextGridLocation - origin  location) / ratio
+		this._gridLocation = (nextGridLocation - origin) / ratio
+		// if current x is less than or equal to zero, add a step to it to make it positive
+		if (this._gridLocation <= 0) {
+			this.advanceToNextStep()
+		}
+	}
+
+	getCurrentStep(): number {
+		return this._gridLocation;
+	}
+
+	advanceToNextStep(): void {
+		this._gridLocation += this._step;
 	}
 }
 
