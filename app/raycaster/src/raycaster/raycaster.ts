@@ -71,6 +71,17 @@ class Raycaster implements RaycasterInterface {
 		return this.currentSlice
 	}
 
+	//information hidden
+	// -- the routine hides how it knows the distance to each grid line distance
+	// //inputs the origin coordinates, angle and maximum distance
+	//outputs an array of numbers, all visible grid thingies
+	//preconditions
+	// --angle is between 0 and 2pi inclusive
+	// -- maximum distance is positive
+	// --both the x and y coordinates are positive
+	//postconditions
+	// --returned array has 0 or more items, all numbers representing the distance to the gridline
+
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
 		for (let i = 0; i < this.resolution; i++) {
 			rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
@@ -158,6 +169,8 @@ class Ray {
 	private _wallIntersection: Coordinates = { x: -1, y: -1 }
 	private offset: number = 10
 	private gridDistances: Array<number> = new Array<number>()
+	private bMath: BMath = BMath.getInstance()
+
 
 	/**
 	 * this method calculates the values of x1, y1, x2, and y2 based on position and angle passed here.
@@ -169,8 +182,8 @@ class Ray {
 		this.y1 = origin.y
 		// use the offset and angle to determine x2 and x3
 		// TODO: test with bMath or some caching to squeeze some performance
-		this.x2 = this.x1 + (this.offset * Math.cos(angle))
-		this.y2 = this.y1 + (this.offset * Math.sin(angle))
+		this.x2 = this.x1 + (this.offset * this.bMath.cos(angle))
+		this.y2 = this.y1 + (this.offset * this.bMath.sin(angle))
 	}
 
 	findClosestHit(walls: Array<WallInterface>): void {
