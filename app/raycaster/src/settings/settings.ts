@@ -12,7 +12,7 @@ export class Settings implements SettingsInterface {
 	CAMERA_HEIGHT = 2
 	FRAMES_PER_SECOND = 60
 	FIELD_OF_VISION = Math.PI / 3 //try wider angle for greater illusion of speed
-	MAX_DISTANCE = 50 // see if lowering this will take the load off of spidermonkey a bit
+	MAX_DISTANCE = 100
 	MAX_PERCENT_BRIGHTNESS = 60
 	MIN_PERCENT_BRIGHTNESS = 10
 	FADE_DISTANCE = 2
