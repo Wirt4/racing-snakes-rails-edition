@@ -318,7 +318,7 @@ describe('castRay', () => {
 
 	test('horizontal cast ray', () => {
 		const expectedDistance = 45
-		const slice = raycaster.castRay(position, angle, walls, [])
+		const slice = raycaster.castRay(position, angle, walls)
 		expect(slice.distance).toEqual(expectedDistance)
 	})
 
@@ -326,7 +326,7 @@ describe('castRay', () => {
 		// for forty-five degrees, length of hypotenuse is square root of 2 times the adjacent
 		angle = FORTY_FIVE_DEGREES
 		const expected = Math.SQRT2 * 45
-		const slice = raycaster.castRay(position, angle, walls, [])
+		const slice = raycaster.castRay(position, angle, walls)
 		const margin = Math.abs(slice.distance - expected)
 		expect(margin).toBeLessThan(1e-6)
 	})
@@ -334,7 +334,7 @@ describe('castRay', () => {
 	test('casting a ray that projects away from the  wall returns a distance of the "max distance"', () => {
 		//use the same set up as before
 		angle = Math.PI
-		const actual = raycaster.castRay(position, angle, walls, [])
+		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.distance).toEqual(TEST_DISTANCE)
 	})
 
@@ -346,13 +346,13 @@ describe('castRay', () => {
 		walls = [{ color: ColorName.RED, line: { start, end } }]
 
 		angle = FORTY_FIVE_DEGREES
-		const actual = raycaster.castRay(position, angle, walls, [])
+		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.distance).toEqual(TEST_DISTANCE)
 	})
 
 	test('should return the correct intersection position', () => {
 		// instantiate a  raycaster with the defaults, angle 0, position (5,5)
-		const actual = raycaster.castRay(position, angle, walls, [])
+		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.intersection.x).toBe(50)
 		expect(actual.intersection.y).toBe(5)
 	})
@@ -363,7 +363,7 @@ describe('castRay', () => {
 		for (let i = 0; i < walls.length; i++) {
 			walls[i].color = ColorName.GREEN
 		}
-		const actual = raycaster.castRay(position, angle, walls, [])
+		const actual = raycaster.castRay(position, angle, walls)
 		expect(actual.color).toEqual(ColorName.GREEN)
 	})
 })

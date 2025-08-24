@@ -15,9 +15,8 @@ class Raycaster implements RaycasterInterface {
 	private currentSlice: Slice
 	private currentRay: Ray
 	private currentGridDistances: Array<number>;
-	private xGridStepCounter: GridStepCounter;
-	private yGridStepCounter: GridStepCounter;
 	private rays: Float32Array;
+	private gridStepCounter: XYGridStepGenerators
 
 	constructor(
 		private resolution: number,
@@ -40,11 +39,13 @@ class Raycaster implements RaycasterInterface {
 		if (this.fieldOfView < 0 || this.fieldOfView > FULL_CIRCLE) {
 			throw new Error("Field of view must be between 0 and 2*Math.PI");
 		}
+
 		this.offsets = [];
 		const step = this.fieldOfView / this.resolution;
 		for (let i = this.resolution - step; i >= 0; i--) {
 			this.offsets.push(i * step);
 		}
+
 		this.fovOffset = this.fieldOfView / 2;
 
 		const aspectRatio = screenWidth / screenHeight;
@@ -59,12 +60,11 @@ class Raycaster implements RaycasterInterface {
 			gridHits: []
 		}
 		this.currentGridDistances = new Array<number>
-		this.xGridStepCounter = new GridStepCounter(cellSize)
-		this.yGridStepCounter = new GridStepCounter(cellSize)
+		this.gridStepCounter = new XYGridStepGenerators(cellSize)
 		this.rays = new Float32Array(resolution)
 	}
 
-	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
+	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
 		this.currentRay.setUp(origin, angle)
 		this.currentRay.findClosestHit(walls);
 		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
@@ -85,24 +85,23 @@ class Raycaster implements RaycasterInterface {
 		 * maximum distance is positive
 		 * both the x and y coordinates are non-negative
 		 **/
-		if (angle < 0 || angle > 2 * Math.PI) {
-			throw new Error("Invalid input: angle must be between 0 and 2*Pi inclusive")
+		if (angle < 0 || angle > FULL_CIRCLE) {
+			throw ("angle must be within 0 and 2Pi")
 		}
 		if (maxDistance <= 0) {
-			throw new Error("maxDistance must be positive")
+			throw ("maxDistance must be positive")
 		}
 		if (origin.x < 0 || origin.y < 0) {
-			throw new Error("invalid input: coordinates must be nonnegative")
+			throw ("coordinates must be non-negative")
 		}
-		// get the x and y directional components of the angle
-		this.xGridStepCounter.reset(origin.x, this.bMath.cos(angle))
-		this.yGridStepCounter.reset(origin.y, this.bMath.sin(angle))
+		// initialize the gridStep counter
+		this.gridStepCounter.init(origin, angle)
 		//reset the griddistances array
 		this.currentGridDistances.length = 0
 
 		while (true) {
-			// currentDistance is the minimum of currentX and currentY
-			const currentDistance = Math.min(this.xGridStepCounter.getCurrentStep(), this.yGridStepCounter.getCurrentStep())
+			// currentDistance is the minimum of the current x and y steps
+			const currentDistance = Math.min(this.gridStepCounter.peekX(), this.gridStepCounter.peekY())
 			// check for the break condition
 			// is not valid (such as exceeding maxDistance), go straight to end of method
 			if (currentDistance <= 0 || currentDistance > maxDistance) {
@@ -112,22 +111,23 @@ class Raycaster implements RaycasterInterface {
 			this.currentGridDistances.push(currentDistance)
 			// if currentX = currentY, then it's a corner, and advance both
 			if (
-				this.xGridStepCounter.getCurrentStep() === this.yGridStepCounter.getCurrentStep()
+				this.gridStepCounter.peekX() === this.gridStepCounter.peekY()
 			) {
-				this.xGridStepCounter.advanceToNextStep();
-				this.yGridStepCounter.advanceToNextStep();
+				this.gridStepCounter.advanceX()
+				this.gridStepCounter.advanceY()
 				continue;
 			}
 			if (
-				// if currentX is less than currentY, advance currentX
-				this.xGridStepCounter.getCurrentStep() < this.yGridStepCounter.getCurrentStep()
+				// if current X is less than current Y, advance the x value
+				this.gridStepCounter.peekX() < this.gridStepCounter.peekY()
 			) {
-				this.xGridStepCounter.advanceToNextStep();
+				this.gridStepCounter.advanceX();
 				continue;
 			}
-			// if currentY is less than currentX, advance currentY
-			this.yGridStepCounter.advanceToNextStep();
+			// if current Y is less than current X, advance current Y
+			this.gridStepCounter.advanceY();
 		}
+		// break jumps here
 		return this.currentGridDistances
 	}
 
@@ -145,6 +145,9 @@ class Raycaster implements RaycasterInterface {
 		 * The length of the array is equal to the resolution
 		 * the array is arranged from 
 		 */
+		if (viewerAngle < 0 || viewerAngle > FULL_CIRCLE) {
+			throw ('invalid angle')
+		}
 		this.fillRaysInto(this.rays, viewerAngle);
 		return this.rays;
 	}
@@ -217,9 +220,7 @@ class Ray {
 	private _wallColor: ColorName = ColorName.NONE
 	private _wallIntersection: Coordinates = { x: -1, y: -1 }
 	private offset: number = 10
-	private gridDistances: Array<number> = new Array<number>()
 	private bMath: BMath = BMath.getInstance()
-
 
 	/**
 	 * this method calculates the values of x1, y1, x2, and y2 based on position and angle passed here.
@@ -258,6 +259,7 @@ class Ray {
 	get wallColor(): ColorName {
 		return this._wallColor
 	}
+
 	private findIntersection(lineSegment: LineSegment): Intersection | null {
 		this.x3 = lineSegment.start.x
 		this.x4 = lineSegment.end.x
@@ -364,20 +366,87 @@ class Ray {
 	}
 }
 
-//Class as ADT: essentially a pair of stacks
-//
-//peekX
-//peekY
-//
-//popX
-//popY
-//
-//Central Purpose is to simplify and coordinate the step counting so wont have to track the X stack and Y stacks separately 
-//
+/** this class  is to simplifies and coordinates the step counting for the grid so wont have to track the X stack and Y stacks separately **/
+
+class XYGridStepGenerators {
+	private _xStep: GridStepGenerator;
+	private _yStep: GridStepGenerator;
+	private bMath: BMath;
+
+	/**
+	 *Constructor uses cellSize because that is the invariant from which calculations are derived
+	 * creates a class as if intialized with an angle of 0 and coordinates of (0,0)
+	 * */
+	constructor(cellSize: number) {
+		// precondition: cellSize is a positive integer
+		if (Math.floor(cellSize) !== cellSize || cellSize <= 0) {
+			throw new Error("cellSize must be a positive integer")
+		}
+		// passes cell size to its members
+		this._xStep = new GridStepGenerator(cellSize);
+		this._yStep = new GridStepGenerator(cellSize);
+		// (0,0) origin and 0 degree angle
+		this._xStep.init(0, 1);
+		this._yStep.init(0, 0);
+		//use bMath class for caching and consistency
+		this.bMath = BMath.getInstance()
+	}
+
+	/**
+	 * sets the x and y steps based on the input location and angle
+	 * if heap memory wasn't an issue, these would be constructor arguments
+	**/
+	init(origin: Coordinates, angle: number): void {
+		//inputs coordinates object and number for angle
+		/**
+		 * preconditions: coordinates are both non negative
+		 * angle is greater or equal than 0 and less than or equal to 2 Pi (FULL_CIRCLE)
+		 */
+		if (angle < 0 || angle > 2 * Math.PI) {
+			throw new Error("Invalid input: angle must be between 0 and 2*Pi inclusive")
+		}
+		if (origin.x < 0 || origin.y < 0) {
+			throw new Error("invalid input: coordinates must be nonnegative")
+		}
+		// init x-step with x and cos of angle
+		this._xStep.init(origin.x, this.bMath.cos(angle))
+		// init y-step with y and sin of angle
+		this._yStep.init(origin.y, this.bMath.sin(angle))
+	}
+
+	/**
+	 * returns the current step value on the x axis
+	 */
+	peekX(): number {
+		return this._xStep.peek()
+	}
+
+	/**
+	 * returns the current step value on the y axis
+	 */
+	peekY(): number {
+		//hides how that X is gotten
+		return this._yStep.peek()
+	}
+
+	/**
+	 * advances the current x value along the x axis according the angle passed in init()
+	 */
+	advanceX(): void {
+		this._xStep.advance()
+	}
+
+	/**
+	 * advances the current x value along the y axis according the angle passed in init()
+	 */
+	advanceY(): void {
+		this._yStep.advance()
+	}
+}
 /**
  * contains the current location along an x or y axis, the step to iterated it, and the means to instantiate and advance to the next step
  * **/
-class GridStepCounter {
+class GridStepGenerator {
 	private _cellSize: number
 	private _gridLocation: number
 	private _step: number
@@ -385,11 +454,8 @@ class GridStepCounter {
 	 * Initiates the object with a cell size, size the cell is constant
 	 * **/
 	constructor(cellSize: number) {
-		if (Math.floor(cellSize) !== cellSize || cellSize <= 0) {
-			throw new Error("cellSize must be a positive integer")
-		}
 		this._cellSize = cellSize
-		//gridlocation and step are set by the reset() function
+		// gridlocation and step are set by the init() method
 		this._gridLocation = -1
 		this._step = -1
 	}
@@ -399,7 +465,7 @@ class GridStepCounter {
 	 *
 	 * If memory allocation wasn't at a premium in this instance, it would be a constructor argument
 	 *  **/
-	reset(origin: number, ratio: number): void {
+	init(origin: number, ratio: number): void {
 		if (origin < 0) {
 			throw new Error("origin may not be negative");
 		}
@@ -434,20 +500,20 @@ class GridStepCounter {
 		this._gridLocation = (nextGridLocation - origin) / ratio
 		// if current x is less than or equal to zero, add a step to it to make it positive
 		if (this._gridLocation <= 0) {
-			this.advanceToNextStep()
+			this.advance()
 		}
 	}
 	/**
 	 * Returns the current location
 	 **/
-	getCurrentStep(): number {
+	peek(): number {
 		return this._gridLocation;
 	}
 
 	/**
 	 * Iterates class to the next location
 	*/
-	advanceToNextStep(): void {
+	advance(): void {
 		this._gridLocation += this._step;
 	}
 }
