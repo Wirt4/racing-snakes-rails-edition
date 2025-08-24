@@ -100,35 +100,35 @@ class Raycaster implements RaycasterInterface {
 		//reset the grid distances array
 		this.currentGridDistances.length = 0
 
-		while (true) {
+		let reachedEnd = false;
+		while (!reachedEnd) {
 			// currentDistance is the minimum of the current x and y steps
 			const currentDistance = Math.min(this.gridStepCounter.peekX(), this.gridStepCounter.peekY())
 			// check for the break condition
 			// is not valid (such as exceeding maxDistance), go straight to end of method
 			if (currentDistance <= 0 || currentDistance > maxDistance) {
-				break;
+				reachedEnd = true
+			} else {
+				// otherwise append currentDistance to the grid distances, this is the key alteration
+				this.currentGridDistances.push(currentDistance)
+				// if currentX = currentY, then it's a corner, and advance both
+				if (
+					this.gridStepCounter.peekX() === this.gridStepCounter.peekY()
+				) {
+					this.gridStepCounter.advanceX()
+					this.gridStepCounter.advanceY()
+				} else if (
+					// if current X is less than current Y, advance the x value
+					this.gridStepCounter.peekX() < this.gridStepCounter.peekY()
+				) {
+					this.gridStepCounter.advanceX();
+				} else {
+					// if current Y is less than current X, advance current Y
+					this.gridStepCounter.advanceY();
+				}
 			}
-			// otherwise append currentDistance to the grid distances
-			this.currentGridDistances.push(currentDistance)
-			// if currentX = currentY, then it's a corner, and advance both
-			if (
-				this.gridStepCounter.peekX() === this.gridStepCounter.peekY()
-			) {
-				this.gridStepCounter.advanceX()
-				this.gridStepCounter.advanceY()
-				continue;
-			}
-			if (
-				// if current X is less than current Y, advance the x value
-				this.gridStepCounter.peekX() < this.gridStepCounter.peekY()
-			) {
-				this.gridStepCounter.advanceX();
-				continue;
-			}
-			// if current Y is less than current X, advance current Y
-			this.gridStepCounter.advanceY();
 		}
-		// break jumps here
+
 		return this.currentGridDistances
 	}
 
