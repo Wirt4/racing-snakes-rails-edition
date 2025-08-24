@@ -377,12 +377,16 @@ class Ray {
 		return result
 	}
 }
-
+/**
+ * containts the current location along an x or y axis, the step to iterated it, and the means to instantiate and advance to the next step
+ * **/
 class GridStepCounter {
 	private _cellSize: number
 	private _gridLocation: number
 	private _step: number
-
+	/**
+	 * Initiates the object with a cell size, size the cell is constant
+	 * **/
 	constructor(cellSize: number) {
 		if (Math.floor(cellSize) !== cellSize || cellSize <= 0) {
 			throw new Error("cellSize must be a positive integer")
@@ -392,8 +396,12 @@ class GridStepCounter {
 		this._gridLocation = -1
 		this._step = -1
 	}
-	// preconditions: cell size is a positive integer
-	/** The state of coordinate step are derived from an origin and ratio **/
+	/** 
+	 * Sets the state of the object based on origin location and ratio
+	 * (a directional adjustment, an output of the trigonometric operation on the angle)
+	 *
+	 * If memory allocation wasn't at a premium in this instance, it would be a constructor argument
+	 *  **/
 	reset(origin: number, ratio: number): void {
 		if (origin < 0) {
 			throw new Error("origin may not be negative");
@@ -432,11 +440,16 @@ class GridStepCounter {
 			this.advanceToNextStep()
 		}
 	}
-
+	/**
+	 * Returns the current location
+	 **/
 	getCurrentStep(): number {
 		return this._gridLocation;
 	}
 
+	/**
+	 * Iterates class to the next location
+	*/
 	advanceToNextStep(): void {
 		this._gridLocation += this._step;
 	}
