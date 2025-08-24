@@ -17,17 +17,18 @@ class Raycaster implements RaycasterInterface {
 	private currentGridDistances: Array<number>;
 	private xGridStepCounter: GridStepCounter;
 	private yGridStepCounter: GridStepCounter;
+	private rays: Float32Array;
 
 	constructor(
 		private resolution: number,
 		private fieldOfView: number,
 		private screenWidth: number,
 		private screenHeight: number,
-		private maxDistance: number = 1000,
+		private maxDistance: number,
 		private horizonY: number,
 		private wallHeight: number,
 		private cameraHeight: number,
-		private rays: Float32Array = new Float32Array(resolution)
+		cellSize: number
 
 	) {
 		/**
@@ -58,10 +59,9 @@ class Raycaster implements RaycasterInterface {
 			gridHits: []
 		}
 		this.currentGridDistances = new Array<number>
-		//TODO: take this argument out of hard coding
-		const cellSize: number = 2
 		this.xGridStepCounter = new GridStepCounter(cellSize)
 		this.yGridStepCounter = new GridStepCounter(cellSize)
+		this.rays = new Float32Array(resolution)
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {

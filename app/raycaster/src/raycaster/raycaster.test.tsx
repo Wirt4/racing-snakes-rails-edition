@@ -3,7 +3,7 @@ import { SIXTY_DEGREES, FULL_CIRCLE, NINETY_DEGREES, FORTY_FIVE_DEGREES } from '
 import { Raycaster } from './raycaster';
 import { WallInterface } from '../wall/interface'
 import { ColorName } from '../color/color_name'
-import { Coordinates, LineSegment } from '../geometry/interfaces'
+import { Coordinates } from '../geometry/interfaces'
 
 const TEST_WIDTH = 440;
 const TEST_HEIGHT = 680;
@@ -12,7 +12,7 @@ const TEST_DISTANCE = 1000;
 const TEST_HORIZON_Y = 340;
 const TEST_WALL_HEIGHT = 100;
 const TEST_CAMERA_HEIGHT = 90;
-
+const TEST_CELL_SIZE = 2;
 
 describe('Raycaster instantiation', () => {
 	test('object may not be instantiated with invalid resolutions', () => {
@@ -25,34 +25,49 @@ describe('Raycaster instantiation', () => {
 				TEST_DISTANCE,
 				TEST_HORIZON_Y,
 				TEST_WALL_HEIGHT,
-				TEST_CAMERA_HEIGHT
+				TEST_CAMERA_HEIGHT,
+				TEST_CELL_SIZE
 			);
 		}).toThrow();
 		expect(() => {
-			new Raycaster(-1,
+			new Raycaster(
+				-1,
 				SIXTY_DEGREES,
 				TEST_WIDTH,
 				TEST_HEIGHT,
 				TEST_DISTANCE,
 				TEST_HORIZON_Y,
 				TEST_WALL_HEIGHT,
-				TEST_CAMERA_HEIGHT);
+				TEST_CAMERA_HEIGHT,
+				TEST_CELL_SIZE,
+			);
 		}).toThrow();
 	});
 	test('object may not be instantiated with invalid angle for field of view', () => {
 		expect(() => {
-			new Raycaster(TEST_RESOLUTION, -1,
+			new Raycaster(
+				TEST_RESOLUTION,
+				-1,
 				TEST_WIDTH,
 				TEST_HEIGHT,
 				TEST_DISTANCE,
 				TEST_HORIZON_Y,
 				TEST_WALL_HEIGHT,
-				TEST_CAMERA_HEIGHT);
+				TEST_CAMERA_HEIGHT,
+				TEST_CELL_SIZE
+			);
 		}).toThrow();
 		expect(() => {
-			new Raycaster(TEST_RESOLUTION, FULL_CIRCLE + 0.01,
-				TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE,
-				TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT
+			new Raycaster(
+				TEST_RESOLUTION,
+				FULL_CIRCLE + 0.01,
+				TEST_WIDTH,
+				TEST_HEIGHT,
+				TEST_DISTANCE,
+				TEST_HORIZON_Y,
+				TEST_WALL_HEIGHT,
+				TEST_CAMERA_HEIGHT,
+				TEST_CELL_SIZE
 			);
 		}).toThrow();
 	});
@@ -60,16 +75,33 @@ describe('Raycaster instantiation', () => {
 describe('getViewRays tests', () => {
 
 	test('getViewRays should return a set with one ray per point of resolution', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE,
-			TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 		const expectedRayNumber = TEST_RESOLUTION;
 		const actualRayNumber = raycaster.getViewRays(0).length;
 		expect(actualRayNumber).toEqual(expectedRayNumber);
 	});
 	test('getViewRays should return rays in the range of 0 to 2*PI', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES,
-			TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 		const rays = raycaster.getViewRays(0);
 		rays.forEach(ray => {
 			expect(ray).toBeGreaterThanOrEqual(0);
@@ -77,14 +109,31 @@ describe('getViewRays tests', () => {
 		});
 	});
 	test('getViewRays should return rays in order', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES,
-			TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			NINETY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 		const rays = raycaster.getViewRays(FORTY_FIVE_DEGREES);
 		expect(Math.abs(rays[0] - NINETY_DEGREES)).toBeLessThan(0.00001);
 	});
 	test('no ray in result may exist outside the cone of vision: happy path', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			NINETY_DEGREES, TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			NINETY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
 		); // 90 degrees field of view
 		const rays = raycaster.getViewRays(NINETY_DEGREES); //looking straight up
 		rays.forEach(ray => {
@@ -93,8 +142,17 @@ describe('getViewRays tests', () => {
 		});
 	});
 	test('no ray in result may exist outside the cone of vision: straddles origin', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION, NINETY_DEGREES,
-			TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT); // 90 degrees field of view
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			NINETY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		); // 90 degrees field of view
 		const rays = raycaster.getViewRays(0); //looking straight to the right
 		rays.forEach(ray => {
 			expect((ray <= FORTY_FIVE_DEGREES && ray >= 0) || (ray <= FULL_CIRCLE && ray >= 7 * FORTY_FIVE_DEGREES)).toEqual(true);
@@ -105,8 +163,17 @@ describe('getViewRays tests', () => {
 describe('RemoveFishEye', () => {
 	let raycaster: Raycaster;
 	beforeEach(() => {
-		raycaster = new Raycaster(TEST_RESOLUTION, SIXTY_DEGREES,
-			TEST_WIDTH, TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 	})
 	test('removeFishEye should return the same distance when angle is 0', () => {
 		const distance = 10;
@@ -129,10 +196,16 @@ describe('RemoveFishEye', () => {
 
 	});
 	test('removeFishEye should not apply to wide angles', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			SIXTY_DEGREES * 2, TEST_WIDTH,
-			TEST_HEIGHT, TEST_DISTANCE, TEST_HORIZON_Y,
-			TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES * 2,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE,);
 		const distance = 10;
 		const rayAngle = SIXTY_DEGREES;
 		const centerAngle = 0;
@@ -142,19 +215,34 @@ describe('RemoveFishEye', () => {
 })
 describe('wallHeightToSliceHeight', () => {
 	test('wallHeightToSliceHeight should fill the screen when distance is 0', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT,
-			TEST_DISTANCE, TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 		const height = 10;
 		const distance = 0;
 		const result = raycaster.wallHeightToSliceHeight(distance, height);
 		expect(result).toEqual(TEST_HEIGHT);
 	});
 	test('arguments must be positive', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			SIXTY_DEGREES, TEST_WIDTH, TEST_HEIGHT,
-			TEST_DISTANCE, TEST_HORIZON_Y,
-			TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT);
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			SIXTY_DEGREES,
+			TEST_WIDTH,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		);
 		expect(() => {
 			raycaster.wallHeightToSliceHeight(-1, 10);
 		}).toThrow();
@@ -163,9 +251,17 @@ describe('wallHeightToSliceHeight', () => {
 		}).toThrow();
 	});
 	test('wallHeightToSliceHeight should return the height when distance is positive', () => {
-		const raycaster = new Raycaster(TEST_RESOLUTION,
-			NINETY_DEGREES, 640, TEST_HEIGHT, TEST_DISTANCE,
-			TEST_HORIZON_Y, TEST_WALL_HEIGHT, TEST_CAMERA_HEIGHT); //control for a focal length
+		const raycaster = new Raycaster(
+			TEST_RESOLUTION,
+			NINETY_DEGREES,
+			640,
+			TEST_HEIGHT,
+			TEST_DISTANCE,
+			TEST_HORIZON_Y,
+			TEST_WALL_HEIGHT,
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
+		); //control for a focal length
 		const height = 10;
 		const distance = 5;
 		const expected = 6023.529411764706;
@@ -184,6 +280,7 @@ describe('FillRaysInto', () => {
 			TEST_HORIZON_Y,
 			TEST_WALL_HEIGHT,
 			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
 		);
 		const shell = new Float32Array(TEST_RESOLUTION);
 		const expected = raycaster.getViewRays(0);
@@ -208,7 +305,8 @@ describe('castRay', () => {
 			TEST_DISTANCE,
 			TEST_HORIZON_Y,
 			TEST_WALL_HEIGHT,
-			TEST_CAMERA_HEIGHT
+			TEST_CAMERA_HEIGHT,
+			TEST_CELL_SIZE
 		);
 		// create a map interface with one wall that runs from (50, 0) to (50, 100)
 		const start = { x: 50, y: 0 }

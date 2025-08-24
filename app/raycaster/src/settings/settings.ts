@@ -23,4 +23,5 @@ export class Settings implements SettingsInterface {
 	GRID_CELL_SIZE = 4
 	CANVAS_HEIGHT = 640
 	RESOLUTION = 400
+	CELL_SIZE = 2
 }

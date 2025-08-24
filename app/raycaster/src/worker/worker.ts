@@ -53,6 +53,7 @@ onmessage = (e) => {
 			msg.settings.HORIZON_LINE_RATIO * msg.settings.CANVAS_HEIGHT,
 			msg.settings.WALL_HEIGHT,
 			msg.settings.CAMERA_HEIGHT,
+			msg.settings.CELL_SIZE
 		);
 		brightness = new Brightness(msg.settings.MAX_DISTANCE, msg.settings.MAX_BRIGHTNESS);
 		game = new Game(map, batchRenderer, raycaster, brightness, player);
