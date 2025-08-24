@@ -1,5 +1,11 @@
 import { RaycasterInterface } from './interface';
-import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils/utils';
+import {
+	assertIsPositiveInteger,
+	normalizeAngle,
+	assertIsNonNegative,
+	assertIsPositive,
+	assertAreNonNegativeCoordinates
+} from '../utils/utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
@@ -12,17 +18,22 @@ class Raycaster implements RaycasterInterface {
 	private offsets: Array<number>;
 	private fovOffset: number;
 	private bMath: BMath = BMath.getInstance();
+	private currentSlice: Slice
+	private currentRay: Ray
+	private currentGridDistances: Array<number>;
+	private rays: Float32Array;
+	private gridStepCounter: XYGridStepGenerators
 
 	constructor(
 		private resolution: number,
 		private fieldOfView: number,
 		private screenWidth: number,
 		private screenHeight: number,
-		private maxDistance: number = 1000,
+		private maxDistance: number,
 		private horizonY: number,
 		private wallHeight: number,
 		private cameraHeight: number,
-		private rays: Float32Array = new Float32Array(resolution),
+		cellSize: number
 
 	) {
 		/**
@@ -34,37 +45,96 @@ class Raycaster implements RaycasterInterface {
 		if (this.fieldOfView < 0 || this.fieldOfView > FULL_CIRCLE) {
 			throw new Error("Field of view must be between 0 and 2*Math.PI");
 		}
+
 		this.offsets = [];
 		const step = this.fieldOfView / this.resolution;
 		for (let i = this.resolution - step; i >= 0; i--) {
 			this.offsets.push(i * step);
 		}
+
 		this.fovOffset = this.fieldOfView / 2;
 
 		const aspectRatio = screenWidth / screenHeight;
 		const verticalFOV = 2 * Math.atan(Math.tan(this.fieldOfView / 2) / aspectRatio);
 
 		this.focalLength = this.screenWidth / (2 * Math.tan(verticalFOV / 2));
+		this.currentRay = new Ray()
+		this.currentSlice = {
+			distance: -1,
+			intersection: { x: -1, y: -1 },
+			color: ColorName.NONE,
+			gridHits: []
+		}
+		this.currentGridDistances = new Array<number>
+		this.gridStepCounter = new XYGridStepGenerators(cellSize)
+		this.rays = new Float32Array(resolution)
 	}
 
-	castRay(origin: Coordinates, angle: number, walls: WallInterface[], gridLines: Array<LineSegment>): Slice {
-		const ray = new Ray(origin, angle);
-		ray.findClosestHit(walls);
-		const distance = ray.wallDistance > 0 ? ray.wallDistance : this.maxDistance;
-		const intersection = ray.wallIntersection;
-		const color = ray.wallColor;
-		const gridHits = ray.gridHits(gridLines, distance);
-		return {
-			distance,
-			intersection,
-			color,
-			gridHits
-		};
+	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
+		assertAreNonNegativeCoordinates(origin)
+		this.currentRay.setUp(origin, angle)
+		this.currentRay.findClosestHit(walls);
+		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
+		this.currentSlice.distance = distance
+		this.currentSlice.intersection = this.currentRay.wallIntersection;
+		this.currentSlice.gridHits = this.getGrid(origin, angle, distance)
+		this.currentSlice.color = this.currentRay.wallColor;
+		return this.currentSlice
+	}
+	/**
+	 * This routine takes in the origin and angle for the point of view as well as a maximum distance
+	 * and returns an array of numbers which are the distances of the floor grid lines visible from that slice
+	 * **/
+	private getGrid(origin: Coordinates, angle: number, maxDistance: number): Array<number> {
+		/**
+		 * preconditions
+		 * angle is between 0 and 2pi inclusive
+		 * maximum distance is positive
+		 * both the x and y coordinates are non-negative
+		 **/
+		assertAreNonNegativeCoordinates(origin)
+		angle = normalizeAngle(angle)
+		assertIsPositive(maxDistance)
+		// initialize the grid Step counter
+		this.gridStepCounter.init(origin, angle)
+		//reset the grid distances array
+		this.currentGridDistances.length = 0
+
+		let reachedEnd = false;
+		while (!reachedEnd) {
+			// currentDistance is the minimum of the current x and y steps
+			const currentDistance = Math.min(this.gridStepCounter.peekX(), this.gridStepCounter.peekY())
+			// check for the break condition
+			// is not valid (such as exceeding maxDistance), go straight to end of method
+			if (currentDistance <= 0 || currentDistance > maxDistance) {
+				reachedEnd = true
+			} else {
+				// otherwise append currentDistance to the grid distances, this is the key alteration
+				this.currentGridDistances.push(currentDistance)
+				// if currentX = currentY, then it's a corner, and advance both
+				if (
+					this.gridStepCounter.peekX() === this.gridStepCounter.peekY()
+				) {
+					this.gridStepCounter.advanceX()
+					this.gridStepCounter.advanceY()
+				} else if (
+					// if current X is less than current Y, advance the x value
+					this.gridStepCounter.peekX() < this.gridStepCounter.peekY()
+				) {
+					this.gridStepCounter.advanceX();
+				} else {
+					// if current Y is less than current X, advance current Y
+					this.gridStepCounter.advanceY();
+				}
+			}
+		}
+
+		return this.currentGridDistances
 	}
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
 		for (let i = 0; i < this.resolution; i++) {
-			rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
+			rays[i] = normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
 		}
 	}
 
@@ -122,21 +192,11 @@ class Raycaster implements RaycasterInterface {
 		}
 		return 100 * (1 - (distance / this.maxDistance));
 	}
-
-	private normalizeAngle(angle: number): number {
-		if (angle < 0) {
-			return angle + FULL_CIRCLE;
-		}
-		if (angle > FULL_CIRCLE) {
-			return angle - FULL_CIRCLE;
-		}
-		return angle;
-	}
 }
 
 class Ray {
-	private x1: number
-	private x2: number
+	private x1: number = -1
+	private x2: number = -1
 	private x3: number = -1
 	private x4: number = -1
 	private y1: number = -1
@@ -147,14 +207,20 @@ class Ray {
 	private _wallDistance: number | null = -1
 	private _wallColor: ColorName = ColorName.NONE
 	private _wallIntersection: Coordinates = { x: -1, y: -1 }
+	private offset: number = 10
+	private bMath: BMath = BMath.getInstance()
 
-	constructor(position: Coordinates, angle: number) {
-		const { x, y } = position
-		this.x1 = x
-		this.y1 = y
-		const offset = 10
-		this.x2 = this.x1 + (offset * Math.cos(angle))
-		this.y2 = this.y1 + (offset * Math.sin(angle))
+	/**
+	 * this method calculates the values of x1, y1, x2, and y2 based on position and angle passed here.
+	 * It's an alternative to instantiating a whole new class on every tick.
+	 * **/
+	setUp(origin: Coordinates, angle: number): void {
+		// set x1 and y1 to the origin coordinates (argument)
+		this.x1 = origin.x
+		this.y1 = origin.y
+		// use the offset and angle to determine x2 and x3
+		this.x2 = this.x1 + (this.offset * this.bMath.cos(angle))
+		this.y2 = this.y1 + (this.offset * this.bMath.sin(angle))
 	}
 
 	findClosestHit(walls: Array<WallInterface>): void {
@@ -180,17 +246,6 @@ class Ray {
 
 	get wallColor(): ColorName {
 		return this._wallColor
-	}
-
-	gridHits(gridLines: Array<LineSegment>, maxDistance: number): Array<number> {
-		const result: Array<number> = new Array<number>()
-		for (let i = 0; i < gridLines.length; i++) {
-			const intersection = this.findIntersection(gridLines[i])
-			if (intersection !== null && intersection.distance < maxDistance) {
-				result.push(intersection.distance)
-			}
-		}
-		return result
 	}
 
 	private findIntersection(lineSegment: LineSegment): Intersection | null {
@@ -296,6 +351,149 @@ class Ray {
 			}
 		}
 		return result
+	}
+}
+
+/** this class  is to simplifies and coordinates the step counting for the grid so wont have to track the X stack and Y stacks separately **/
+class XYGridStepGenerators {
+	private _xStep: GridStepGenerator;
+	private _yStep: GridStepGenerator;
+	private bMath: BMath;
+
+	/**
+	 *Constructor uses cellSize because that is the invariant from which calculations are derived
+	 * creates a class as if intialized with an angle of 0 and coordinates of (0,0)
+	 * */
+	constructor(cellSize: number) {
+		// precondition: cellSize is a positive integer
+		assertIsPositiveInteger(cellSize)
+		// passes cell size to its members
+		this._xStep = new GridStepGenerator(cellSize);
+		this._yStep = new GridStepGenerator(cellSize);
+		// (0,0) origin and 0 degree angle
+		this._xStep.init(0, 1);
+		this._yStep.init(0, 0);
+		//use bMath class for caching and consistency
+		this.bMath = BMath.getInstance()
+	}
+
+	/**
+	 * sets the x and y steps based on the input location and angle
+	 * if heap memory wasn't an issue, these would be constructor arguments
+	**/
+	init(origin: Coordinates, angle: number): void {
+		//inputs coordinates object and number for angle
+		/**
+		 * preconditions: coordinates are both non negative
+		 * angle is greater or equal than 0 and less than or equal to 2 Pi (FULL_CIRCLE)
+		 */
+		angle = normalizeAngle(angle)
+		assertAreNonNegativeCoordinates(origin)
+		// init x-step with x and cos of angle
+		this._xStep.init(origin.x, this.bMath.cos(angle))
+		// init y-step with y and sin of angle
+		this._yStep.init(origin.y, this.bMath.sin(angle))
+	}
+
+	/**
+	 * returns the current step value on the x axis
+	 */
+	peekX(): number {
+		return this._xStep.peek()
+	}
+
+	/**
+	 * returns the current step value on the y axis
+	 */
+	peekY(): number {
+		//hides how that X is gotten
+		return this._yStep.peek()
+	}
+
+	/**
+	 * advances the current x value along the x axis according the angle passed in init()
+	 */
+	advanceX(): void {
+		this._xStep.advance()
+	}
+
+	/**
+	 * advances the current x value along the y axis according the angle passed in init()
+	 */
+	advanceY(): void {
+		this._yStep.advance()
+	}
+}
+/**
+ * contains the current location along an x or y axis, the step to iterated it, and the means to instantiate and advance to the next step
+ * **/
+class GridStepGenerator {
+	private _cellSize: number
+	private _gridLocation: number
+	private _step: number
+
+	/**
+	 * Initiates the object with a cell size, size the cell is constant
+	 * **/
+	constructor(cellSize: number) {
+		//preconsition: cellSize is a positive integer
+		assertIsPositiveInteger(cellSize)
+		this._cellSize = cellSize
+		// gridlocation and step are set by the init() method
+		this._gridLocation = -1
+		this._step = -1
+	}
+	/** 
+	 * Sets the state of the object based on origin location and ratio
+	 * (a directional adjustment, an output of the trigonometric operation on the angle)
+	 *
+	 * If memory allocation wasn't at a premium in this instance, it would be a constructor argument
+	 *  **/
+	init(origin: number, ratio: number): void {
+		//preconditions: origin is nonnegative, and ratio is the output of either a sin or cos function
+		assertIsNonNegative(origin)
+		if (ratio < -1 || ratio > 1) {
+			throw new Error("ratio must be be between -1 and 1 inclusive");
+		}
+
+		// set step and current Location to infinity
+		this._step = Number.POSITIVE_INFINITY;
+		this._gridLocation = Number.POSITIVE_INFINITY;
+		if (ratio !== 0) {
+			// create a temporary variable cellIndx, which is the floor of origin/ cellSize
+			let cellIndx = Math.floor(origin / this._cellSize);
+			// we need to determine the next Grid Location
+			if (ratio > 0) {
+				cellIndx++;
+			}
+			//If there's a verical line decrement cellIndex by one
+			if (ratio < 0 && origin % this._cellSize === 0) {
+				cellIndx--;
+			}
+			// nextGridLocation is the cellIndex times the cell size
+			const nextGridLocation = cellIndx * this._cellSize;
+			// step is the absolute value of cell/directionx
+			this._step = Math.abs(this._cellSize / ratio)
+			// finally, current is (nextGridLocation - origin  location) / ratio
+			this._gridLocation = (nextGridLocation - origin) / ratio
+			// if current x is less than or equal to zero, add a step to it to make it positive
+			if (this._gridLocation <= 0) {
+				this.advance()
+			}
+		}
+	}
+	/**
+	 * Returns the current location
+	 **/
+	peek(): number {
+		return this._gridLocation;
+	}
+
+	/**
+	 * Iterates class to the next location
+	*/
+	advance(): void {
+		this._gridLocation += this._step;
 	}
 }
 
