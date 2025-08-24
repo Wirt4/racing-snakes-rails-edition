@@ -95,9 +95,9 @@ class Raycaster implements RaycasterInterface {
 		assertAreNonNegativeCoordinates(origin)
 		angle = normalizeAngle(angle)
 		assertIsPositive(maxDistance)
-		// initialize the gridStep counter
+		// initialize the grid Step counter
 		this.gridStepCounter.init(origin, angle)
-		//reset the griddistances array
+		//reset the grid distances array
 		this.currentGridDistances.length = 0
 
 		while (true) {
