@@ -1,5 +1,11 @@
 import { RaycasterInterface } from './interface';
-import { assertIsPositiveInteger, assertIsNonNegative, assertIsPositive } from '../utils/utils';
+import {
+	assertIsPositiveInteger,
+	normalizeAngle,
+	assertIsNonNegative,
+	assertIsPositive,
+	assertAreNonNegativeCoordinates
+} from '../utils/utils';
 import { FULL_CIRCLE, NINETY_DEGREES } from '../geometry/constants';
 import { BMath } from '../boundedMath/bmath';
 import { Slice } from '../slice/interface';
@@ -65,6 +71,7 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
+		assertAreNonNegativeCoordinates(origin)
 		this.currentRay.setUp(origin, angle)
 		this.currentRay.findClosestHit(walls);
 		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
@@ -85,15 +92,9 @@ class Raycaster implements RaycasterInterface {
 		 * maximum distance is positive
 		 * both the x and y coordinates are non-negative
 		 **/
-		if (angle < 0 || angle > FULL_CIRCLE) {
-			throw ("angle must be within 0 and 2Pi")
-		}
-		if (maxDistance <= 0) {
-			throw ("maxDistance must be positive")
-		}
-		if (origin.x < 0 || origin.y < 0) {
-			throw ("coordinates must be non-negative")
-		}
+		assertAreNonNegativeCoordinates(origin)
+		angle = normalizeAngle(angle)
+		assertIsPositive(maxDistance)
 		// initialize the gridStep counter
 		this.gridStepCounter.init(origin, angle)
 		//reset the griddistances array
@@ -133,7 +134,7 @@ class Raycaster implements RaycasterInterface {
 
 	fillRaysInto(rays: Float32Array, viewerAngle: number): void {
 		for (let i = 0; i < this.resolution; i++) {
-			rays[i] = this.normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
+			rays[i] = normalizeAngle(viewerAngle - this.fovOffset + this.offsets[i]);
 		}
 	}
 
@@ -193,16 +194,6 @@ class Raycaster implements RaycasterInterface {
 			return 0;
 		}
 		return 100 * (1 - (distance / this.maxDistance));
-	}
-
-	private normalizeAngle(angle: number): number {
-		if (angle < 0) {
-			return angle + FULL_CIRCLE;
-		}
-		if (angle > FULL_CIRCLE) {
-			return angle - FULL_CIRCLE;
-		}
-		return angle;
 	}
 }
 
@@ -379,9 +370,7 @@ class XYGridStepGenerators {
 	 * */
 	constructor(cellSize: number) {
 		// precondition: cellSize is a positive integer
-		if (Math.floor(cellSize) !== cellSize || cellSize <= 0) {
-			throw new Error("cellSize must be a positive integer")
-		}
+		assertIsPositiveInteger(cellSize)
 		// passes cell size to its members
 		this._xStep = new GridStepGenerator(cellSize);
 		this._yStep = new GridStepGenerator(cellSize);
@@ -402,12 +391,8 @@ class XYGridStepGenerators {
 		 * preconditions: coordinates are both non negative
 		 * angle is greater or equal than 0 and less than or equal to 2 Pi (FULL_CIRCLE)
 		 */
-		if (angle < 0 || angle > 2 * Math.PI) {
-			throw new Error("Invalid input: angle must be between 0 and 2*Pi inclusive")
-		}
-		if (origin.x < 0 || origin.y < 0) {
-			throw new Error("invalid input: coordinates must be nonnegative")
-		}
+		angle = normalizeAngle(angle)
+		assertAreNonNegativeCoordinates(origin)
 		// init x-step with x and cos of angle
 		this._xStep.init(origin.x, this.bMath.cos(angle))
 		// init y-step with y and sin of angle
@@ -454,6 +439,8 @@ class GridStepGenerator {
 	 * Initiates the object with a cell size, size the cell is constant
 	 * **/
 	constructor(cellSize: number) {
+		//preconsition: cellSize is a positive integer
+		assertIsPositiveInteger(cellSize)
 		this._cellSize = cellSize
 		// gridlocation and step are set by the init() method
 		this._gridLocation = -1
@@ -466,15 +453,13 @@ class GridStepGenerator {
 	 * If memory allocation wasn't at a premium in this instance, it would be a constructor argument
 	 *  **/
 	init(origin: number, ratio: number): void {
-		if (origin < 0) {
-			throw new Error("origin may not be negative");
-		}
-		// ratio is the output of either a sin or cos function
+		//preconditions: origin is nonnegative, and ratio is the output of either a sin or cos function
+		assertIsNonNegative(origin)
 		if (ratio < -1 || ratio > 1) {
 			throw new Error("ratio must be be between -1 and 1 inclusive");
 		}
 
-		// set step and currentLocation to infinity
+		// set step and current Location to infinity
 		this._step = Number.POSITIVE_INFINITY;
 		this._gridLocation = Number.POSITIVE_INFINITY;
 		// if ratio is 0, then return
