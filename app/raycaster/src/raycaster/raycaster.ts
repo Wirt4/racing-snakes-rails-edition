@@ -146,9 +146,6 @@ class Raycaster implements RaycasterInterface {
 		 * The length of the array is equal to the resolution
 		 * the array is arranged from 
 		 */
-		if (viewerAngle < 0 || viewerAngle > FULL_CIRCLE) {
-			throw ('invalid angle')
-		}
 		this.fillRaysInto(this.rays, viewerAngle);
 		return this.rays;
 	}
