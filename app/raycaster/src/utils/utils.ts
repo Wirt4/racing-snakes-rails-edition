@@ -55,7 +55,6 @@ function normalizeAngle(angle: number): number {
  * */
 function assertAreNonNegativeCoordinates(coordinates: Coordinates): void {
 	try {
-		//assert x and y are non-negative
 		assertIsNonNegative(coordinates.x)
 		assertIsNonNegative(coordinates.y)
 	}
