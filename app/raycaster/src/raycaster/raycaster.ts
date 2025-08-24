@@ -355,7 +355,6 @@ class Ray {
 }
 
 /** this class  is to simplifies and coordinates the step counting for the grid so wont have to track the X stack and Y stacks separately **/
-
 class XYGridStepGenerators {
 	private _xStep: GridStepGenerator;
 	private _yStep: GridStepGenerator;
@@ -432,6 +431,7 @@ class GridStepGenerator {
 	private _cellSize: number
 	private _gridLocation: number
 	private _step: number
+
 	/**
 	 * Initiates the object with a cell size, size the cell is constant
 	 * **/
@@ -459,30 +459,27 @@ class GridStepGenerator {
 		// set step and current Location to infinity
 		this._step = Number.POSITIVE_INFINITY;
 		this._gridLocation = Number.POSITIVE_INFINITY;
-		// if ratio is 0, then return
-		if (ratio == 0) {
-			return;
-		}
-		// create a temporary variable cellIndx, which is the floor of origin/ cellSize
-		let cellIndx = Math.floor(origin / this._cellSize);
-		// we need to determine nextGridLocation
-		// if ratio is positive increase cellIndex by one
-		if (ratio > 0) {
-			cellIndx++;
-		}
-		//If there's a verical line decrement cellIndex by one
-		if (ratio < 0 && origin % this._cellSize === 0) {
-			cellIndx--;
-		}
-		// nextGridLocation is the cellIndex times the cell size
-		const nextGridLocation = cellIndx * this._cellSize;
-		// step is the absolute value of cell/directionx
-		this._step = Math.abs(this._cellSize / ratio)
-		// finally, current is (nextGridLocation - origin  location) / ratio
-		this._gridLocation = (nextGridLocation - origin) / ratio
-		// if current x is less than or equal to zero, add a step to it to make it positive
-		if (this._gridLocation <= 0) {
-			this.advance()
+		if (ratio !== 0) {
+			// create a temporary variable cellIndx, which is the floor of origin/ cellSize
+			let cellIndx = Math.floor(origin / this._cellSize);
+			// we need to determine the next Grid Location
+			if (ratio > 0) {
+				cellIndx++;
+			}
+			//If there's a verical line decrement cellIndex by one
+			if (ratio < 0 && origin % this._cellSize === 0) {
+				cellIndx--;
+			}
+			// nextGridLocation is the cellIndex times the cell size
+			const nextGridLocation = cellIndx * this._cellSize;
+			// step is the absolute value of cell/directionx
+			this._step = Math.abs(this._cellSize / ratio)
+			// finally, current is (nextGridLocation - origin  location) / ratio
+			this._gridLocation = (nextGridLocation - origin) / ratio
+			// if current x is less than or equal to zero, add a step to it to make it positive
+			if (this._gridLocation <= 0) {
+				this.advance()
+			}
 		}
 	}
 	/**
