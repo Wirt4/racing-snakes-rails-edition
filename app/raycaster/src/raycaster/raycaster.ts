@@ -258,20 +258,6 @@ class Ray {
 	get wallColor(): ColorName {
 		return this._wallColor
 	}
-
-	gridHits(gridLines: Array<LineSegment>, maxDistance: number): Array<number> {
-		//truncate the gridDistances array 
-		// Not initiating a new one so not putting heap pressure on Spidermonkey
-		this.gridDistances.length = 0
-		for (let i = 0; i < gridLines.length; i++) {
-			const intersection = this.findIntersection(gridLines[i])
-			if (intersection !== null && intersection.distance < maxDistance) {
-				this.gridDistances.push(intersection.distance)
-			}
-		}
-		return this.gridDistances
-	}
-
 	private findIntersection(lineSegment: LineSegment): Intersection | null {
 		this.x3 = lineSegment.start.x
 		this.x4 = lineSegment.end.x
@@ -377,8 +363,19 @@ class Ray {
 		return result
 	}
 }
+
+//Class as ADT: essentially a pair of stacks
+//
+//peekX
+//peekY
+//
+//popX
+//popY
+//
+//Central Purpose is to simplify and coordinate the step counting so wont have to track the X stack and Y stacks separately 
+//
 /**
- * containts the current location along an x or y axis, the step to iterated it, and the means to instantiate and advance to the next step
+ * contains the current location along an x or y axis, the step to iterated it, and the means to instantiate and advance to the next step
  * **/
 class GridStepCounter {
 	private _cellSize: number
