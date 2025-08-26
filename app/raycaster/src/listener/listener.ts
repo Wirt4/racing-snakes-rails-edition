@@ -29,9 +29,10 @@ class Listener {
 		this.lastDirection = DirectionRecord.NONE;
 	}
 
-	/**derives the direction based on the click location 
-	 * and posts it to the worker
-	* */
+	/**
+	 * Derives the direction based on the click location 
+	 * and posts it to the worker.
+	 */
 	click(x: number, windowWidth: number) {
 
 		assertIsPositiveInteger(x);
