@@ -29,7 +29,7 @@ window.addEventListener("keyup", (e: KeyboardEvent) => {
 });
 
 /**
- * Handles mouse or tab - based events
+ * Handles mouse or tap - based events
  * **/
 window.addEventListener("click", (e: MouseEvent) => {
 	// mouse releage not required because click records a full mouse down then mouse up
