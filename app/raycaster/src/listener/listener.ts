@@ -1,4 +1,5 @@
 import { Directions } from '../controls/directions';
+import { assertIsPositive } from '../utils/utils'
 
 const type = "turn";
 
@@ -26,6 +27,24 @@ class Listener {
 			return;
 		}
 		this.lastDirection = DirectionRecord.NONE;
+	}
+	/**derives the direction based on the click location 
+	 * and posts it to the worker
+	* */
+
+	// click 
+	click(x: number, windowWidth: number) {
+		// hides: 
+		// -- how the turn direction is derived from the click location
+		// takes in the coordinates of the mouse click
+		// information hidden
+		// preconditions:
+		// the game space is centered in the window
+		assertIsPositive(x);
+		assertIsPositive(windowWidth);
+		// x and windowWidth are positive integers
+		// postconditions:
+		//		the worker receives a directional message
 	}
 
 	private isLastDirection(keystroke: string): boolean {
