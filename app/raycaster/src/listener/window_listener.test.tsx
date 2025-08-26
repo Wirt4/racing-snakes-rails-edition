@@ -9,62 +9,31 @@ describe('click tests', () => {
 	let mockWorker: Worker;
 	let listener: Listener;
 	let spy: PostSpy;
-	let assertThrows: Function;
-	let assertDoesntThrow: Function;
-	let assertWrapper: Function;
 
 	beforeEach(() => {
 		mockWorker = createMockWorker()
 		spy = createSpy(mockWorker)
 		listener = new Listener(mockWorker)
-
-		/***
-		 * a couple of DRY functions to encapsulate callbacks
-		 * */
-		assertWrapper = (x: number, width: number) => {
-			return () => { listener.click(x, width) }
-		}
-
-		/**
-		 * encapsulation of confirming method throws
-		 */
-		assertThrows = (x: number, width: number) => {
-			//calls click inside an arrow method
-			const wrapper = assertWrapper(x, width)
-			//asserts if it throws
-			expect(wrapper).toThrow()
-		}
-
-		/**
-		 * encapsulation of confirming method does not throw
-		 */
-		assertDoesntThrow = (x: number, width: number) => {
-			//calls click inside an arrow method
-			const wrapper = assertWrapper(x, width)
-			//asserts if it throws
-			expect(wrapper).not.toThrow()
-
-		}
 	});
 
 	test('calling click with x or width less than 0 should throw', () => {
-		assertThrows(-1, 100)
-		assertThrows(10, -1)
+		assertClickThrows(listener, -1, 100)
+		assertClickThrows(listener, 10, -1)
 	});
 
 	test('calling click with x greater than width should throw', () => {
-		assertThrows(40, 39)
+		assertClickThrows(listener, 40, 39)
 	});
+
 	test("calling click with x less than 1/2 width should post a turn left message", () => {
 		// confirm calling the method with x: 9 and width: 100 does not throw
 		const xCoordinate = 9;
 		const width = 100;
-		assertDoesntThrow(xCoordinate, width)
-		// call the method with x: 9 and width :100
+		assertClickDoesntThrow(listener, xCoordinate, width)
 		listener.click(xCoordinate, width)
 		assertTurnCalledWith(spy, Directions.LEFT)
-
 	})
+
 	test("calling click with x greater than 1/2 width should post a turn right message", () => {
 		// x is 750
 		const x = 750
@@ -72,12 +41,12 @@ describe('click tests', () => {
 		const width = 1000
 
 		// the method should not throw
-		assertDoesntThrow(x, width)
+		assertClickDoesntThrow(listener, x, width)
 		listener.click(x, width)
 		// assert called with right
 		assertTurnCalledWith(spy, Directions.RIGHT)
-
 	})
+
 	test("when width is odd and x is dead center, should default to calling turn right", () => {
 		//width is 6, which is odd if include zero index
 		const width = 6
@@ -85,7 +54,7 @@ describe('click tests', () => {
 		const x = 3
 		//assumes window displays with upper bound inclusive
 		// assert the method doesn't throw
-		assertDoesntThrow(x, width)
+		assertClickDoesntThrow(listener, x, width)
 		// call the method
 		listener.click(x, width)
 		// assert turn is called with right
@@ -114,9 +83,7 @@ describe('Keydown Tests', () => {
 		const keyStroke = 'ArrowLeft';
 		listener.keydown(keyStroke);
 		listener.keydown(keyStroke);
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }]
-		]);
+		assertMutlipleTurnsCalledWith(postMessageSpy, [Directions.LEFT])
 	})
 
 	test('should turn right', () => {
@@ -201,3 +168,32 @@ function assertMutlipleTurnsCalledWith(spy: PostSpy, directions: Array<Direction
 	// assert the spy's call array equals the payloads
 	expect(spy.mock.calls).toEqual(payloads)
 }
+
+
+/***
+ * a couple of DRY functions to encapsulate callbacks
+ * */
+function assertClickWrapper(listener: Listener, x: number, width: number): () => void {
+	return () => { listener.click(x, width) }
+}
+
+/**
+ * encapsulation of confirming method throws
+ */
+function assertClickThrows(listener: Listener, x: number, width: number): void {
+	//calls click inside an arrow method
+	const wrapper = assertClickWrapper(listener, x, width)
+	//asserts if it throws
+	expect(wrapper).toThrow()
+}
+
+/**
+ * encapsulation of confirming method does not throw
+ */
+function assertClickDoesntThrow(listener: Listener, x: number, width: number): void {
+	//calls click inside an arrow method
+	const wrapper = assertClickWrapper(listener, x, width)
+	//asserts if it throws
+	expect(wrapper).not.toThrow()
+}
+
