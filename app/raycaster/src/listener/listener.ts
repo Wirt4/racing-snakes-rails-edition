@@ -1,5 +1,5 @@
 import { Directions } from '../controls/directions';
-import { assertIsPositive } from '../utils/utils'
+import { assertIsPositiveInteger } from '../utils/utils'
 
 const type = "turn";
 
@@ -40,9 +40,13 @@ class Listener {
 		// information hidden
 		// preconditions:
 		// the game space is centered in the window
-		assertIsPositive(x);
-		assertIsPositive(windowWidth);
-		// x and windowWidth are positive integers
+		// 		// x and windowWidth are positive integers
+
+		assertIsPositiveInteger(x);
+		assertIsPositiveInteger(windowWidth);
+		if (x > windowWidth) {
+			throw new Error('x coordinate may not be wider than window width')
+		}
 		// postconditions:
 		//		the worker receives a directional message
 	}
