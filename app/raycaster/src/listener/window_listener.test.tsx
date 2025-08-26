@@ -78,7 +78,19 @@ describe('click tests', () => {
 		assertTurnCalledWith(spy, Directions.RIGHT)
 
 	})
-	// when width is odd and x is dead center, should default to calling turn right
+	test("when width is odd and x is dead center, should default to calling turn right", () => {
+		//width is 6, which is odd if include zero index
+		const width = 6
+		//x is 3, which puts coordinates 0, 1, 2, on one side and 4, 5, 6 on the other
+		const x = 3
+		//assumes window displays with upper bound inclusive
+		// assert the method doesn't throw
+		assertDoesntThrow(x, width)
+		// call the method
+		listener.click(x, width)
+		// assert turn is called with right
+		assertTurnCalledWith(spy, Directions.RIGHT)
+	})
 })
 
 describe('Keydown Tests', () => {
