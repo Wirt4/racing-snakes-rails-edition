@@ -47,6 +47,7 @@ class Listener {
 		if (x > windowWidth) {
 			throw new Error('x coordinate may not be wider than window width')
 		}
+		this.worker.postMessage({ direction: Directions.LEFT })
 		// postconditions:
 		//		the worker receives a directional message
 	}
