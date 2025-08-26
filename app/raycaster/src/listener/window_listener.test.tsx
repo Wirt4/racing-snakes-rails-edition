@@ -35,9 +35,7 @@ describe('click tests', () => {
 	})
 
 	test("calling click with x greater than 1/2 width should post a turn right message", () => {
-		// x is 750
 		const x = 750
-		// width is 1000
 		const width = 1000
 
 		// the method should not throw

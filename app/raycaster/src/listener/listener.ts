@@ -34,7 +34,6 @@ class Listener {
 	 * and posts it to the worker.
 	 */
 	click(x: number, windowWidth: number) {
-
 		assertIsPositiveInteger(x);
 		assertIsPositiveInteger(windowWidth);
 		if (x > windowWidth) {
