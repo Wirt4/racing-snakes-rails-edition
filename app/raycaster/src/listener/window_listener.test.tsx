@@ -47,7 +47,17 @@ describe('click tests', () => {
 	test('calling click with x greater than width should throw', () => {
 		assertThrows(40, 39)
 	});
-	// calling click with x less than 1/2 width should post a turn left message
+	test("calling click with x less than 1/2 width should post a turn left message", () => {
+		// confirm calling the method with x: 9 and width: 100 does not throw
+		const xCoordinate = 9;
+		const width = 100;
+		expect(() => listener.click(xCoordinate, width)).not.toThrow()
+		// call the method with x: 9 and width :100
+		//confirm the spy was called with type "turn"
+		//confirm the spy was called with turn: "left"
+		expect(spy).toHaveBeenCalledWith(expect.objectContaining({ direction: Directions.LEFT }))
+
+	})
 	// calling click with x greater than 1/2 width should post a turn right message
 	// when width is odd and x is dead center, should default to calling turn right
 })
