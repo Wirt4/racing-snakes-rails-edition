@@ -47,9 +47,9 @@ class Listener {
 		if (x > windowWidth) {
 			throw new Error('x coordinate may not be wider than window width')
 		}
-		this.worker.postMessage({ direction: Directions.LEFT })
 		// postconditions:
 		//		the worker receives a directional message
+		this.postTurn(DirectionRecord.LEFT)
 	}
 
 	private isLastDirection(keystroke: string): boolean {
@@ -72,8 +72,24 @@ class Listener {
 
 	private postIfDirectionChanged(direction: DirectionRecord): void {
 		if (direction !== this.lastDirection) {
-			this.worker.postMessage({ type, direction });
+			this.postTurn(direction)
 		}
+	}
+
+	/**
+	 * encapsulates a post for a turn direction
+	 */
+	private postTurn(direction: DirectionRecord) {
+		//assert direction is valid type
+		if (!Object.values(DirectionRecord).includes(direction as DirectionRecord)) {
+			throw new Error(`!{direction} is invalid`)
+		}
+		// exit early if no direction
+		if (direction === DirectionRecord.NONE) {
+			return;
+		}
+		//call worker with type "turn" and appropriate direction
+		this.worker.postMessage({ type: 'turn', direction });
 	}
 }
 
