@@ -78,7 +78,7 @@ class Listener {
 	private postTurn(direction: DirectionRecord) {
 		//assert direction is valid type
 		if (!Object.values(DirectionRecord).includes(direction as DirectionRecord)) {
-			throw new Error(`!{direction} is invalid`)
+			throw new Error(`${direction} is invalid`)
 		}
 		// exit early if no direction
 		if (direction === DirectionRecord.NONE) {
