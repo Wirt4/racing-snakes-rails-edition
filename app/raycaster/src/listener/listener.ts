@@ -28,28 +28,23 @@ class Listener {
 		}
 		this.lastDirection = DirectionRecord.NONE;
 	}
+
 	/**derives the direction based on the click location 
 	 * and posts it to the worker
 	* */
-
-	// click 
 	click(x: number, windowWidth: number) {
-		// hides: 
-		// -- how the turn direction is derived from the click location
-		// takes in the coordinates of the mouse click
-		// information hidden
-		// preconditions:
-		// the game space is centered in the window
-		// 		// x and windowWidth are positive integers
 
 		assertIsPositiveInteger(x);
 		assertIsPositiveInteger(windowWidth);
 		if (x > windowWidth) {
 			throw new Error('x coordinate may not be wider than window width')
 		}
-		// postconditions:
-		//		the worker receives a directional message
-		this.postTurn(DirectionRecord.LEFT)
+		// if x is less than the halfway mark, it's a left turn, otherwise it's a right turn
+		if (x < Math.floor(windowWidth / 2)) {
+			this.postTurn(DirectionRecord.LEFT)
+		} else {
+			this.postTurn(DirectionRecord.RIGHT)
+		}
 	}
 
 	private isLastDirection(keystroke: string): boolean {
