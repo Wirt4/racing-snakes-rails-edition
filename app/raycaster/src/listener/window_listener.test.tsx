@@ -10,38 +10,46 @@ describe('click tests', () => {
 	let listener: Listener;
 	let spy: PostSpy;
 	let assertThrows: Function;
-
-	//assert throws
-	//hides: callback nonsense, 
-	//preconditions: listener is instantiated
-	//postconditions assert...toThrow is called
-	//outputs - none
-	//inputs - x and width arguments, both numbers
-	/***
-	 * nicety
-	 */
+	let assertDoesntThrow: Function;
+	let assertWrapper: Function;
 
 	beforeEach(() => {
 		mockWorker = createMockWorker()
 		spy = createSpy(mockWorker)
 		listener = new Listener(mockWorker)
+
 		/***
-		 * a DRY function to encapsulate callbacks
+		 * a couple of DRY functions to encapsulate callbacks
 		 * */
+		assertWrapper = (x: number, width: number) => {
+			return () => { listener.click(x, width) }
+		}
+
+		/**
+		 * encapsulation of confirming method throws
+		 */
 		assertThrows = (x: number, width: number) => {
 			//calls click inside an arrow method
-			const wrapper = () => { listener.click(x, width) }
+			const wrapper = assertWrapper(x, width)
 			//asserts if it throws
 			expect(wrapper).toThrow()
 		}
 
+		/**
+		 * encapsulation of confirming method does not throw
+		 */
+		assertDoesntThrow = (x: number, width: number) => {
+			//calls click inside an arrow method
+			const wrapper = assertWrapper(x, width)
+			//asserts if it throws
+			expect(wrapper).not.toThrow()
+
+		}
 	});
 
 	test('calling click with x or width less than 0 should throw', () => {
 		assertThrows(-1, 100)
 		assertThrows(10, -1)
-		expect(() => listener.click(-1, 100)).toThrow()
-		expect(() => listener.click(10, -1)).toThrow()
 	});
 
 	test('calling click with x greater than width should throw', () => {
@@ -51,14 +59,25 @@ describe('click tests', () => {
 		// confirm calling the method with x: 9 and width: 100 does not throw
 		const xCoordinate = 9;
 		const width = 100;
-		expect(() => listener.click(xCoordinate, width)).not.toThrow()
+		assertDoesntThrow(xCoordinate, width)
 		// call the method with x: 9 and width :100
-		//confirm the spy was called with type "turn"
-		//confirm the spy was called with turn: "left"
-		expect(spy).toHaveBeenCalledWith(expect.objectContaining({ direction: Directions.LEFT }))
+		listener.click(xCoordinate, width)
+		assertTurnCalledWith(spy, Directions.LEFT)
 
 	})
-	// calling click with x greater than 1/2 width should post a turn right message
+	test("calling click with x greater than 1/2 width should post a turn right message", () => {
+		// x is 750
+		const x = 750
+		// width is 1000
+		const width = 1000
+
+		// the method should not throw
+		assertDoesntThrow(x, width)
+		listener.click(x, width)
+		// assert called with right
+		assertTurnCalledWith(spy, Directions.RIGHT)
+
+	})
 	// when width is odd and x is dead center, should default to calling turn right
 })
 
@@ -76,10 +95,7 @@ describe('Keydown Tests', () => {
 	test('should turn left', () => {
 		const keyStroke = 'ArrowLeft';
 		listener.keydown(keyStroke);
-		expect(mockWorker.postMessage).toHaveBeenCalledWith({
-			type: 'turn',
-			direction: Directions.LEFT
-		});
+		assertTurnCalledWith(postMessageSpy, Directions.LEFT)
 	})
 
 	test('if user hits the same key twice, just call the worker post once', () => {
@@ -94,32 +110,24 @@ describe('Keydown Tests', () => {
 	test('should turn right', () => {
 		const keyStroke = 'ArrowRight';
 		listener.keydown(keyStroke);
-		expect(mockWorker.postMessage).toHaveBeenCalledWith({
-			type: 'turn',
-			direction: Directions.RIGHT
-		});
+		assertTurnCalledWith(postMessageSpy, Directions.RIGHT)
 	})
 
 	test('should turn right after turning left', () => {
 		listener.keydown('ArrowLeft');
 		listener.keydown('ArrowRight');
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }],
-			[{ type: 'turn', direction: Directions.RIGHT }]
-		]);
+		assertMutlipleTurnsCalledWith(postMessageSpy, [Directions.LEFT, Directions.RIGHT])
 	})
 
 	test('should not turn if the same key is pressed twice', () => {
 		listener.keydown('ArrowLeft');
 		listener.keydown('ArrowLeft');
-		expect(postMessageSpy.mock.calls).toEqual([
-			[{ type: 'turn', direction: Directions.LEFT }]
-		]);
-	})
+		assertMutlipleTurnsCalledWith(postMessageSpy, [Directions.LEFT])
+	});
 
 	test('shoult not accept any keys other than ArrowLeft or ArrowRight', () => {
 		listener.keydown('a');
-		expect(mockWorker.postMessage).not.toHaveBeenCalled();
+		expect(postMessageSpy).not.toHaveBeenCalled();
 	})
 
 	test('can turn left again after releasing arrow left key', () => {
@@ -127,14 +135,14 @@ describe('Keydown Tests', () => {
 		listener.keydown(keyStroke);
 		listener.keyup(keyStroke);
 		listener.keydown(keyStroke);
-		expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
+		expect(postMessageSpy).toHaveBeenCalledTimes(2);
 	})
 
 	test('the keyups need to match', () => {
 		listener.keydown('ArrowLeft');
 		listener.keyup('ArrowRight');
 		listener.keydown('ArrowLeft');
-		expect(mockWorker.postMessage).toHaveBeenCalledTimes(1);
+		expect(postMessageSpy).toHaveBeenCalledTimes(1);
 	})
 })
 
@@ -160,5 +168,24 @@ function createSpy(worker: Worker): PostSpy {
 	return jest.spyOn(worker, methodName);
 }
 
+/**
+ * determines if the spy has been called with correct direction and invariant arguments
+ * **/
+function assertTurnCalledWith(spy: PostSpy, direction: Directions): void {
+	//create the payload
+	const payload = { type: "turn", direction }
+	//expect that the spy was called with the payload
+	expect(spy).toHaveBeenCalledWith(payload)
+}
 
-
+/**
+ * given an array of directions, this method checks them with the call record of the spy in order
+ */
+function assertMutlipleTurnsCalledWith(spy: PostSpy, directions: Array<Directions>): void {
+	//build an array of payloads
+	const payloads = directions.map((direction) => {
+		return [{ type: "turn", direction }]
+	})
+	// assert the spy's call array equals the payloads
+	expect(spy.mock.calls).toEqual(payloads)
+}
