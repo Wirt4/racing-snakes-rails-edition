@@ -33,19 +33,20 @@ describe('click tests', () => {
 			const wrapper = () => { listener.click(x, width) }
 			//asserts if it throws
 			expect(wrapper).toThrow()
-
 		}
 
 	});
 
-	test('callind click with x or width less than 0 should throw', () => {
+	test('calling click with x or width less than 0 should throw', () => {
 		assertThrows(-1, 100)
 		assertThrows(10, -1)
 		expect(() => listener.click(-1, 100)).toThrow()
 		expect(() => listener.click(10, -1)).toThrow()
-	})
-	//calling click with width equal to 0 should throw
-	//calling click with x greater than width should throw
+	});
+
+	test('calling click with x greater than width should throw', () => {
+		assertThrows(40, 39)
+	});
 	// calling click with x less than 1/2 width should post a turn left message
 	// calling click with x greater than 1/2 width should post a turn right message
 	// when width is odd and x is dead center, should default to calling turn right
