@@ -27,3 +27,11 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 window.addEventListener("keyup", (e: KeyboardEvent) => {
 	listener.keyup(e.key);
 });
+
+/**
+ * Handles mouse or tap - based events
+ * **/
+window.addEventListener("click", (e: MouseEvent) => {
+	// mouse release not required because click records a full mouse down then mouse up
+	listener.click(e.clientX, window.innerWidth);
+});
