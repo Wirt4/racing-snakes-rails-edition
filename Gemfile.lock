@@ -93,6 +93,7 @@ GEM
     debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    device_detector (0.8.2)
     diff-lcs (1.6.2)
     drb (2.2.3)
     erb (5.0.1)
@@ -312,6 +313,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   debug
+  device_detector (~> 0.8.2)
   foreman (~> 0.88.1)
   importmap-rails
   jbuilder
