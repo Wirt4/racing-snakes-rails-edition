@@ -64,3 +64,6 @@ gem 'rspec-rails', '~> 7.1'
 gem 'tailwindcss-rails', '~> 4.2'
 
 gem 'foreman', '~> 0.88.1'
+
+# device detector for figuring out if client is desktop or mobile
+gem 'device_detector', '~> 0.8.2'

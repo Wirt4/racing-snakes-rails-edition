@@ -16,9 +16,11 @@
   .play-button {
     @apply bg-pink-500 text-black px-6 py-3 rounded-md text-lg uppercase font-bold shadow-lg hover:bg-pink-400 transition-all duration-200 border-2 border-pink-300 z-10;
   }
+.control-prompt{
+    @apply z-10;
+  }
 }
 
-/*TODO: make scanlines verical to evoke how the rendering is actually done*/
 @layer utilities {
   .scanlines {
     position: relative;
