@@ -10,6 +10,6 @@ RSpec.describe GamesController, type: :controller do
     # call the user_prompt_controls method
     message = controller.user_prompt_controls
     # expect the message to be 'Use Arrow Keys to Turn'
-    expect(message).to equal('Use Arrow Keys to Turn')
+    expect(message).to eq('Use Arrow Keys to Turn')
   end
 end

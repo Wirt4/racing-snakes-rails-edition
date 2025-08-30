@@ -21,7 +21,7 @@ class GamesController < ApplicationController
     #  default message is for mobile
     message = 'Tap to turn'
     #  if the device type is desktop, set the result to a message for arrow keys
-    message = 'Use arrow keys to turn' if client.device_type == 'desktop'
+    message = 'Use Arrow Keys to Turn' if client.device_type == 'desktop'
 
     message
   end
