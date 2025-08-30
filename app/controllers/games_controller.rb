@@ -11,18 +11,24 @@ class GamesController < ApplicationController
   # @return [String] message detailing appropriate user instructions
   def user_prompt_controls
     #      postconditions
-    #        The string is of one of two states:
+    #        The string is of one of three states:
     #         message for desktop-based
-    #         message for tablet based controls
+    #         message for tablet or phone based controls
+    #         empty string for unsupported broswer types
 
     # create a device detector object from the user agent
     client = DeviceDetector.new(request.user_agent)
-    #  default message is for mobile
-    message = 'Tap'
-    #  if the device type is desktop, set the result to a message for arrow keys
-    message = 'Use Arrow Keys' if client.device_type == 'desktop'
-    message += ' to Turn'
-    message
+    device = client.device_type
+    puts device
+    # if the browser if a tablet phone or phablet, then the message is "Tap to Turn"
+    # # (a "phablet" is a marketing term for a larger smart phone)
+    if %w[smartphone tablet phablet].include?(device)
+      'Tap to Turn'
+    elsif device == 'desktop'
+      'Use Arrow Keys to Turn'
+    else
+      ''
+    end
   end
   helper_method :user_prompt_controls
 end

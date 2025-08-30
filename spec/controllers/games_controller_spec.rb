@@ -16,7 +16,7 @@ RSpec.describe GamesController, type: :controller do
   end
   it 'returns a phone-specific controls prompt' do
     # mock a mobile browser
-    phone = 'Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0'
+    phone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1'
     mock_user_agent(phone)
     # call user_prompt controls
     message = controller.user_prompt_controls
@@ -25,7 +25,7 @@ RSpec.describe GamesController, type: :controller do
   end
   it 'returns a tablet-specific controls prompt' do
     # mock a mobile browser
-    tablet = 'Mozilla/5.0 (Android 4.4; Tablet; rv:41.0) Gecko/41.0 Firefox/41.0'
+    tablet = 'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1'
     mock_user_agent(tablet)
     # call user_prompt controls
     message = controller.user_prompt_controls
@@ -36,7 +36,7 @@ RSpec.describe GamesController, type: :controller do
     # mock a smart speaker
     speaker = 'Mozilla/5.0 (Linux; <Android version>) AppleWebKit/537.36 (KHTML, like Gecko)'
     mock_user_agent(speaker)
-    message = conroller.user_prompt_controls
+    message = controller.user_prompt_controls
     # message should be an empty string -- don't want to change types if can help it
     expect(message).to eq('')
   end
