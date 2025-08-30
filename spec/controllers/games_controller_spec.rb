@@ -24,7 +24,7 @@ RSpec.describe GamesController, type: :controller do
     expect(message).to eq('Tap to Turn')
   end
   it 'returns a tablet-specific controls prompt' do
-    # mock a mobile browser
+    # mock a tablet browser
     tablet = 'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1'
     mock_user_agent(tablet)
     # call user_prompt controls
