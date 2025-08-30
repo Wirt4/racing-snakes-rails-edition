@@ -32,4 +32,12 @@ RSpec.describe GamesController, type: :controller do
     # expect the message to be 'Tap to Turn'
     expect(message).to eq('Tap to Turn')
   end
+  it "Does not prompt if it can't recognize the browser" do
+    # mock a smart speaker
+    speaker = 'Mozilla/5.0 (Linux; <Android version>) AppleWebKit/537.36 (KHTML, like Gecko)'
+    mock_user_agent(speaker)
+    message = conroller.user_prompt_controls
+    # message should be an empty string -- don't want to change types if can help it
+    expect(message).to eq('')
+  end
 end
