@@ -19,10 +19,10 @@ class GamesController < ApplicationController
     # create a device detector object from the user agent
     client = DeviceDetector.new(request.user_agent)
     #  default message is for mobile
-    message = 'Tap to turn'
+    message = 'Tap'
     #  if the device type is desktop, set the result to a message for arrow keys
-    message = 'Use Arrow Keys to Turn' if client.device_type == 'desktop'
-
+    message = 'Use Arrow Keys' if client.device_type == 'desktop'
+    message += ' to Turn'
     message
   end
   helper_method :user_prompt_controls
