@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# reqiure the device detector
 require 'device_detector'
 class GamesController < ApplicationController
   def show
