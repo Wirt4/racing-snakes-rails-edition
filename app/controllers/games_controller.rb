@@ -7,28 +7,22 @@ class GamesController < ApplicationController
     # dummy object or Game.find(params[:id])
   end
 
-  # method
+  # Determines the correct user prompt based on device type, helper method to be used in view
+  #
+  # @return [String] message detailing appropriate user instructions
   def user_prompt_controls
-    # information hidden
-    # any detection of user agent or device type
-    # preconditions
-    # --The app is running
-    # --the device_detection gem is installed
-    # postconditions
-    #   The string is of one of two states:
-    #    message for desktop-based
-    #    message for tablet based controls
-    #  # inputs: none
-    #  #get the user agent
-    user_agent = request.user_agent
-    # expect the user agent string displays as the output
-    #  # create a device detector object from the user agent
-    client = DeviceDetector.new(user_agent)
-    #  # create a result message that defaults to mobile
+    #      postconditions
+    #        The string is of one of two states:
+    #         message for desktop-based
+    #         message for tablet based controls
+
+    # create a device detector object from the user agent
+    client = DeviceDetector.new(request.user_agent)
+    #  default message is for mobile
     message = 'Tap to turn'
-    #  # if the device type is desktop, set the result to a message for arrow keys
+    #  if the device type is desktop, set the result to a message for arrow keys
     message = 'Use arrow keys to turn' if client.device_type == 'desktop'
-    # return the result message
+
     message
   end
   helper_method :user_prompt_controls
