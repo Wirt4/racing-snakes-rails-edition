@@ -14,14 +14,10 @@ class GamesController < ApplicationController
     #        The string is of one of three states:
     #         message for desktop-based
     #         message for tablet or phone based controls
-    #         empty string for unsupported broswer types
+    #         empty string for unrecognized browser types
 
-    # create a device detector object from the user agent
-    client = DeviceDetector.new(request.user_agent)
-    device = client.device_type
-    puts device
-    # if the browser if a tablet phone or phablet, then the message is "Tap to Turn"
-    # # (a "phablet" is a marketing term for a larger smart phone)
+    device = DeviceDetector.new(request.user_agent).device_type
+    # (a "phablet" is a marketing term for a larger smart phone)
     if %w[smartphone tablet phablet].include?(device)
       'Tap to Turn'
     elsif device == 'desktop'
