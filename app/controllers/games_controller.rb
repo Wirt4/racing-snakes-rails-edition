@@ -2,6 +2,9 @@
 
 require 'device_detector'
 class GamesController < ApplicationController
+  # don't allow un-sessioned users in
+  before_action :authenticate_user!
+
   def show
     # dummy object or Game.find(params[:id])
   end
