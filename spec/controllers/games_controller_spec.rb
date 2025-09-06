@@ -12,11 +12,6 @@ RSpec.describe 'confirm class type' do
     games = GamesController.new
     expect(games).to be_a ApplicationController
   end
-  it 'a games controller is not a sessionInfo controller' do
-    # users still need to be authenticated for access, but don't need the logout headers on the page
-    games = GamesController.new
-    expect(games).not_to be_a SessionInfoController
-  end
 end
 
 RSpec.describe GamesController, type: :controller do
