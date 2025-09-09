@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 require 'device_detector'
+# controller for the Games view. At present, the core logic of the game is housed in the TypeScript application
 class GamesController < ApplicationController
+  # don't allow un-sessioned users in
+  before_action :authenticate_user!
+
   def show
     # dummy object or Game.find(params[:id])
   end

@@ -86,6 +86,9 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # devise configuration for authenticating users
+  config.action_mailer.default_url_options = { host: 'https://lite-cycles-3586d8404d73.herokuapp.com/', protocol: 'https' }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

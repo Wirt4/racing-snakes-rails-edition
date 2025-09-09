@@ -1,7 +1,17 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 def mock_user_agent(agent_string)
   allow(request).to receive(:user_agent).and_return(agent_string)
+end
+
+RSpec.describe 'confirm class type' do
+  # the games controller is an instance of the application controller,
+  it 'a games controller is an application controller' do
+    games = GamesController.new
+    expect(games).to be_a ApplicationController
+  end
 end
 
 RSpec.describe GamesController, type: :controller do

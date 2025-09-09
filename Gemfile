@@ -67,3 +67,5 @@ gem 'foreman', '~> 0.88.1'
 
 # device detector for figuring out if client is desktop or mobile
 gem 'device_detector', '~> 0.8.2'
+
+gem 'devise', '~> 4.9'
