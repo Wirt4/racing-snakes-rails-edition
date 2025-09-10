@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def create_guest_user
-    guest_user = User.create(password: guest_user_password, email: guest_user_email)
+    guest_user = User.create(guest: true, password: guest_user_password, email: guest_user_email)
     guest_user.save(validate: false)
     guest_user
   end
