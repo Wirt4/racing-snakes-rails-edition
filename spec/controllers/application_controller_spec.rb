@@ -17,4 +17,11 @@ RSpec.describe ApplicationController, type: :controller do
   it 'returns the logged-in user' do
     expect(controller.current_user).to eq(user)
   end
+
+  it 'if not logged in, then creates guest user' do
+    # know it's creating a guest user
+    expect do
+      controller.send(:current_user)
+    end.to change(User, :count).by(1)
+  end
 end
