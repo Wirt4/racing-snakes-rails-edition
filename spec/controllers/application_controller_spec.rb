@@ -14,7 +14,7 @@ RSpec.describe ApplicationController, type: :controller do
   context 'when user is logged in' do
     # fake a signed in user for next test
     before do
-      allow(controller).to receive(:current_user).and_return(user)
+      allow(controller).to receive(:logged_in_user).and_return(user)
     end
 
     it 'returns the logged-in user' do
@@ -24,6 +24,10 @@ RSpec.describe ApplicationController, type: :controller do
 
   context 'user is not logged in' do
     # no current user mocked here, user is logged out
+    before do
+      allow(controller).to receive(:logged_in_user).and_return(nil)
+    end
+
     it 'if not logged in, then creates guest user' do
       # know it's creating a guest user
       expect do
