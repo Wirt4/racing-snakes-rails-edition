@@ -44,7 +44,7 @@ task :profile do
   ENV['NODE_OPTIONS'] = [
     ENV['NODE_OPTIONS'],
     '--cpu-prof',
-    "--cpu-prof-dir=#{dir}"
+    '--cpu-prof-dir=' + dir
   ].compact.join(' ')
   local_host_server
 end
