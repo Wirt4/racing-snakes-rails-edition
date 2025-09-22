@@ -67,3 +67,6 @@ gem 'foreman', '~> 0.88.1'
 
 # device detector for figuring out if client is desktop or mobile
 gem 'device_detector', '~> 0.8.2'
+
+# to encapsulate and reuse components
+gem 'view_component', '~> 4.0.2'
