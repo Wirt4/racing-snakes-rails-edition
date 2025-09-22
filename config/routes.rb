@@ -9,5 +9,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root 'landing#index'
+  # address for the gameover screen. right now it's just {host}/gameover
+  get 'gameover', to: 'gameover#index'
   resources :games, only: [:show]
 end
