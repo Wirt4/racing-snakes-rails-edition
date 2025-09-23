@@ -40,10 +40,8 @@ window.addEventListener("click", (e: MouseEvent) => {
  * Redirects the browser when the worker module emits a gameover event
  * **/
 worker.addEventListener('message', (event) => {
-	// listen for the message "gameover"
 	const message = event.data
 	if (message.type === 'gameover') {
-		// get the endpoint from the message data and redirect
 		redirectTo(message.endpoint)
 	}
 })
