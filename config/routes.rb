@@ -11,5 +11,5 @@ Rails.application.routes.draw do
   root 'landing#index'
   # address for the gameover screen. right now it's just {host}/gameover
   get 'gameover', to: 'gameover#index'
-  resources :games, :gameover, only: [:show]
+  resources :games, only: [:show]
 end
