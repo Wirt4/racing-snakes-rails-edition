@@ -1,10 +1,10 @@
-<section class="scanlines min-h-screen w-full flex flex-col justify-center items-center bg-black text-pink-500 font-arcade text-center px-4 relative overflow-hidden">
-    <h1 class="glow-text text-6xl sm:text-7xl font-extrabold tracking-widest drop-shadow-neon mb-6 z-10">
+<section class="scanlines font-arcade page-style">
+    <h1 class="glow-text main-title drop-shadow-neon">
     "Lite" Cycle
   </h1>
   <p class="text-xl sm:text-2xl text-pink-300 max-w-xl mb-8 drop-shadow">
     Race to Survive.
   </p>
-  <%= link_to "Play Now!", game_path(@game), class:"play-button"%>
+  <%= render(PlayButtonComponent.new(label: "Play Now!", path: game_path(@game))) %>
     </section>
 

@@ -1,4 +1,5 @@
 export interface SettingsInterface {
+	SCREEN_PAUSE: number;
 	HORIZON_LINE_RATIO: number;
 	FRAME_HEIGHT: number;
 	ARENA_WIDTH: number;

@@ -71,7 +71,6 @@ class Raycaster implements RaycasterInterface {
 	}
 
 	castRay(origin: Coordinates, angle: number, walls: WallInterface[]): Slice {
-		assertAreNonNegativeCoordinates(origin)
 		this.currentRay.setUp(origin, angle)
 		this.currentRay.findClosestHit(walls);
 		const distance = this.currentRay.wallDistance > 0 ? this.currentRay.wallDistance : this.maxDistance;
@@ -92,7 +91,6 @@ class Raycaster implements RaycasterInterface {
 		 * maximum distance is positive
 		 * both the x and y coordinates are non-negative
 		 **/
-		assertAreNonNegativeCoordinates(origin)
 		angle = normalizeAngle(angle)
 		assertIsPositive(maxDistance)
 		// initialize the grid Step counter
@@ -388,7 +386,6 @@ class XYGridStepGenerators {
 		 * angle is greater or equal than 0 and less than or equal to 2 Pi (FULL_CIRCLE)
 		 */
 		angle = normalizeAngle(angle)
-		assertAreNonNegativeCoordinates(origin)
 		// init x-step with x and cos of angle
 		this._xStep.init(origin.x, this.bMath.cos(angle))
 		// init y-step with y and sin of angle
@@ -451,7 +448,6 @@ class GridStepGenerator {
 	 *  **/
 	init(origin: number, ratio: number): void {
 		//preconditions: origin is nonnegative, and ratio is the output of either a sin or cos function
-		assertIsNonNegative(origin)
 		if (ratio < -1 || ratio > 1) {
 			throw new Error("ratio must be be between -1 and 1 inclusive");
 		}

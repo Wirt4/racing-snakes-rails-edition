@@ -2,15 +2,16 @@ import { SettingsInterface } from './interface';
 
 export class Settings implements SettingsInterface {
 	HORIZON_LINE_RATIO = 0.65
+	SCREEN_PAUSE = 1 //in seconds
 	FRAME_HEIGHT = -200
 	MAX_BRIGHTNESS = 60
 	CAMERA_ANGLE = 0
-	TURN_TIME = 12//in frames
+	TURN_TIME = 3//in frames
 	HUD_ON = true
 	WALL_HEIGHT = 3
-	PLAYER_SPEED = 0.375 //in units per frame
+	PLAYER_SPEED = 2//in units per frame
 	CAMERA_HEIGHT = 2
-	FRAMES_PER_SECOND = 60
+	FRAMES_PER_SECOND = 30
 	FIELD_OF_VISION = Math.PI / 3 //try wider angle for greater illusion of speed
 	MAX_DISTANCE = 100
 	MAX_PERCENT_BRIGHTNESS = 60
