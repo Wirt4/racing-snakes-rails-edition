@@ -2,7 +2,7 @@
 
 import { assertIsPositiveInteger } from './utils/utils';
 
-const ONE_SECOND_IN_MS = 100
+const ONE_SECOND_IN_MS = 1000
 
 async function sleep(fps: number): Promise<void> {
 	/** precondition: fps must be a positive integer
