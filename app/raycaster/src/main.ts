@@ -62,7 +62,6 @@ function redirectTo(endpoint: string): void {
 	}
 	// get the current href and replace the endpoint
 	const oldAddress = window.location.href
-	console.log('harvested address:', oldAddress)
 	const regex = new RegExp('\/games.*');
 	const newAddress = oldAddress.replace(regex, endpoint)
 	// go to the new address created
