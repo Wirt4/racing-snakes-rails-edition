@@ -10,6 +10,7 @@ import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
 import { sleep, delayFor } from '../sleep';
 import { Arena } from '../arena/arena';
+import { Settings } from '../settings/settings'
 
 let game: Game;
 let player: Player;
@@ -77,19 +78,20 @@ function startLoop(): void {
 	 * calls requestAnimationFrame to continue the loop
 		* */
 	if (running) return;
+	const settings = new Settings()
 	running = true;
 	async function loop(): Promise<void> {
 		batchRenderer.clear();
 		game.update();
 		game.draw();
-		await sleep(30);
+		await sleep(settings.FRAMES_PER_SECOND);
 		if (!game.isGameOver()) {
 			requestAnimationFrame(loop);
 		} else {
 			running = false;
 			// draw the map for a beat
 			game.draw()
-			await delayFor(10)
+			await delayFor(settings.SCREEN_PAUSE)
 			emitGameover();
 		}
 	};
