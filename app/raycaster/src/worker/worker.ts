@@ -8,7 +8,7 @@ import { Directions } from '../controls/directions';
 import { Camera } from '../camera/camera';
 import { BatchRenderer } from "../batchRenderer/batchRenderer";
 import { ColorName } from '../color/color_name';
-import { sleep } from '../sleep';
+import { sleep, delayFor } from '../sleep';
 import { Arena } from '../arena/arena';
 
 let game: Game;
@@ -87,6 +87,9 @@ function startLoop(): void {
 			requestAnimationFrame(loop);
 		} else {
 			running = false;
+			// draw the map for a beat
+			game.draw()
+			await delayFor(10)
 			emitGameover();
 		}
 	};
