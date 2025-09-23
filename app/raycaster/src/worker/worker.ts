@@ -87,7 +87,19 @@ function startLoop(): void {
 			requestAnimationFrame(loop);
 		} else {
 			running = false;
+			emitGameover();
 		}
 	};
 	requestAnimationFrame(loop);
 }
+
+/**
+ *This function emits the gameover message
+ **/
+function emitGameover(): void {
+	self.postMessage({
+		type: 'gameover',
+		endpoint: '/gameover'
+	})
+}
+
