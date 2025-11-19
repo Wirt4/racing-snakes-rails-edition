@@ -66,7 +66,8 @@ The player whips around hairpin 90 degree turns in a trippy digital space.
 Left/Right Arrows
 #### Mobile View
 Tap of left or right side of view screen
-
+#### Live Hosted
+See the latest live version on [heroku](https://lite-cycles-staging-102ec7f16fff.herokuapp.com/).
 ## Terms of Use
 The MIT License (MIT)
 
